@@ -21,7 +21,7 @@
 %% /* GRAMMAR AND ACTIONS */
 
 translation_unit
-	: external_declaration
+	: external_declaration { std::cout << "translation_unit -> external declaration" << std::endl }
 	| translation_unit external_declaration
 	;
 
