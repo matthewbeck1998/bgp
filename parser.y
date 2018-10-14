@@ -10,6 +10,10 @@ extern int yyparse();
 void yyerror(const char* s);
 extern FILE* yyin;
 
+extern int line_num;
+extern int column_num;
+extern int tab_num;
+
 ofstream outputStream;
 void output(string s);
 %}
@@ -479,6 +483,9 @@ int main(int argc, char** argv)
     
     outputStream.open(argv[2]);
     yyparse();
+    cout << "line_num: " << line_num << endl;
+    cout << "column_num: " << column_num << endl;
+    cout << "tab_num: " << tab_num << endl;
 }
 
 void yyerror(const char* s)
