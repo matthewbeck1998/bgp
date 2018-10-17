@@ -1,118 +1,583 @@
 %{
 #include <iostream>
+#include <sstream>
 #include <cstdio>
 #include <cstring>
 #include "parser.h"
 
 using namespace std;
+
+int line = 1;
+int column = 1;
+int tab = 0;
+
+void handleNewline();
+void incrementColumn(int n);
+void incrementTab(int n);
+
+extern stringstream output;
+void scannerOutput(string s);
 %}
 
 %option noyywrap
 
-letter	            [A-Za-z]
-digit	            [0-9]
-identifier          {letter}({letter}|{digit})*
-integer_constant    {digit}+
-floating_constant   {digit}+\.{digit}+
-string_literal      \".*\"
+letter                  [A-Za-z]
+digit                   [0-9]
+identifier              {letter}({letter}|{digit})*
+integer_constant        {digit}+
+character_constant      ['].[']
+floating_constant       {digit}+\.{digit}+
+string_literal          ["].*["]
+line_comment            [/][/].*
+block_comment           [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]
 
 %%
 
-[ \t\n]     {}
+"auto"                  {                            
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return AUTO;
+                        }
+                    
+"break"                 {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return BREAK;
+                        }
 
-auto 		{ return AUTO; }
-break 		{ return BREAK; }
-case 		{ return CASE; }
-char 		{ return CHAR; }
-const 		{ return CONST; }
-continue 	{ return CONTINUE; }
-default 	{ return DEFAULT; }
-do 			{ return DO; }
-double 		{ return DOUBLE; }
-"..."		{ return ELLIPSIS; }
-else 		{ return ELSE; }
-enum 		{ return ENUM; }
-extern 		{ return EXTERN; }
-float 		{ return FLOAT; }
-for 		{ return FOR; }
-goto 		{ return GOTO; }
-if 			{ return IF; }
-int 		{ return INT; }
-long 		{ return LONG; }
-register 	{ return REGISTER; }
-return 		{ return RETURN; }
-short 		{ return SHORT; }
-signed 		{ return SIGNED; }
-sizeof 		{ return SIZEOF; }
-static 		{ return STATIC; }
-struct 		{ return STRUCT; }
-switch 		{ return SWITCH; }
-typedef 	{ return TYPEDEF; }
-union 		{ return UNION; }
-unsigned	{ return UNSIGNED; }
-void 		{ return VOID; }
-volatile 	{ return VOLATILE; }
-while 		{ return WHILE; }
+"case"                  {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return CASE;
+                        }
 
-"="			{ return ASSIGN; }
-"->"        { return ARROW; }
-","         { return COMMA; }
-";"			{ return SEMICOLON; }
-"."			{ return PERIOD; }
-"&"			{ return AMPERSAND; }
-"*"			{ return STAR; }
+"char"                  {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return CHAR;
+                        }
 
-"{"		{ return OBRACE; }
-"}"		{ return CBRACE; }
-"["     { return OBRACKET; }
-"]"     { return CBRACKET; }
-"("		{ return OPAREN; }
-")"		{ return CPAREN; }
-"?"		{ return QUESTION; }
-":"		{ return COLON; }
+"const"                 {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return CONST;
+                        }
 
-"+"			{ return ADD; }
-"-"			{ return SUB; }
-"/"			{ return DIV; }
-"%"			{ return MOD; }
+"continue"              {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return CONTINUE;
+                        }
 
-"++"		{ return INC_OP; }
-"--"		{ return DEC_OP; }
+"default"               {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return DEFAULT;
+                        }
 
-"+="		{ return ADD_ASSIGN; }
-"-="		{ return SUB_ASSIGN; }
-"*="		{ return MUL_ASSIGN; }
-"/="		{ return DIV_ASSIGN; }
-"%="		{ return MOD_ASSIGN; }
+"do"                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return DO;
+                        }
 
-"!"			{ return L_NOT; }
-"&&"		{ return L_AND; }
-"||"		{ return L_OR; }
+"double"                {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return DOUBLE;
+                        }
 
-">"			{ return GT_OP; }
-"<"			{ return LT_OP; }
-"=="		{ return EQ_OP; }
-"!="		{ return NE_OP; }
-"<="		{ return LE_OP; }
-">="		{ return GE_OP; }
+"..."                   {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return ELLIPSIS;
+                        }
 
-"~"			{ return B_NOT; }
-"^"			{ return B_XOR; }
-"|"			{ return B_OR; }
-"<<"		{ return B_SL; }
-">>"		{ return B_SR; }
+"else"                  {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return ELSE;
+                        }
 
-"&="		{ return B_AND_ASSIGN; }
-"|="		{ return B_OR_ASSIGN; }
-"^="		{ return B_XOR_ASSIGN; }
-"<<="		{ return B_SL_ASSIGN; }
-">>="		{ return B_SR_ASSIGN; }
+"enum"                  {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return ENUM;
+                        }
 
-{identifier}		{ strcpy(yylval.sval, yytext); return IDENTIFIER; }
-{integer_constant}	{ strcpy(yylval.sval, yytext); return INTEGER_CONSTANT; }
-{floating_constant}	{ strcpy(yylval.sval, yytext); return FLOATING_CONSTANT; }
-{string_literal}    { strcpy(yylval.sval, yytext); return STRING_LITERAL; }
+"extern"                {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return EXTERN;
+                        }
 
-.			{ strcpy(yylval.sval, yytext); return ERROR; }
+"float"                 {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return FLOAT;
+                        }
+
+"for"                   {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return FOR;
+                        }
+
+"goto"                  {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return GOTO;
+                        }
+
+"if"                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return IF;
+                        }
+
+"int"                   {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return INT;
+                        }
+
+"long"                  {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return LONG;
+                        }
+
+"register"              {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return REGISTER;
+                        }
+
+"return"                {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return RETURN;
+                        }
+
+"short"                 {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return SHORT;
+                        }
+
+"signed"                {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return SIGNED;
+                        }
+
+"sizeof"                {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return SIZEOF;
+                        }
+
+"static"                {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return STATIC;
+                        }
+
+"struct"                {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return STRUCT;
+                        }
+
+"switch"                {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return SWITCH;
+                        }
+
+"typedef"               {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return TYPEDEF;
+                        }
+
+"union"                 {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return UNION;
+                        }
+
+"unsigned"              {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return UNSIGNED;
+                        }
+
+"void"                  {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return VOID;
+                        }
+
+"volatile"              {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return VOLATILE;
+                        }
+
+"while"                 {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return WHILE;
+                        }
+
+" "                     {
+							incrementColumn(yyleng);
+                        }
+
+"\t"                    {
+                            incrementTab(1);
+                        }
+
+"\n"                    {
+                            handleNewline();
+                        }
+
+"="                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return ASSIGN;
+                        }
+
+"->"                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return ARROW;
+                        }
+
+","                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return COMMA;
+                        }
+
+";"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return SEMICOLON;
+                        }
+
+"."                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return PERIOD;
+                        }
+
+"&"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return AMPERSAND;
+                        }
+
+"*"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return STAR;
+                        }
+
+"{"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return OBRACE;
+                        }
+
+"}"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return CBRACE;
+                        }
+
+"["                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return OBRACKET;
+                        }
+
+"]"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return CBRACKET;
+                        }
+
+"("                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return OPAREN;
+                        }
+
+")"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return CPAREN;
+                        }
+
+"?"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return QUESTION;
+                        }
+
+":"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return COLON;
+                        }
+
+"+"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return ADD;
+                        }
+
+"-"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return SUB;
+                        }
+
+"/"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return DIV;
+                        }
+
+"%"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return MOD;
+                        }
+
+"++"                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return INC_OP;
+                        }
+
+"--"                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return DEC_OP;
+                        }
+
+"+="                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return ADD_ASSIGN;
+                        }
+
+"-="                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return SUB_ASSIGN;
+                        }
+
+"*="                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return MUL_ASSIGN;
+                        }
+
+"/="                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return DIV_ASSIGN;
+                        }
+
+"%="                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return MOD_ASSIGN;
+                        }
+
+"!"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return L_NOT;
+                        }
+
+"&&"                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return L_AND;
+                        }
+
+"||"                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return L_OR;
+                        }
+
+">"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return GT_OP;
+                        }
+
+"<"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return LT_OP;
+                        }
+
+"=="                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return EQ_OP;
+                        }
+
+"!="                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return NE_OP;
+                        }
+
+">="                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return GE_OP;
+                        }
+
+"<="                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return LE_OP;
+                        }
+
+"~"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return B_NOT;
+                        }
+
+"^"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return B_XOR;
+                        }
+
+"|"                     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return B_OR;
+                        }
+
+"<<"                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return B_SL;
+                        }
+
+">>"                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return B_SR;
+                        }
+
+"&="                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return B_AND_ASSIGN;
+                        }
+
+"|="                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return B_OR_ASSIGN;
+                        }
+
+"^="                    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return B_XOR_ASSIGN;
+                        }
+
+"<<="                   {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return B_SL_ASSIGN;
+                        }
+
+">>="                   {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            return B_SR_ASSIGN;
+                        }
+
+{identifier}            {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            strcpy(yylval.sval, yytext);
+                            return IDENTIFIER;
+                        }
+
+{integer_constant}      {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            strcpy(yylval.sval, yytext);
+                            return INTEGER_CONSTANT;
+                        }
+
+{character_constant}    {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            strcpy(yylval.sval, yytext);
+                            return CHARACTER_CONSTANT;
+                        }
+
+{floating_constant}     {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            strcpy(yylval.sval, yytext);
+                            return FLOATING_CONSTANT;
+                        }
+
+{string_literal}        {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            strcpy(yylval.sval, yytext);
+                            return STRING_LITERAL;
+                        }
+
+{line_comment}          {}
+
+{block_comment}         {}
+
+.                       {
+                            scannerOutput(yytext);
+							incrementColumn(yyleng);
+                            strcpy(yylval.sval, yytext);
+                        }
 
 %%
+
+inline void handleNewline()
+{
+    line++;
+    column = 1;
+    tab = 0;
+}
+
+inline void incrementColumn(int n)
+{
+    column += n;
+}
+
+inline void incrementTab(int n)
+{
+    tab += n;
+}
+
+void scannerOutput(string s)
+{
+    output << "Token: " << s << endl;
+}
