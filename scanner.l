@@ -33,6 +33,7 @@ character_constant      ['].[']
 floating_constant       {decimal_digit}+\.{decimal_digit}+
 string_literal          ["].*["]
 escaped_character       ['][\\].[']
+octal_character         ['][\\]{octal_digit}{octal_digit}{octal_digit}[']
 line_comment            [/][/].*
 block_comment           [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]
 
@@ -40,14 +41,6 @@ productions_on          [@][p][+]
 productions_off         [@][p][-]
 
 %%
-
-{productions_on}        {
-                            outputProductions = true;
-                        }
-
-{productions_off}       {
-                            outputProductions = false;
-                        }
 
 "auto"                  {                            
                             scannerOutput(yytext);
@@ -571,9 +564,24 @@ productions_off         [@][p][-]
                             return CHARACTER_CONSTANT;
                         }
 
+{octal_character}       {
+                            scannerOutput(yytext);
+                            incrementColumn(yyleng);
+                            strcpy(yylval.sval, yytext);
+                            return CHARACTER_CONSTANT;
+                        }
+
 {line_comment}          {}
 
 {block_comment}         {}
+
+{productions_on}        {
+                            outputProductions = true;
+                        }
+
+{productions_off}       {
+                            outputProductions = false;
+                        }
 
 .                       {
                             scannerOutput(yytext);
