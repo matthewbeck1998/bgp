@@ -24,12 +24,15 @@ void scannerOutput(string s);
 %option noyywrap
 
 letter                  [A-Za-z]
-digit                   [0-9]
-identifier              {letter}({letter}|{digit})*
-integer_constant        {digit}+
+decimal_digit           [0-9]
+octal_digit             [0-7]
+hexadecimal_digit       [0-9A-Za-f]
+identifier              {letter}({letter}|{decimal_digit})*
+integer_constant        {decimal_digit}+
 character_constant      ['].[']
-floating_constant       {digit}+\.{digit}+
+floating_constant       {decimal_digit}+\.{decimal_digit}+
 string_literal          ["].*["]
+escaped_character       ['][\\].[']
 line_comment            [/][/].*
 block_comment           [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]
 
@@ -561,6 +564,13 @@ productions_off         [@][p][-]
                             return STRING_LITERAL;
                         }
 
+{escaped_character}     {
+                            scannerOutput(yytext);
+                            incrementColumn(yyleng);
+                            strcpy(yylval.sval, yytext);
+                            return CHARACTER_CONSTANT;
+                        }
+
 {line_comment}          {}
 
 {block_comment}         {}
@@ -569,6 +579,7 @@ productions_off         [@][p][-]
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
                             strcpy(yylval.sval, yytext);
+                            return ERROR;
                         }
 
 %%
