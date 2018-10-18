@@ -7,6 +7,8 @@
 
 using namespace std;
 
+extern bool outputProductions;
+
 int line = 1;
 int column = 1;
 int tab = 0;
@@ -15,7 +17,7 @@ void handleNewline();
 void incrementColumn(int n);
 void incrementTab(int n);
 
-extern stringstream output;
+extern stringstream outputStream;
 void scannerOutput(string s);
 %}
 
@@ -31,7 +33,18 @@ string_literal          ["].*["]
 line_comment            [/][/].*
 block_comment           [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]
 
+productions_on          [@][p][+]
+productions_off         [@][p][-]
+
 %%
+
+{productions_on}        {
+                            outputProductions = true;
+                        }
+
+{productions_off}       {
+                            outputProductions = false;
+                        }
 
 "auto"                  {                            
                             scannerOutput(yytext);
@@ -579,5 +592,5 @@ inline void incrementTab(int n)
 
 void scannerOutput(string s)
 {
-    output << "Token: " << s << endl;
+    outputStream << "Token: " << s << endl;
 }
