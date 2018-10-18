@@ -17,10 +17,11 @@ extern int tab;
 
 // symbol table
 
-string inputFile;
-ofstream outputStream;
-stringstream output;
-stringstream error;
+bool outputProductions = false;
+ifstream inputFile;
+ofstream outputFile;
+stringstream outputStream;
+stringstream errorStream;
 void parserOutput(string s);
 %}
 
@@ -476,7 +477,7 @@ identifier
 
 int main(int argc, char** argv)
 {
-    inputFile = argv[1];
+    inputFile.open(argv[1]);
     FILE* inputStream = fopen(argv[1], "r");
     if (!inputStream)
     {
@@ -489,44 +490,48 @@ int main(int argc, char** argv)
     
     yyparse();
 
-    outputStream.open(argv[2]);
-    if (outputStream.good())
+    outputFile.open(argv[2]);
+    if (outputFile.good())
     {
-        outputStream << output.str();
+        outputFile << outputStream.str();
     }
     else
     {
-        cout << output.str();
+        cout << outputStream.str();
     }
 }
 
 void yyerror(const char* s)
 {
-    ifstream inputStream;
-    inputStream.open(inputFile.c_str());
-
-    for (int i = 0; i < line; i++)
+    if (inputFile.good())
     {
         string currentLine;
-        getline(inputStream, currentLine);
-        error << currentLine << endl;
+        for (int i = 0; i < line; i++)
+        {
+            getline(inputFile, currentLine);
+        }
+        errorStream << currentLine << endl;
     }
 
     for (int i = 0; i < tab; i++)
     {
-        error << "\t";
+        errorStream << "\t";
     }
 
     for (int i = 0; i < column; i++)
     {
-        error << " ";
+        errorStream << " ";
     }
 
-    error << "^ ERROR on line " << line << ", column " << column << endl;
-    cerr << error.str();
+    errorStream << "^ ERROR on line " << line << ", column " << column << endl;
+    outputStream << errorStream.str();
+    cerr << errorStream.str();
 }
 
 void parserOutput(string s)
 {
-    output << "Rule: " << s << endl;
+    if (outputProductions)
+    {
+        outputStream << "Rule: " << s << endl;
+    }
 }
