@@ -49,6 +49,7 @@ void parserOutput(string s);
 
 %token <sval> CHARACTER_CONSTANT ENUMERATION_CONSTANT FLOATING_CONSTANT INTEGER_CONSTANT
 %token <sval> STRING_LITERAL TYPEDEF_NAME IDENTIFIER
+%token <sval> ERROR
 
 %%
 
@@ -523,7 +524,7 @@ void yyerror(const char* s)
         errorStream << " ";
     }
 
-    errorStream << "^ ERROR on line " << line << ", column " << column << endl;
+    errorStream << "^ Error on line " << line << ", column " << column << "." << endl;
     outputStream << errorStream.str();
     cerr << errorStream.str();
 }
