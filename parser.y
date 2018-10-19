@@ -116,7 +116,7 @@ type_specifier
 	| UNSIGNED { parserOutput("type_specifier -> UNSIGNED"); }
 	| struct_or_union_specifier { parserOutput("type_specifier -> struct_or_union_specifier"); }
 	| enum_specifier { parserOutput("type_specifier -> enum_specifier"); }
-	| TYPEDEF_NAME { parserOutput("type_specifier -> TYPEDEF_NAME"); }
+	| TYPEDEF_NAME { parserOutput("type_specifier -> TYPEDEF_NAME"); /* TODO: typedefs in symbol table */ }
 	;
 
 type_qualifier
