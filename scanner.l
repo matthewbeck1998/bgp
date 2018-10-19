@@ -28,7 +28,7 @@ extern ofstream symbolTableOut;
 extern stringstream outputStream;
 extern stringstream errorStream;
 
-void scannerOutput(string s);
+void scannerOutput(string s, string token_name);
 extern symbolTable st;
 %}
 
@@ -171,7 +171,7 @@ productions_off         [@][p][-]
                         }
 
 "int"                   {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "INT");
 							incrementColumn(yyleng);
                             return INT;
                         }
@@ -297,7 +297,7 @@ productions_off         [@][p][-]
                         }
 
 ";"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "SEMICOLON");
 							incrementColumn(yyleng);
                             return SEMICOLON;
                         }
@@ -321,7 +321,7 @@ productions_off         [@][p][-]
                         }
 
 "{"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "OBRACE");
 							incrementColumn(yyleng);
                             st.pushLevel();
                             return OBRACE;

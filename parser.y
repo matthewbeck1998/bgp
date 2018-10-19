@@ -18,9 +18,6 @@ extern int line;
 extern int column;
 extern int tab;
 
-// symbol table
-symbolTable st;
-
 bool outputProductions = false;
 ifstream inputFile;
 ofstream outputFile;
