@@ -573,6 +573,7 @@ void yyerror(const char* s)
     }
 
     errorStream << "^ Error on line " << line << ", column " << column << "." << endl;
+    outputStream << errorStream.str();
 }
 
 /// @name parserOutput

@@ -352,18 +352,27 @@ productions_off         [@][p][-]
                         }
 
 "{"                     {
+							
+							if( command_s and symbolTableOut.good() )
+							{
+								symbolTableOut << st;
+							}
                             scannerOutput(yytext, "OBRACE");
 							incrementColumn(yyleng);
                             st.pushLevel();
-                            st.setInsertMode(false);
+							st.setInsertMode(false);
                             return OBRACE;
                         }
 
 "}"                     {
+							if( command_s and symbolTableOut.good() )
+							{
+								symbolTableOut << st;
+							}
                             scannerOutput(yytext, "CBRACE");
 							incrementColumn(yyleng);
                             st.popLevel();
-                            st.setInsertMode(false);
+							st.setInsertMode(false);
                             return CBRACE;
                         }
 
