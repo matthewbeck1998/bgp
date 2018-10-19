@@ -10,26 +10,57 @@
 
 using namespace std;
 
+//Global for the @p++ and @p-- toggle.
 extern bool outputProductions;
 
+//Globals to hold line, columns, and tab.
 int line = 1;
 int column = 1;
 int tab = 0;
-
-void handleNewline();
-void incrementColumn(int n);
-void incrementTab(int n);
-
+//External bools to hook in with the command line arguments parsed in the yacc file.
 extern bool command_l;
 extern bool command_s;
 
+//External output streams for the -l command line option, -s command line option, -d command line option, and the @ token.
 extern ofstream lexDebugOutput;
 extern ofstream symbolTableOut;
+
+//External streams for the final output and error
 extern stringstream outputStream;
 extern stringstream errorStream;
 
-void scannerOutput(string s, string token_name);
+//External variable for the symbol table
 extern symbolTable st;
+
+//Functions to handle incrementing of globals.
+/*
+ *@name handleNewLine
+ *@brief Keeps track of line, column, and tabs when a new line character is found
+*/
+void handleNewline();
+
+/*
+ *@name incrementColum
+ *@brief increments the global column based on the int input
+ *@param an integer n representing how many columns to increment
+*/
+void incrementColumn(int n);
+
+/*
+ *@name incrementTab
+ *@brief increments the global tab based on the int input
+ *@param an integer n representing how many tabs to increment
+*/
+void incrementTab(int n);
+
+/*
+ *@name scannerOutput
+ *@brief Outputs the token name and source code to the lexDebugOutput output stream
+ *@param a string outputStr that holds the source code to output
+ *@param a string token_name that holds the token name to output
+*/
+void scannerOutput(string s, string token_name);
+
 %}
 
 %option noyywrap
@@ -567,7 +598,7 @@ productions_off         [@][p][-]
 
 {integer_constant}      {
                             scannerOutput(yytext, "INTEGER_CONSTANT");
-							if( strcmp(yytext, "2147483647") > 0 )
+							if( yyleng > 10 or (yyleng == 10 and strcmp(yytext, "2147483647") > 0) )
 							{
 								
 								errorStream << "WARNING: Integer " << yytext << " too big to be held in an int" << endl;
@@ -646,6 +677,11 @@ productions_off         [@][p][-]
 
 %%
 
+
+/*
+ *@name handleNewLine
+ *@brief Keeps track of line, column, and tabs when a new line character is found
+*/
 inline void handleNewline()
 {
     line++;
@@ -653,16 +689,32 @@ inline void handleNewline()
     tab = 0;
 }
 
+/*
+ *@name incrementColum
+ *@brief increments the global column based on the int input
+ *@param an integer n representing how many columns to increment
+*/
 inline void incrementColumn(int n)
 {
     column += n;
 }
 
+/*
+ *@name incrementTab
+ *@brief increments the global tab based on the int input
+ *@param an integer n representing how many tabs to increment
+*/
 inline void incrementTab(int n)
 {
     tab += n;
 }
 
+/*
+ *@name scannerOutput
+ *@brief Outputs the token name and source code to the lexDebugOutput output stream
+ *@param a string outputStr that holds the source code to output
+ *@param a string token_name that holds the token name to output
+*/
 void scannerOutput(string outputStr, string token_name)
 {
 	if( command_l and lexDebugOutput.good() )
