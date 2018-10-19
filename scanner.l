@@ -567,7 +567,7 @@ productions_off         [@][p][-]
 
 {integer_constant}      {
                             scannerOutput(yytext, "INTEGER_CONSTANT");
-							if( strcmp(yytext, "2147483647") > 0 )
+							if( yyleng > 10 or (yyleng == 10 and strcmp(yytext, "2147483647") > 0) )
 							{
 								
 								errorStream << "WARNING: Integer " << yytext << " too big to be held in an int" << endl;
