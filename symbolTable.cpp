@@ -23,12 +23,21 @@ bool symbolTable::insert (node &insertNode)
 	if(!table.empty() and insertMode)
 	{
 		insertNode.setVarScopeLevel(currentLevel);
-		if(searchAllExceptTop(insertNode.getIdentifier()).first != -1)
-			errorStream << "Shadowing variable: \"" << insertNode.getIdentifier() << "\" on line " << insertNode.getLineNum();
-		bool insertStatus = table.begin()->insert(pair<string, node>(insertNode.getIdentifier(), insertNode)).second;
-		if(!insertStatus)
-			errorStream << "Identifier: \"" << insertNode.getIdentifier() << "\" already exists";
-		return insertStatus;
+		auto searchReturn = searchAllExceptTop(insertNode.getIdentifier());
+		if(searchReturn.first != -1)
+		{
+			errorStream << "WARNING: In scope " << currentLevel << " Shadowing variable: \"" << insertNode.getIdentifier() << '\"';
+			errorStream << " from scope " << searchReturn.second->second.getVarScopeLevel() << endl;
+		}
+		auto insertStatus = table.begin()->insert(pair<string, node>(insertNode.getIdentifier(), insertNode));
+
+		if(!insertStatus.second)
+		{
+			errorStream << "ERROR: Identifier: \"" << insertNode.getIdentifier() << "\" already exists on line ";
+			errorStream << insertStatus.first->second.getLineNum() << endl;
+		}
+
+		return insertStatus.second;
 	}
 	else
 	{
@@ -126,7 +135,7 @@ pair<int, map<string, node>::iterator> symbolTable::searchAll (string key)
 	auto it = table.begin()->end();
 	pair<int, map<string, node>::iterator> rt;
 	bool notFound = true;
-	for(auto itr = table.begin(); itr != table.end() && notFound; itr++)
+	for(auto itr = table.rbegin(); itr != table.rend() && notFound; itr++)
 	{
 		it = itr->find(key);
 		if(it != itr ->end())
@@ -193,7 +202,7 @@ pair<int, map<string, node>::iterator> symbolTable::searchAllExceptTop (string k
 	auto it = table.begin()->end();
 	pair<int, map<string, node>::iterator> rt;
 	bool notFound = true;
-	for(auto itr = ++table.begin(); itr != table.end() && notFound; itr++)
+	for(auto itr = ++table.rbegin(); itr != table.rend() && notFound; itr++)
 	{
 		it = itr->find(key);
 		if(it != itr ->end())
