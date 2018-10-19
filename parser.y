@@ -82,10 +82,10 @@ external_declaration
 	;
 
 function_definition
-	: declarator compound_statement { parserOutput("function_definition -> declarator compound_statement"); cout << "POP LEVEL" << endl; st.popLevel(); cout << st << endl; }
-	| declarator declaration_list compound_statement { parserOutput("function_definition -> declarator declaration_list compound_statement"); cout << "POP LEVEL" << endl; st.popLevel(); cout << st << endl; }
-	| declaration_specifiers declarator compound_statement { parserOutput("function_definition -> declaration_specifiers declarator compound_statement"); cout << "POP LEVEL" << endl; st.popLevel(); }
-	| declaration_specifiers declarator declaration_list compound_statement { parserOutput("function_definition -> declaration_specifiers declarator declaration_list compound_statement"); cout << "POP LEVEL" << endl; st.popLevel(); }
+	: declarator compound_statement { parserOutput("function_definition -> declarator compound_statement"); st.popLevel(); }
+	| declarator declaration_list compound_statement { parserOutput("function_definition -> declarator declaration_list compound_statement"); st.popLevel(); }
+	| declaration_specifiers declarator compound_statement { parserOutput("function_definition -> declaration_specifiers declarator compound_statement"); st.popLevel(); }
+	| declaration_specifiers declarator declaration_list compound_statement { parserOutput("function_definition -> declaration_specifiers declarator declaration_list compound_statement"); st.popLevel(); }
 	;
 
 declaration
@@ -225,8 +225,6 @@ direct_declarator
                         nodeTypeQualifier = -1;
                         nodeIsFunction = false;
                         nodeIsSigned = true;
-
-                        cout << st << endl;
                     }
 	| OPAREN declarator CPAREN { parserOutput("direct_declarator -> OPAREN declarator CPAREN"); }
 	| direct_declarator OBRACKET CBRACKET { parserOutput("direct_declarator -> direct_declarator OBRACKET CBRACKET"); }

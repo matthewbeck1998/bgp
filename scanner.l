@@ -321,7 +321,6 @@ productions_off         [@][p][-]
 "{"                     {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            cout << "PUSH LEVEL" << endl;
                             st.pushLevel();
                             return OBRACE;
                         }
@@ -329,7 +328,6 @@ productions_off         [@][p][-]
 "}"                     {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            cout << "POP LEVEL" << endl;
                             st.popLevel();
                             return CBRACE;
                         }
@@ -351,7 +349,6 @@ productions_off         [@][p][-]
 							incrementColumn(yyleng);
                             if (st.getInsertMode())
                             {
-                                cout << "PUSH LEVEL" << endl;
                                 st.pushLevel();
                             }
                             return OPAREN;
