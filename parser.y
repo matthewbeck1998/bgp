@@ -489,15 +489,19 @@ identifier
 int main(int argc, char** argv)
 {
 	int outputIndex = parseCommandLine(argc, argv); //Returns the index of the output file in argv or 0 if there is no -o
+
 	yyparse();
-    outputFile.open( outputIndex ? argv[outputIndex] : "a.out");
+
+    outputFile.open( outputIndex ? argv[outputIndex] : "defaultOutput.txt");
+
     if (outputFile.good())
     {
         outputFile << outputStream.str();
     }
     else
     {
-        cout << outputStream.str();
+		cerr << "Output file fail." << endl;
+        exit(-1);
     }
 
 	return 0;
@@ -579,6 +583,11 @@ int parseCommandLine(int argc, char** argv)
 					case 's': command_s = true;
 						break;
 					case 'o': outputIndex = ++i;
+						if(i >= argc)
+						{
+							cerr << "ERROR: Please provide an output file with -o" << endl;
+							exit(-1);
+						}
 						break;
 					default:
 						cerr << "Invalid command line argument" << endl;
