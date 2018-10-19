@@ -355,6 +355,7 @@ productions_off         [@][p][-]
                             scannerOutput(yytext, "OBRACE");
 							incrementColumn(yyleng);
                             st.pushLevel();
+                            st.setInsertMode(false);
                             return OBRACE;
                         }
 
@@ -362,6 +363,7 @@ productions_off         [@][p][-]
                             scannerOutput(yytext, "CBRACE");
 							incrementColumn(yyleng);
                             st.popLevel();
+                            st.setInsertMode(false);
                             return CBRACE;
                         }
 

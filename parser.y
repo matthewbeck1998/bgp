@@ -508,7 +508,16 @@ string
 	;
 
 identifier
-	: IDENTIFIER { parserOutput("identifier -> IDENTIFIER"); nodeIdentifier = yylval.sval; nodeLineNumber = line; }
+	: IDENTIFIER {
+                    parserOutput("identifier -> IDENTIFIER"); 
+                    nodeIdentifier = yylval.sval; 
+                    nodeLineNumber = line;
+                    if (!st.getInsertMode() && st.searchAll(nodeIdentifier).first == -1)
+                    {
+                        yyerror(NULL);
+                        return 1;
+                    }
+                 }
 	;
 
 %%
@@ -564,8 +573,6 @@ void yyerror(const char* s)
     }
 
     errorStream << "^ Error on line " << line << ", column " << column << "." << endl;
-    outputStream << errorStream.str();
-    cerr << errorStream.str();
 }
 
 /// @name parserOutput
