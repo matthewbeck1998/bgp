@@ -556,22 +556,6 @@ productions_off         [@][p][-]
                         }
 
 {identifier}            {
-                            /*
-                            cout << "CURRENT: " << (st.getInsertMode() ? "INSERT" : "LOOKUP") << endl;
-                            nodeIdentifier = yytext;
-                            cout << nodeIdentifier << endl;
-                            if (st.getInsertMode())
-                            {
-                                node node(nodeIdentifier, line, nodeType);
-                                st.insert(node);
-                                nodeType = 3;
-                                cout << st;
-                            }
-                            else
-                            {
-                                st.searchAll(nodeIdentifier);
-                            }
-                            */
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
                             strcpy(yylval.sval, yytext);
@@ -618,7 +602,6 @@ productions_off         [@][p][-]
 
 .                       {
                             scannerOutput(yytext);
-							//incrementColumn(yyleng); //Want the error to point to the start of the error.
                             strcpy(yylval.sval, yytext);
                             return ERROR;
                         }
