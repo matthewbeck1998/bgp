@@ -20,19 +20,16 @@ void handleNewline();
 void incrementColumn(int n);
 void incrementTab(int n);
 
+extern bool command_l;
+extern bool command_s;
+
 extern ofstream lexDebugOutput;
 extern ofstream symbolTableOut;
 extern stringstream outputStream;
-extern bool command_l;
-extern bool command_s;
-void scannerOutput(string outputStr, string token_name);
-
-extern stringstream outputStream;
 extern stringstream errorStream;
 
+void scannerOutput(string s);
 extern symbolTable st;
-string nodeIdentifier;
-int nodeType = 3;
 %}
 
 %option noyywrap
@@ -174,10 +171,7 @@ productions_off         [@][p][-]
                         }
 
 "int"                   {
-                            st.setInsertMode(true);
-                            cout << "INSERT MODE" << endl;
-                            nodeType = 3;
-                            scannerOutput(yytext, "INT");
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return INT;
                         }
@@ -303,9 +297,7 @@ productions_off         [@][p][-]
                         }
 
 ";"                     {
-                            st.setInsertMode(false);
-                            cout << "LOOKUP MODE" << endl;
-                            scannerOutput(yytext, "SEMICOLON");
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return SEMICOLON;
                         }
@@ -329,26 +321,16 @@ productions_off         [@][p][-]
                         }
 
 "{"                     {
-                            st.setInsertMode(false);
-                            cout << "LOOKUP MODE" << endl;
-                            scannerOutput(yytext, "OBRACE");
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
-
-							if( command_s and symbolTableOut.good() )
-							{
-								symbolTableOut << st;
-							}
+                            st.pushLevel();
                             return OBRACE;
                         }
 
 "}"                     {
                             scannerOutput(yytext, "CBRACE");
 							incrementColumn(yyleng);
-							
-							if( command_s and symbolTableOut.good() )
-							{
-								symbolTableOut << st;
-							}
+                            st.popLevel();
                             return CBRACE;
                         }
 
@@ -367,6 +349,10 @@ productions_off         [@][p][-]
 "("                     {
                             scannerOutput(yytext, "OPAREN");
 							incrementColumn(yyleng);
+                            if (st.getInsertMode())
+                            {
+                                st.pushLevel();
+                            }
                             return OPAREN;
                         }
 
@@ -569,20 +555,10 @@ productions_off         [@][p][-]
                         }
 
 {identifier}            {
-                            cout << "CURRENT: " << (st.getInsertMode() ? "INSERT" : "LOOKUP") << endl;
 							if( yyleng > 253 )
 							{
 								return ERROR;//ID too long
 							}
-                            if (st.getInsertMode())
-                            {
-                                //st.insert(node(nodeIdentifier, line, nodeType));
-                                nodeType = 3;
-                            }
-                            else
-                            {
-                                st.searchTop(nodeIdentifier);
-                            }
                             scannerOutput(yytext, "IDENTIFIER");
 							incrementColumn(yyleng);
                             strcpy(yylval.sval, yytext);
@@ -694,4 +670,3 @@ void scannerOutput(string outputStr, string token_name)
     	lexDebugOutput << "Token: " << token_name << endl << "\tSource: " << outputStr << endl;
 	}
 }
-
