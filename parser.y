@@ -24,6 +24,7 @@ bool outputProductions = false;
 ifstream inputFile;
 ofstream outputFile;
 ofstream lexDebugOutput;
+ofstream symbolTableOut;
 stringstream outputStream;
 stringstream errorStream;
 void parserOutput(string s);
@@ -593,6 +594,15 @@ int parseCommandLine(int argc, char** argv)
 		if( !lexDebugOutput.good() )
 		{
 			cerr << "Failed to open LexDebugOutput.txt" << endl;
+			exit(-1);
+		}
+	}
+	if(command_s)
+	{
+		symbolTableOut.open( "SymbolTableDump.txt" );
+		if( !symbolTableOut.good() )
+		{
+			cerr << "Failed to open SymbolTableDump.txt" << endl;
 			exit(-1);
 		}
 	}

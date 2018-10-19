@@ -21,12 +21,13 @@ void incrementColumn(int n);
 void incrementTab(int n);
 
 extern ofstream lexDebugOutput;
+extern ofstream symbolTableOut;
 extern stringstream outputStream;
 extern bool command_l;
-void scannerOutput(string outputStr);
+extern bool command_s;
+void scannerOutput(string outputStr, string token_name);
 
 extern stringstream outputStream;
-void scannerOutput(string s);
 
 extern symbolTable st;
 string nodeIdentifier;
@@ -70,103 +71,103 @@ productions_off         [@][p][-]
 %%
 
 "auto"                  {                            
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "AUTO");
 							incrementColumn(yyleng);
                             return AUTO;
                         }
                     
 "break"                 {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "BREAK");
 							incrementColumn(yyleng);
                             return BREAK;
                         }
 
 "case"                  {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "CASE");
 							incrementColumn(yyleng);
                             return CASE;
                         }
 
 "char"                  {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "CHAR");
 							incrementColumn(yyleng);
                             return CHAR;
                         }
 
 "const"                 {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "CONST");
 							incrementColumn(yyleng);
                             return CONST;
                         }
 
 "continue"              {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "CONTINUE");
 							incrementColumn(yyleng);
                             return CONTINUE;
                         }
 
 "default"               {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "DEFAULT");
 							incrementColumn(yyleng);
                             return DEFAULT;
                         }
 
 "do"                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "DO");
 							incrementColumn(yyleng);
                             return DO;
                         }
 
 "double"                {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "DOUBLE");
 							incrementColumn(yyleng);
                             return DOUBLE;
                         }
 
 "..."                   {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "...");
 							incrementColumn(yyleng);
                             return ELLIPSIS;
                         }
 
 "else"                  {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "ELSE");
 							incrementColumn(yyleng);
                             return ELSE;
                         }
 
 "enum"                  {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "ENUM");
 							incrementColumn(yyleng);
                             return ENUM;
                         }
 
 "extern"                {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "EXTERN");
 							incrementColumn(yyleng);
                             return EXTERN;
                         }
 
 "float"                 {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "FLOAT");
 							incrementColumn(yyleng);
                             return FLOAT;
                         }
 
 "for"                   {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "FOR");
 							incrementColumn(yyleng);
                             return FOR;
                         }
 
 "goto"                  {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "GOTO");
 							incrementColumn(yyleng);
                             return GOTO;
                         }
 
 "if"                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "IF");
 							incrementColumn(yyleng);
                             return IF;
                         }
@@ -175,97 +176,97 @@ productions_off         [@][p][-]
                             st.setInsertMode(true);
                             cout << "INSERT MODE" << endl;
                             nodeType = 3;
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "INT");
 							incrementColumn(yyleng);
                             return INT;
                         }
 
 "long"                  {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "LONG");
 							incrementColumn(yyleng);
                             return LONG;
                         }
 
 "register"              {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "REGISTER");
 							incrementColumn(yyleng);
                             return REGISTER;
                         }
 
 "return"                {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "RETURN");
 							incrementColumn(yyleng);
                             return RETURN;
                         }
 
 "short"                 {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "SHORT");
 							incrementColumn(yyleng);
                             return SHORT;
                         }
 
 "signed"                {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "SIGNED");
 							incrementColumn(yyleng);
                             return SIGNED;
                         }
 
 "sizeof"                {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "SIZEOF");
 							incrementColumn(yyleng);
                             return SIZEOF;
                         }
 
 "static"                {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "STATIC");
 							incrementColumn(yyleng);
                             return STATIC;
                         }
 
 "struct"                {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "STRUCT");
 							incrementColumn(yyleng);
                             return STRUCT;
                         }
 
 "switch"                {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "SWITCH");
 							incrementColumn(yyleng);
                             return SWITCH;
                         }
 
 "typedef"               {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "TYPEDEF");
 							incrementColumn(yyleng);
                             return TYPEDEF;
                         }
 
 "union"                 {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "UNION");
 							incrementColumn(yyleng);
                             return UNION;
                         }
 
 "unsigned"              {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "UNSIGNED");
 							incrementColumn(yyleng);
                             return UNSIGNED;
                         }
 
 "void"                  {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "VOID");
 							incrementColumn(yyleng);
                             return VOID;
                         }
 
 "volatile"              {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "VOLATILE");
 							incrementColumn(yyleng);
                             return VOLATILE;
                         }
 
 "while"                 {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "WHILE");
 							incrementColumn(yyleng);
                             return WHILE;
                         }
@@ -283,19 +284,19 @@ productions_off         [@][p][-]
                         }
 
 "="                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "ASSIGN");
 							incrementColumn(yyleng);
                             return ASSIGN;
                         }
 
 "->"                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "ARROW");
 							incrementColumn(yyleng);
                             return ARROW;
                         }
 
 ","                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "COMMA");
 							incrementColumn(yyleng);
                             return COMMA;
                         }
@@ -303,25 +304,25 @@ productions_off         [@][p][-]
 ";"                     {
                             st.setInsertMode(false);
                             cout << "LOOKUP MODE" << endl;
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "SEMICOLON");
 							incrementColumn(yyleng);
                             return SEMICOLON;
                         }
 
 "."                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "PERIOD");
 							incrementColumn(yyleng);
                             return PERIOD;
                         }
 
 "&"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "AMPERSAND");
 							incrementColumn(yyleng);
                             return AMPERSAND;
                         }
 
 "*"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "STAR");
 							incrementColumn(yyleng);
                             return STAR;
                         }
@@ -329,229 +330,239 @@ productions_off         [@][p][-]
 "{"                     {
                             st.setInsertMode(false);
                             cout << "LOOKUP MODE" << endl;
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "OBRACE");
 							incrementColumn(yyleng);
+
+							if( command_s and symbolTableOut.good() )
+							{
+								symbolTableOut << st;
+							}
                             return OBRACE;
                         }
 
 "}"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "CBRACE");
 							incrementColumn(yyleng);
+							
+							if( command_s and symbolTableOut.good() )
+							{
+								symbolTableOut << st;
+							}
                             return CBRACE;
                         }
 
 "["                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "OBRACKET");
 							incrementColumn(yyleng);
                             return OBRACKET;
                         }
 
 "]"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "CBRACKET");
 							incrementColumn(yyleng);
                             return CBRACKET;
                         }
 
 "("                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "OPAREN");
 							incrementColumn(yyleng);
                             return OPAREN;
                         }
 
 ")"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "CPAREN");
 							incrementColumn(yyleng);
                             return CPAREN;
                         }
 
 "?"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "QUESTION");
 							incrementColumn(yyleng);
                             return QUESTION;
                         }
 
 ":"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "COLON");
 							incrementColumn(yyleng);
                             return COLON;
                         }
 
 "+"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "ADD");
 							incrementColumn(yyleng);
                             return ADD;
                         }
 
 "-"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "SUB");
 							incrementColumn(yyleng);
                             return SUB;
                         }
 
 "/"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "DIV");
 							incrementColumn(yyleng);
                             return DIV;
                         }
 
 "%"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "MOD");
 							incrementColumn(yyleng);
                             return MOD;
                         }
 
 "++"                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "INC_OP");
 							incrementColumn(yyleng);
                             return INC_OP;
                         }
 
 "--"                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "DEC_OP");
 							incrementColumn(yyleng);
                             return DEC_OP;
                         }
 
 "+="                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "ADD_ASSIGN");
 							incrementColumn(yyleng);
                             return ADD_ASSIGN;
                         }
 
 "-="                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "SUB_ASSIGN");
 							incrementColumn(yyleng);
                             return SUB_ASSIGN;
                         }
 
 "*="                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "MUL_ASSIGN");
 							incrementColumn(yyleng);
                             return MUL_ASSIGN;
                         }
 
 "/="                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "DIV_ASSIGN");
 							incrementColumn(yyleng);
                             return DIV_ASSIGN;
                         }
 
 "%="                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "MOD_ASSIGN");
 							incrementColumn(yyleng);
                             return MOD_ASSIGN;
                         }
 
 "!"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "L_NOT");
 							incrementColumn(yyleng);
                             return L_NOT;
                         }
 
 "&&"                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "L_AND");
 							incrementColumn(yyleng);
                             return L_AND;
                         }
 
 "||"                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "L_OR");
 							incrementColumn(yyleng);
                             return L_OR;
                         }
 
 ">"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "GT_OP");
 							incrementColumn(yyleng);
                             return GT_OP;
                         }
 
 "<"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "LT_OP");
 							incrementColumn(yyleng);
                             return LT_OP;
                         }
 
 "=="                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "EQ_OP");
 							incrementColumn(yyleng);
                             return EQ_OP;
                         }
 
 "!="                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "NE_OP");
 							incrementColumn(yyleng);
                             return NE_OP;
                         }
 
 ">="                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "GE_OP");
 							incrementColumn(yyleng);
                             return GE_OP;
                         }
 
 "<="                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "LE_OP");
 							incrementColumn(yyleng);
                             return LE_OP;
                         }
 
 "~"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "B_NOT");
 							incrementColumn(yyleng);
                             return B_NOT;
                         }
 
 "^"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "B_XOR");
 							incrementColumn(yyleng);
                             return B_XOR;
                         }
 
 "|"                     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "B_OR");
 							incrementColumn(yyleng);
                             return B_OR;
                         }
 
 "<<"                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "B_SL");
 							incrementColumn(yyleng);
                             return B_SL;
                         }
 
 ">>"                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "B_SR");
 							incrementColumn(yyleng);
                             return B_SR;
                         }
 
 "&="                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "B_AND_ASSIGN");
 							incrementColumn(yyleng);
                             return B_AND_ASSIGN;
                         }
 
 "|="                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "B_OR_ASSIGN");
 							incrementColumn(yyleng);
                             return B_OR_ASSIGN;
                         }
 
 "^="                    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "B_XOR_ASSIGN");
 							incrementColumn(yyleng);
                             return B_XOR_ASSIGN;
                         }
 
 "<<="                   {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "B_SL_ASSIGN");
 							incrementColumn(yyleng);
                             return B_SL_ASSIGN;
                         }
 
 ">>="                   {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "B_SR_ASSIGN");
 							incrementColumn(yyleng);
                             return B_SR_ASSIGN;
                         }
@@ -567,48 +578,55 @@ productions_off         [@][p][-]
                             {
                                 st.searchTop(nodeIdentifier);
                             }
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "IDENTIFIER");
 							incrementColumn(yyleng);
                             strcpy(yylval.sval, yytext);
                             return IDENTIFIER;
                         }
 
 {integer_constant}      {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "INTEGER_CONSTANT");
 							incrementColumn(yyleng);
                             strcpy(yylval.sval, yytext);
                             return INTEGER_CONSTANT;
                         }
 
 {character_constant}    {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "CHARACTER_CONSTANT");
 							incrementColumn(yyleng);
                             strcpy(yylval.sval, yytext);
                             return CHARACTER_CONSTANT;
                         }
 
 {floating_constant}     {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "FLOATING_CONSTANT");
 							incrementColumn(yyleng);
                             strcpy(yylval.sval, yytext);
                             return FLOATING_CONSTANT;
                         }
 
 {string_literal}        {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "STRING_LITERAL");
 							incrementColumn(yyleng);
                             strcpy(yylval.sval, yytext);
                             return STRING_LITERAL;
                         }
 
 {symbol_table_dump}		{
-							scannerOutput(yytext);
+							scannerOutput(yytext, "SYMBOL_TABLE_DUMP");
 							incrementColumn(yyleng);
-							ofstream symbolTableOut;
-							symbolTableOut.open( "SymbolTableDump.txt" );
+							if( !symbolTableOut.is_open() ) //Open the symbol table output file if it's not currently open
+							{
+								symbolTableOut.open( "SymbolTableDump.txt" );
+								if( !symbolTableOut.good() )
+								{
+									cerr << "Failed to open SymbolTableDump.txt" << endl;
+									exit(-1);
+								}
+							}
 							if( symbolTableOut.good() )
 							{
-								symbolTableOut << st << endl << endl;
+								symbolTableOut << st;
 							}
 						}
 						
@@ -620,10 +638,12 @@ productions_off         [@][p][-]
                             outputProductions = false;
                         }
 
-{comment}               {}
+{comment}               {
+							scannerOutput(yytext, "COMMENT");
+						}
 
 .                       {
-                            scannerOutput(yytext);
+                            scannerOutput(yytext, "ERROR");
 							//incrementColumn(yyleng); //Want the error to point to the start of the error.
                             strcpy(yylval.sval, yytext);
                             return ERROR;
@@ -648,11 +668,11 @@ inline void incrementTab(int n)
     tab += n;
 }
 
-void scannerOutput(string outputStr)
+void scannerOutput(string outputStr, string token_name)
 {
 	if( command_l and lexDebugOutput.good() )
 	{
-    	lexDebugOutput << "Token: " << outputStr << endl;
+    	lexDebugOutput << "Token: " << token_name << endl << "\tSource: " << outputStr << endl;
 	}
 }
 
