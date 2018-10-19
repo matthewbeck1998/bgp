@@ -508,7 +508,16 @@ string
 	;
 
 identifier
-	: IDENTIFIER { parserOutput("identifier -> IDENTIFIER"); nodeIdentifier = yylval.sval; nodeLineNumber = line; }
+	: IDENTIFIER {
+                    parserOutput("identifier -> IDENTIFIER"); 
+                    nodeIdentifier = yylval.sval; 
+                    nodeLineNumber = line;
+                    if (!st.getInsertMode() && st.searchAll(nodeIdentifier).first == -1)
+                    {
+                        yyerror(NULL);
+                        return 1;
+                    }
+                 }
 	;
 
 %%
