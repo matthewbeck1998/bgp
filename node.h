@@ -11,6 +11,8 @@
 
 using namespace std;
 
+//add
+
 enum storage_class_specifier{Auto, Register, Static, Extern, Typedef};
 enum type_specifier{Void, Char, Short, Int, Long, Float, Double, Struct};
 enum type_qualifier{Const, Volatile, Both};
@@ -18,7 +20,7 @@ enum type_qualifier{Const, Volatile, Both};
 class node
 {
 public:
-	node (const string &identifier, int lineNum, int typeSpecifier = 3);
+	node (const string &identifier, int lineNum, int colNum, int typeSpecifier = 3);
 
 	const string &getIdentifier () const;
 
@@ -61,6 +63,7 @@ private:
 	int typeSpecifierIndex;
 	int varScopeLevel;
 	int lineNum;
+	int colNum;
 	bool isFunction;
 	bool isSigned;
 	map<string, node> structVariables;

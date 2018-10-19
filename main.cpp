@@ -13,7 +13,7 @@ stringstream errorStream;
 
 int main()
 {
-	node testNode1("testVar1", 13);
+	node testNode1("testVar1", 13, 42);
 	testNode1.setVarScopeLevel(1);
 	testNode1.setIsFunction(false);
 	testNode1.setIsSigned(false);
@@ -21,7 +21,8 @@ int main()
 	testNode1.setTypeStorageClassIndex(Static);
 	testNode1.setTypeSpecifierIndex(Short);
 
-	node testNode2("testVar1", 14);
+	//add
+	node testNode2("testVar1", 14, 56);
 	testNode1.setTypeStorageClassIndex(Both);
 	testNode1.setTypeSpecifierIndex(Int);
 

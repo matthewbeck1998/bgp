@@ -2,6 +2,7 @@
 // Created by WIll on 10/3/2018.
 //
 
+//add
 #include "node.h"
 
 const string &node::getIdentifier () const
@@ -87,7 +88,7 @@ void node::setIsSigned (bool isSigned)
 ostream &operator<< (ostream &os, const node &node1)
 {
 	os << "identifier: \"" << node1.identifier << "\"" << endl;
-	os << "\tlineNum: " << node1.lineNum << " scopeLevel: " << node1.varScopeLevel;
+	os << "\tlineNum: " << node1.lineNum << " colNum: " << node1.colNum << " scopeLevel: " << node1.varScopeLevel;
 	os << " Function: " << (node1.isFunction ? "True" : "False") << endl;
 	os << "\tSignature: \"";
 
@@ -166,7 +167,7 @@ ostream &operator<< (ostream &os, const node &node1)
 	return os;
 }
 
-node::node (const string &identifier, int lineNum, int typeSpecifier) : identifier(identifier), lineNum(lineNum), typeSpecifierIndex(typeSpecifier)
+node::node (const string &identifier, int lineNum, int colNum, int typeSpecifier) : identifier(identifier), lineNum(lineNum), typeSpecifierIndex(typeSpecifier), colNum(colNum)
 {
 	varScopeLevel = -1;
 	isFunction = false;
