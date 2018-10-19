@@ -28,7 +28,10 @@ dec                     [0-9]
 oct                     [0-7]
 hex                     [0-9A-Fa-f]
 identifier              {letter}({letter}|{dec})*
-integer_constant        {dec}+
+decimal_integer         {dec}+
+octal_integer           [0]{oct}+
+hexadecimal_integer     [0][x]{hex}+
+integer_constant        {decimal_integer}|{octal_integer}|{hexadecimal_integer}
 character_constant      ['].[']|{escaped_character}|{octal_character}|{hexadecimal_character}
 floating_constant       {dec}+\.{dec}+
 string_literal          ["].*["]
