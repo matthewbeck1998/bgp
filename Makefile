@@ -4,4 +4,4 @@ bgp: parser.y scanner.l
 	g++ -o bgp parser.c scanner.c node.cpp symbolTable.cpp -lfl
 
 clean:
-	rm parser.c parser.h scanner.c bgp
+	rm parser.c parser.h scanner.c SymbolTableDump.txt LexDebugOutput.txt bgp
