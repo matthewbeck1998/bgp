@@ -28,7 +28,7 @@ void scannerOutput(string outputStr);
 extern stringstream outputStream;
 void scannerOutput(string s);
 
-symbolTable st;
+extern symbolTable st;
 string nodeIdentifier;
 int nodeType = 3;
 %}
@@ -64,6 +64,7 @@ comment                 {line_comment}|{block_comment}
 line_comment            [/][/].*
 block_comment           [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]
 
+symbol_table_dump		[@]
 productions_on          [@][p][+]
 productions_off         [@][p][-]
 %%
@@ -559,7 +560,7 @@ productions_off         [@][p][-]
                             cout << "CURRENT: " << (st.getInsertMode() ? "INSERT" : "LOOKUP") << endl;
                             if (st.getInsertMode())
                             {
-                                st.insert(node(nodeIdentifier, line, nodeType));
+                                //st.insert(node(nodeIdentifier, line, nodeType));
                                 nodeType = 3;
                             }
                             else
@@ -601,13 +602,13 @@ productions_off         [@][p][-]
                         }
 
 {symbol_table_dump}		{
-							scannerOutput(yytext, yyleng);
+							scannerOutput(yytext);
 							incrementColumn(yyleng);
 							ofstream symbolTableOut;
 							symbolTableOut.open( "SymbolTableDump.txt" );
 							if( symbolTableOut.good() )
 							{
-								symbolTableOut << symTable << endl << endl;
+								symbolTableOut << st << endl << endl;
 							}
 						}
 						
@@ -653,11 +654,5 @@ void scannerOutput(string outputStr)
 	{
     	lexDebugOutput << "Token: " << outputStr << endl;
 	}
-}
-
-
-void scannerOutput(string s)
-{
-    outputStream << "Token: " << s << endl;
 }
 
