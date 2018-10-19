@@ -211,7 +211,6 @@ pair<int, map<string, node>::iterator> symbolTable::searchAllExceptTop (string k
 			notFound = false;
 	}
 
-	cout << endl;
 	if(notFound)
 	{
 		rt.first = -1;

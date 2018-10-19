@@ -19,17 +19,19 @@ extern int column;
 extern int tab;
 
 // symbol table
+symbolTable st;
 
 bool outputProductions = false;
 ifstream inputFile;
 ofstream outputFile;
+ofstream lexDebugOutput;
+ofstream symbolTableOut;
 stringstream outputStream;
 stringstream errorStream;
 void parserOutput(string s);
 
 //Command line Parse
 int parseCommandLine(int argc, char** argv);
-bool command_d = false;
 bool command_l = false;
 bool command_s = false;
 
@@ -516,9 +518,8 @@ identifier
 
 int main(int argc, char** argv)
 {
-	int outputIndex = parseCommandLine(argc, argv); //Returns the index of the output file in argv or 0 if there is no -o
-	yyparse();
-
+	  int outputIndex = parseCommandLine(argc, argv); //Returns the index of the output file in argv or 0 if there is no -o
+    yyparse();
     outputFile.open(outputIndex ? argv[outputIndex] : "a.out");
     if (outputFile.good())
     {
@@ -532,7 +533,7 @@ int main(int argc, char** argv)
         cerr << errorStream.str();
     }
 
-	return 0;
+	  return 0;
 }
 
 void yyerror(const char* s)
@@ -604,7 +605,7 @@ int parseCommandLine(int argc, char** argv)
 			{
 				switch( argv[i][1] ) //Get the single character of the command line arguement
 				{
-					case 'd': command_d = true;
+					case 'd': command_s = command_l = true; //Both debug to true.
 						break;
 					case 'l': command_l = true;
 						break;
@@ -612,8 +613,30 @@ int parseCommandLine(int argc, char** argv)
 						break;
 					case 'o': outputIndex = ++i;
 						break;
+					default:
+						cerr << "Invalid command line argument" << endl;
+						exit(-1);
+						break;
 				}
 			}
+		}
+	}
+	if(command_l)//Open the lex debug if the command line argument l was set.
+	{
+		lexDebugOutput.open( "LexDebugOutput.txt" );
+		if( !lexDebugOutput.good() )
+		{
+			cerr << "Failed to open LexDebugOutput.txt" << endl;
+			exit(-1);
+		}
+	}
+	if(command_s)
+	{
+		symbolTableOut.open( "SymbolTableDump.txt" );
+		if( !symbolTableOut.good() )
+		{
+			cerr << "Failed to open SymbolTableDump.txt" << endl;
+			exit(-1);
 		}
 	}
 	return outputIndex;
