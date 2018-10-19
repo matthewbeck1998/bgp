@@ -26,7 +26,9 @@ bool symbolTable::insert (node &insertNode)
 		auto searchReturn = searchAllExceptTop(insertNode.getIdentifier());
 		if(searchReturn.first != -1)
 		{
-			errorStream << "WARNING: In scope " << currentLevel << " Shadowing variable: \"" << insertNode.getIdentifier() << '\"';
+			errorStream << "WARNING: Scope " << currentLevel << endl;
+			errorStream << "\tShadowing variable: \"" << insertNode.getIdentifier() << '\"';
+			errorStream << " on line " << searchReturn.second->second.getLineNum();
 			errorStream << " from scope " << searchReturn.second->second.getVarScopeLevel() << endl;
 		}
 		auto insertStatus = table.begin()->insert(pair<string, node>(insertNode.getIdentifier(), insertNode));
@@ -135,7 +137,7 @@ pair<int, map<string, node>::iterator> symbolTable::searchAll (string key)
 	auto it = table.begin()->end();
 	pair<int, map<string, node>::iterator> rt;
 	bool notFound = true;
-	for(auto itr = table.rbegin(); itr != table.rend() && notFound; itr++)
+	for(auto itr = table.begin(); itr != table.end() && notFound; itr++)
 	{
 		it = itr->find(key);
 		if(it != itr ->end())
@@ -202,14 +204,14 @@ pair<int, map<string, node>::iterator> symbolTable::searchAllExceptTop (string k
 	auto it = table.begin()->end();
 	pair<int, map<string, node>::iterator> rt;
 	bool notFound = true;
-	for(auto itr = ++table.rbegin(); itr != table.rend() && notFound; itr++)
+	for(auto itr = ++table.begin(); itr != table.end() && notFound; itr++)
 	{
 		it = itr->find(key);
 		if(it != itr ->end())
 			notFound = false;
 	}
 
-
+	cout << endl;
 	if(notFound)
 	{
 		rt.first = -1;
