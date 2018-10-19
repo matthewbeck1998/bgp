@@ -4,6 +4,8 @@
 #include <cstdio>
 #include <cstring>
 #include "parser.h"
+#include "symbolTable.h"
+#include "node.h"
 
 using namespace std;
 
@@ -19,6 +21,10 @@ void incrementTab(int n);
 
 extern stringstream outputStream;
 void scannerOutput(string s);
+
+symbolTable st;
+string nodeIdentifier;
+int nodeType = 3;
 %}
 
 %option noyywrap
@@ -160,6 +166,9 @@ productions_off         [@][p][-]
                         }
 
 "int"                   {
+                            st.setInsertMode(true);
+                            cout << "INSERT MODE" << endl;
+                            nodeType = 3;
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return INT;
@@ -286,6 +295,8 @@ productions_off         [@][p][-]
                         }
 
 ";"                     {
+                            st.setInsertMode(false);
+                            cout << "LOOKUP MODE" << endl;
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return SEMICOLON;
@@ -310,6 +321,8 @@ productions_off         [@][p][-]
                         }
 
 "{"                     {
+                            st.setInsertMode(false);
+                            cout << "LOOKUP MODE" << endl;
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return OBRACE;
@@ -538,6 +551,16 @@ productions_off         [@][p][-]
                         }
 
 {identifier}            {
+                            cout << "CURRENT: " << (st.getInsertMode() ? "INSERT" : "LOOKUP") << endl;
+                            if (st.getInsertMode())
+                            {
+                                st.insert(node(nodeIdentifier, line, nodeType));
+                                nodeType = 3;
+                            }
+                            else
+                            {
+                                st.searchTop(nodeIdentifier);
+                            }
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
                             strcpy(yylval.sval, yytext);
