@@ -16,6 +16,7 @@ int tab = 0;
 void handleNewline();
 void incrementColumn(int n);
 void incrementTab(int n);
+const char* textToStr(char* text, size_t text_len);
 
 extern stringstream outputStream;
 void scannerOutput(string s);
@@ -540,35 +541,35 @@ productions_off         [@][p][-]
 {identifier}            {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, yytext);
+                            strcpy(yylval.sval, textToStr(yytext, yyleng));
                             return IDENTIFIER;
                         }
 
 {integer_constant}      {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, yytext);
+                            strcpy(yylval.sval, textToStr(yytext, yyleng));
                             return INTEGER_CONSTANT;
                         }
 
 {character_constant}    {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, yytext);
+                            strcpy(yylval.sval, textToStr(yytext, yyleng));
                             return CHARACTER_CONSTANT;
                         }
 
 {floating_constant}     {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, yytext);
+                            strcpy(yylval.sval, textToStr(yytext, yyleng));
                             return FLOATING_CONSTANT;
                         }
 
 {string_literal}        {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, yytext);
+                            strcpy(yylval.sval, textToStr(yytext, yyleng));
                             return STRING_LITERAL;
                         }
 
@@ -584,8 +585,8 @@ productions_off         [@][p][-]
 
 .                       {
                             scannerOutput(yytext);
-							incrementColumn(yyleng);
-                            strcpy(yylval.sval, yytext);
+							//incrementColumn(yyleng); //Want the error to point to the start of the error.
+                            strcpy(yylval.sval, textToStr(yytext, yyleng));
                             return ERROR;
                         }
 
@@ -611,4 +612,10 @@ inline void incrementTab(int n)
 void scannerOutput(string s)
 {
     outputStream << "Token: " << s << endl;
+}
+
+const char* textToStr(char* text, size_t text_len)
+{
+	string st(text, text_len);
+	return st.c_str();
 }
