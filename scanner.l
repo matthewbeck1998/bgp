@@ -24,6 +24,8 @@ extern stringstream outputStream;
 extern symbolTable symTable;
 extern bool command_l;
 void scannerOutput(char* text, size_t text_len);
+
+int symbolTableIdFound(char* idFound);
 %}
 
 %option noyywrap
@@ -64,7 +66,8 @@ symbol_table_dump		[@]
 
 %%
 
-"auto"                  {                            
+"auto"                  {   
+							symTable.setInsertMode(true);                         
                             scannerOutput(yytext, yyleng);
 							incrementColumn(yyleng);
                             return AUTO;
@@ -293,6 +296,7 @@ symbol_table_dump		[@]
                         }
 
 ";"                     {
+							symTable.setInsertMode(false);
                             scannerOutput(yytext, yyleng);
 							incrementColumn(yyleng);
                             return SEMICOLON;
@@ -317,6 +321,7 @@ symbol_table_dump		[@]
                         }
 
 "{"                     {
+							symTable.setInsertMode(false); 
                             scannerOutput(yytext, yyleng);
 							incrementColumn(yyleng);
                             return OBRACE;
@@ -548,7 +553,7 @@ symbol_table_dump		[@]
                             scannerOutput(yytext, yyleng);
 							incrementColumn(yyleng);
                             strcpy(yylval.sval, textToStr(yytext, yyleng));
-                            return IDENTIFIER;
+                            return symbolTableIdFound( yylval.sval );
                         }
 
 {integer_constant}      {
@@ -632,6 +637,15 @@ void scannerOutput(char* text, size_t text_len)
 	if( command_l and lexDebugOutput.good() )
 	{
     	lexDebugOutput << "Token: " << outputStr << endl;
+	}
+}
+
+
+int symbolTableIdFound(char* idFound)
+{
+	if( symTable.getInsertMode() )
+	{
+		//symTable.insert
 	}
 }
 
