@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <cstdio>
+#include <cstring>
 
 using namespace std;
 
@@ -23,6 +24,12 @@ ofstream outputFile;
 stringstream outputStream;
 stringstream errorStream;
 void parserOutput(string s);
+
+//Command line Parse
+int parseCommandLine(int argc, char** argv);
+bool command_d = false;
+bool command_l = false;
+bool command_s = false;
 %}
 
 %union
@@ -478,20 +485,10 @@ identifier
 
 int main(int argc, char** argv)
 {
-    inputFile.open(argv[1]);
-    FILE* inputStream = fopen(argv[1], "r");
-    if (!inputStream)
-    {
-        cout << "Cannot open input file." << endl;
-    }
-    else
-    {
-        yyin = inputStream;
-    }
-    
-    yyparse();
+	int outputIndex = parseCommandLine(argc, argv); //Returns the index of the output file in argv or 0 if there is no -o
+	yyparse();
 
-    outputFile.open(argv[2]);
+    outputFile.open( outputIndex ? argv[outputIndex] : "a.out");
     if (outputFile.good())
     {
         outputFile << outputStream.str();
@@ -500,6 +497,8 @@ int main(int argc, char** argv)
     {
         cout << outputStream.str();
     }
+
+	return 0;
 }
 
 void yyerror(const char* s)
@@ -535,4 +534,54 @@ void parserOutput(string s)
     {
         outputStream << "Rule: " << s << endl;
     }
+}
+
+
+//Returns the index of the output file 
+int parseCommandLine(int argc, char** argv)
+{
+	int outputIndex = 0;
+	const int num_options = 4;
+	const char* valid_options[] {
+		"-d",
+		"-l",
+		"-s",
+		"-o"
+	};
+
+    inputFile.open(argv[1]); //Assumes the first command line arguement is the input file.
+    FILE* inputStream = fopen(argv[1], "r");
+    if (!inputStream)
+    {
+        cerr << "Cannot open input file." << endl;
+		exit(-1);
+    }
+    else
+    {
+        yyin = inputStream;
+    }
+
+
+	for(int i = 2 ; i < argc ; ++i) //Skips the input file name
+	{
+		for(int j = 0 ; j < num_options ; ++j)
+		{
+			if( strcmp(valid_options[j], argv[i]) == 0 )
+			{
+				switch( argv[i][1] ) //Get the single character of the command line arguement
+				{
+					case 'd': command_d = true;
+						break;
+					case 'l': command_l = true;
+						break;
+					case 's': command_s = true;
+						break;
+					case 'o': outputIndex = ++i;
+						break;
+				}
+			}
+		}
+	}
+	return outputIndex;
+    
 }
