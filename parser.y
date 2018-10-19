@@ -60,7 +60,7 @@ translation_unit
 
 external_declaration
 	: function_definition { parserOutput("external_declaration -> function_definition"); }
-	| declaration { parserOutput("external_declaration -> declaration"); }
+	| declaration { parserOutput("lookup mode"); parserOutput("external_declaration -> declaration"); }
 	;
 
 function_definition
@@ -76,8 +76,8 @@ declaration
 	;
 
 declaration_list
-	: declaration { parserOutput("declaration_list -> declaration"); }
-	| declaration_list declaration { parserOutput("declaration_list -> declaration_list declaration"); }
+	: declaration { parserOutput("lookup mode"); parserOutput("declaration_list -> declaration"); }
+	| declaration_list declaration { parserOutput("lookup mode"); parserOutput("declaration_list -> declaration_list declaration"); }
 	;
 
 declaration_specifiers
@@ -98,15 +98,15 @@ storage_class_specifier
 	;
 
 type_specifier
-	: VOID { parserOutput("type_specifier -> VOID"); }
-	| CHAR { parserOutput("type_specifier -> CHAR"); }
-	| SHORT { parserOutput("type_specifier -> SHORT"); }
-	| INT { parserOutput("type_specifier -> INT"); }
-	| LONG { parserOutput("type_specifier -> LONG"); }
-	| FLOAT { parserOutput("type_specifier -> FLOAT"); }
-	| DOUBLE { parserOutput("type_specifier -> DOUBLE"); }
-	| SIGNED { parserOutput("type_specifier -> SIGNED"); }
-	| UNSIGNED { parserOutput("type_specifier -> UNSIGNED"); }
+	: VOID { parserOutput("insert mode"); parserOutput("type_specifier -> VOID"); }
+	| CHAR { parserOutput("insert mode"); parserOutput("type_specifier -> CHAR"); }
+	| SHORT { parserOutput("insert mode"); parserOutput("type_specifier -> SHORT"); }
+	| INT { parserOutput("insert mode"); parserOutput("type_specifier -> INT"); }
+	| LONG { parserOutput("insert mode"); parserOutput("type_specifier -> LONG"); }
+	| FLOAT { parserOutput("insert mode"); parserOutput("type_specifier -> FLOAT"); }
+	| DOUBLE { parserOutput("insert mode"); parserOutput("type_specifier -> DOUBLE"); }
+	| SIGNED { parserOutput("insert mode"); parserOutput("type_specifier -> SIGNED"); }
+	| UNSIGNED { parserOutput("insert mode"); parserOutput("type_specifier -> UNSIGNED"); }
 	| struct_or_union_specifier { parserOutput("type_specifier -> struct_or_union_specifier"); }
 	| enum_specifier { parserOutput("type_specifier -> enum_specifier"); }
 	| TYPEDEF_NAME { parserOutput("type_specifier -> TYPEDEF_NAME"); }
@@ -124,8 +124,8 @@ struct_or_union_specifier
 	;
 
 struct_or_union
-	: STRUCT { parserOutput("struct_or_union -> STRUCT"); }
-	| UNION { parserOutput("struct_or_union -> UNION"); }
+	: STRUCT { parserOutput("insert mode"); parserOutput("struct_or_union -> STRUCT"); }
+	| UNION { parserOutput("insert mode"); parserOutput("struct_or_union -> UNION"); }
 	;
 
 struct_declaration_list
