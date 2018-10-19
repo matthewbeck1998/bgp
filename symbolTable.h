@@ -27,6 +27,7 @@ public:
 	void pushLevel();
 	bool getInsertMode () const;
 	void setInsertMode (bool insertMode);
+	void resetTable();
 
 	int getCurrentLevel () const;
 

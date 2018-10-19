@@ -66,6 +66,8 @@ private:
 	int colNum;
 	bool isFunction;
 	bool isSigned;
+
+	///Not implemented yet
 	map<string, node> structVariables;
 };
 

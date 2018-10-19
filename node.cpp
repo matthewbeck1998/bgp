@@ -84,6 +84,12 @@ void node::setIsSigned (bool isSigned)
 	node::isSigned = isSigned;
 }
 
+/**
+ * @brief An inseration operator to help print the node
+ * @param os The ostream object
+ * @param table The node to be printed
+ * @return The ostream with everything to print
+ */
 ostream &operator<< (ostream &os, const node &node1)
 {
 	os << "identifier: \"" << node1.identifier << "\"" << endl;

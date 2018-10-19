@@ -7,6 +7,8 @@ using namespace std;
 #include <sstream>
 #include "symbolTable.h"
 
+#define FAILURE -1
+
 extern stringstream errorStream;
 
 /**
@@ -27,7 +29,7 @@ bool symbolTable::insert (node &insertNode)
 		if(searchReturn.first != -1)
 		{
 			errorStream << "WARNING: Scope " << currentLevel << endl;
-			errorStream << "\tShadowing variable: \"" << insertNode.getIdentifier() << '\"';
+			errorStream << "\tShadowing identifier: \"" << insertNode.getIdentifier() << '\"';
 			errorStream << " on line " << searchReturn.second->second.getLineNum();
 			errorStream << " from scope " << searchReturn.second->second.getVarScopeLevel() << endl;
 		}
@@ -35,7 +37,8 @@ bool symbolTable::insert (node &insertNode)
 
 		if(!insertStatus.second)
 		{
-			errorStream << "ERROR: Identifier: \"" << insertNode.getIdentifier() << "\" already exists on line ";
+			errorStream << "ERROR: Scope: " << currentLevel << endl;
+			errorStream << "\tIdentifier: \"" << insertNode.getIdentifier() << "\" already exists on line ";
 			errorStream << insertStatus.first->second.getLineNum() << endl;
 		}
 
@@ -147,7 +150,7 @@ pair<int, map<string, node>::iterator> symbolTable::searchAll (string key)
 
 	if(notFound)
 	{
-		rt.first = -1;
+		rt.first = FAILURE;
 		rt.second = it;
 	}
 	else
@@ -173,7 +176,7 @@ pair<int, map<string, node>::iterator> symbolTable::searchTop (string key)
 	pair<int, map<string, node>::iterator> rt;
 	if(itr == table.begin()->end())
 	{
-		rt.first = -1;
+		rt.first = FAILURE;
 		rt.second = itr;
 	}
 	else
@@ -199,6 +202,15 @@ void symbolTable::setInsertMode (bool insertMode)
 	symbolTable::insertMode = insertMode;
 }
 
+/**
+ * @brief A function to search every thing except the top level of the symbol table
+ * @param key A string to find in the symbol table (this will be the identifier name)
+ * @return A pair:
+ * 			first: an int that represents the level the key was found on
+ * 					will return -1 if the key wasn't found
+ * 			second: an iterator to the map where the key was found
+ * 					will return an iterator to the end if the key wasn't found
+ */
 pair<int, map<string, node>::iterator> symbolTable::searchAllExceptTop (string key)
 {
 	auto it = table.begin()->end();
@@ -211,10 +223,9 @@ pair<int, map<string, node>::iterator> symbolTable::searchAllExceptTop (string k
 			notFound = false;
 	}
 
-	cout << endl;
 	if(notFound)
 	{
-		rt.first = -1;
+		rt.first = FAILURE;
 		rt.second = it;
 	}
 	else
@@ -223,4 +234,14 @@ pair<int, map<string, node>::iterator> symbolTable::searchAllExceptTop (string k
 		rt.second = it;
 	}
 	return rt;
+}
+
+/**
+ * @brief Resets the symbol table to an the way it was intialized
+ */
+void symbolTable::resetTable ()
+{
+	while(!table.empty())
+		popLevel();
+	pushLevel();
 }
