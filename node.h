@@ -18,7 +18,7 @@ enum type_qualifier{Const, Volatile, Both};
 class node
 {
 public:
-	node (const string &identifier, int lineNum, int typeSpecifier = 3);
+	node (const string &identifier, int lineNum, int colNum, int typeSpecifier = 3);
 
 	const string &getIdentifier () const;
 
@@ -61,6 +61,7 @@ private:
 	int typeSpecifierIndex;
 	int varScopeLevel;
 	int lineNum;
+	int colNum;
 	bool isFunction;
 	bool isSigned;
 	map<string, node> structVariables;
