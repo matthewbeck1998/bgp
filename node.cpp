@@ -2,7 +2,6 @@
 // Created by WIll on 10/3/2018.
 //
 
-//add
 #include "node.h"
 
 const string &node::getIdentifier () const
@@ -167,7 +166,8 @@ ostream &operator<< (ostream &os, const node &node1)
 	return os;
 }
 
-node::node (const string &identifier, int lineNum, int colNum, int typeSpecifier) : identifier(identifier), lineNum(lineNum), typeSpecifierIndex(typeSpecifier), colNum(colNum)
+node::node (const string &identifier, int lineNum, int colNum, int typeSpecifier)
+		: identifier(identifier), lineNum(lineNum), typeSpecifierIndex(typeSpecifier), colNum(colNum)
 {
 	varScopeLevel = -1;
 	isFunction = false;
