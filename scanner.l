@@ -27,23 +27,30 @@ letter                  [A-Za-z]
 dec                     [0-9]
 oct                     [0-7]
 hex                     [0-9A-Fa-f]
+
 identifier              {letter}({letter}|{dec})*
+
+integer_constant        {decimal_integer}|{octal_integer}|{hexadecimal_integer}
 decimal_integer         {dec}+
 octal_integer           [0]{oct}+
 hexadecimal_integer     [0][x]{hex}+
-integer_constant        {decimal_integer}|{octal_integer}|{hexadecimal_integer}
-character_constant      ['].[']|{escaped_character}|{octal_character}|{hexadecimal_character}
-floating_constant       {dec}+\.{dec}+
-string_literal          ["].*["]
+
+character_constant      {escaped_character}|{octal_character}|{hexadecimal_character}|{regular_character}
+regular_character       ['].[']
 escaped_character       ['][\\].[']
 octal_character         ['][\\]{oct}{oct}{oct}[']
+hexadecimal_character   {hexadecimal_character_2}|{hexadecimal_character_4}|{hexadecimal_character_8}
 hexadecimal_character_2 ['][\\][x]{hex}+[']
 hexadecimal_character_4 ['][\\][u]{hex}{hex}{hex}{hex}[']
 hexadecimal_character_8 ['][\\][U]{hex}{hex}{hex}{hex}{hex}{hex}{hex}{hex}[']
-hexadecimal_character   {hexadecimal_character_2}|{hexadecimal_character_4}|{hexadecimal_character_8}
+
+floating_constant       {dec}+\.{dec}+
+
+string_literal          ["].*["]
+
+comment                 {line_comment}|{block_comment}
 line_comment            [/][/].*
 block_comment           [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]
-comment                 {line_comment}|{block_comment}
 
 productions_on          [@][p][+]
 productions_off         [@][p][-]
