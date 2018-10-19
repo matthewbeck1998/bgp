@@ -535,6 +535,12 @@ int main(int argc, char** argv)
 	  return 0;
 }
 
+/// @name yyerror
+/// @brief This is the general syntax error function for the parser.
+///        It will output the line and column number the error occurred on.
+///        The output will first go to an error stream (a stringstream).
+///        The error stream is then flushed to the output file and cerr.
+
 void yyerror(const char* s)
 {
     if (inputFile.good())
@@ -562,6 +568,10 @@ void yyerror(const char* s)
     cerr << errorStream.str();
 }
 
+/// @name parserOutput
+/// @brief This function simply adds the rule used to the output file, if the option
+///        to have debugging productions is on.
+
 void parserOutput(string s)
 {
     if (outputProductions)
@@ -570,8 +580,9 @@ void parserOutput(string s)
     }
 }
 
-
-//Returns the index of the output file 
+/// @name parseCommandLine
+/// @brief Handles and command line arguments.
+///        Returns the argv index of the output file, if it exists, else returns 0.
 int parseCommandLine(int argc, char** argv)
 {
 	int outputIndex = 0;
