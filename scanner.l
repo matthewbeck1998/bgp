@@ -24,18 +24,23 @@ void scannerOutput(string s);
 %option noyywrap
 
 letter                  [A-Za-z]
-decimal_digit           [0-9]
-octal_digit             [0-7]
-hexadecimal_digit       [0-9A-Za-f]
-identifier              {letter}({letter}|{decimal_digit})*
-integer_constant        {decimal_digit}+
-character_constant      ['].[']
-floating_constant       {decimal_digit}+\.{decimal_digit}+
+dec                     [0-9]
+oct                     [0-7]
+hex                     [0-9A-Fa-f]
+identifier              {letter}({letter}|{dec})*
+integer_constant        {dec}+
+character_constant      ['].[']|{escaped_character}|{octal_character}|{hexadecimal_character}
+floating_constant       {dec}+\.{dec}+
 string_literal          ["].*["]
 escaped_character       ['][\\].[']
-octal_character         ['][\\]{octal_digit}{octal_digit}{octal_digit}[']
+octal_character         ['][\\]{oct}{oct}{oct}[']
+hexadecimal_character_2 ['][\\][x]{hex}+[']
+hexadecimal_character_4 ['][\\][u]{hex}{hex}{hex}{hex}[']
+hexadecimal_character_8 ['][\\][U]{hex}{hex}{hex}{hex}{hex}{hex}{hex}{hex}[']
+hexadecimal_character   {hexadecimal_character_2}|{hexadecimal_character_4}|{hexadecimal_character_8}
 line_comment            [/][/].*
 block_comment           [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]
+comment                 {line_comment}|{block_comment}
 
 productions_on          [@][p][+]
 productions_off         [@][p][-]
@@ -557,24 +562,6 @@ productions_off         [@][p][-]
                             return STRING_LITERAL;
                         }
 
-{escaped_character}     {
-                            scannerOutput(yytext);
-                            incrementColumn(yyleng);
-                            strcpy(yylval.sval, yytext);
-                            return CHARACTER_CONSTANT;
-                        }
-
-{octal_character}       {
-                            scannerOutput(yytext);
-                            incrementColumn(yyleng);
-                            strcpy(yylval.sval, yytext);
-                            return CHARACTER_CONSTANT;
-                        }
-
-{line_comment}          {}
-
-{block_comment}         {}
-
 {productions_on}        {
                             outputProductions = true;
                         }
@@ -582,6 +569,8 @@ productions_off         [@][p][-]
 {productions_off}       {
                             outputProductions = false;
                         }
+
+{comment}               {}
 
 .                       {
                             scannerOutput(yytext);
