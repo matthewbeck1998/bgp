@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstring>
 #include "symbolTable.h"
+#include "node.h"
 
 using namespace std;
 
@@ -33,6 +34,15 @@ void parserOutput(string s);
 int parseCommandLine(int argc, char** argv);
 bool command_l = false;
 bool command_s = false;
+
+symbolTable st;
+string nodeIdentifier = "";
+int nodeLineNumber = -1;
+int nodeStorageClassSpecifier = -1;
+int nodeTypeSpecifier = 3;
+int nodeTypeQualifier = -1;
+bool nodeIsFunction = false;
+bool nodeIsSigned = true;
 %}
 
 %union
@@ -74,10 +84,10 @@ external_declaration
 	;
 
 function_definition
-	: declarator compound_statement { parserOutput("function_definition -> declarator compound_statement"); }
-	| declarator declaration_list compound_statement { parserOutput("function_definition -> declarator declaration_list compound_statement"); }
-	| declaration_specifiers declarator compound_statement { parserOutput("function_definition -> declaration_specifiers declarator compound_statement"); }
-	| declaration_specifiers declarator declaration_list compound_statement { parserOutput("function_definition -> declaration_specifiers declarator declaration_list compound_statement"); }
+	: declarator compound_statement { parserOutput("function_definition -> declarator compound_statement"); st.popLevel(); }
+	| declarator declaration_list compound_statement { parserOutput("function_definition -> declarator declaration_list compound_statement"); st.popLevel(); }
+	| declaration_specifiers declarator compound_statement { parserOutput("function_definition -> declaration_specifiers declarator compound_statement"); st.popLevel(); }
+	| declaration_specifiers declarator declaration_list compound_statement { parserOutput("function_definition -> declaration_specifiers declarator declaration_list compound_statement"); st.popLevel(); }
 	;
 
 declaration
@@ -86,8 +96,8 @@ declaration
 	;
 
 declaration_list
-	: declaration { parserOutput("declaration_list -> declaration"); }
-	| declaration_list declaration { parserOutput("declaration_list -> declaration_list declaration"); }
+	: declaration { parserOutput("declaration_list -> declaration"); st.setInsertMode(false); }
+	| declaration_list declaration { parserOutput("declaration_list -> declaration_list declaration"); st.setInsertMode(false); }
 	;
 
 declaration_specifiers
@@ -100,31 +110,31 @@ declaration_specifiers
 	;
 
 storage_class_specifier
-	: AUTO { parserOutput("storage_class_specifier -> AUTO"); }
-	| REGISTER { parserOutput("storage_class_specifier -> REGISTER"); }
-	| STATIC { parserOutput("storage_class_specifier -> STATIC"); }
-	| EXTERN { parserOutput("storage_class_specifier -> EXTERN"); }
-	| TYPEDEF { parserOutput("storage_class_specifier -> TYPEDEF"); }
+	: AUTO { parserOutput("storage_class_specifier -> AUTO"); st.setInsertMode(true); nodeStorageClassSpecifier = 0; }
+	| REGISTER { parserOutput("storage_class_specifier -> REGISTER"); st.setInsertMode(true); nodeStorageClassSpecifier = 1; }
+	| STATIC { parserOutput("storage_class_specifier -> STATIC"); st.setInsertMode(true); nodeStorageClassSpecifier = 2; }
+	| EXTERN { parserOutput("storage_class_specifier -> EXTERN"); st.setInsertMode(true); nodeStorageClassSpecifier = 3; }
+	| TYPEDEF { parserOutput("storage_class_specifier -> TYPEDEF"); st.setInsertMode(true); nodeStorageClassSpecifier = 4; }
 	;
 
 type_specifier
-	: VOID { parserOutput("type_specifier -> VOID"); }
-	| CHAR { parserOutput("type_specifier -> CHAR"); }
-	| SHORT { parserOutput("type_specifier -> SHORT"); }
-	| INT { parserOutput("type_specifier -> INT"); }
-	| LONG { parserOutput("type_specifier -> LONG"); }
-	| FLOAT { parserOutput("type_specifier -> FLOAT"); }
-	| DOUBLE { parserOutput("type_specifier -> DOUBLE"); }
-	| SIGNED { parserOutput("type_specifier -> SIGNED"); }
-	| UNSIGNED { parserOutput("type_specifier -> UNSIGNED"); }
+	: VOID { parserOutput("type_specifier -> VOID"); st.setInsertMode(true); nodeTypeSpecifier = 0; }
+	| CHAR { parserOutput("type_specifier -> CHAR"); st.setInsertMode(true); nodeTypeSpecifier = 1; }
+	| SHORT { parserOutput("type_specifier -> SHORT"); st.setInsertMode(true); nodeTypeSpecifier = 2; }
+	| INT { parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeTypeSpecifier = 3; }
+	| LONG { parserOutput("type_specifier -> LONG"); st.setInsertMode(true); nodeTypeSpecifier = 4; }
+	| FLOAT { parserOutput("type_specifier -> FLOAT"); st.setInsertMode(true); nodeTypeSpecifier = 5; }
+	| DOUBLE { parserOutput("type_specifier -> DOUBLE"); st.setInsertMode(true); nodeTypeSpecifier = 6; }
+	| SIGNED { parserOutput("type_specifier -> SIGNED"); st.setInsertMode(true); nodeIsSigned = true; }
+	| UNSIGNED { parserOutput("type_specifier -> UNSIGNED"); st.setInsertMode(true); nodeIsSigned = false; }
 	| struct_or_union_specifier { parserOutput("type_specifier -> struct_or_union_specifier"); }
-	| enum_specifier { parserOutput("type_specifier -> enum_specifier"); }
+	| enum_specifier { parserOutput("type_specifier -> enum_specifier"); /* TODO: Enums... one day... */ }
 	| TYPEDEF_NAME { parserOutput("type_specifier -> TYPEDEF_NAME"); /* TODO: typedefs in symbol table */ }
 	;
 
 type_qualifier
-	: CONST { parserOutput("type_qualifier -> CONST"); }
-	| VOLATILE { parserOutput("type_qualifier -> VOLATILE"); }
+	: CONST { parserOutput("type_qualifier -> CONST"); st.setInsertMode(true); nodeTypeQualifier = 0; }
+	| VOLATILE { parserOutput("type_qualifier -> VOLATILE"); st.setInsertMode(true); nodeTypeQualifier = 1; }
 	;
 
 struct_or_union_specifier
@@ -134,7 +144,7 @@ struct_or_union_specifier
 	;
 
 struct_or_union
-	: STRUCT { parserOutput("struct_or_union -> STRUCT"); }
+	: STRUCT { parserOutput("struct_or_union -> STRUCT"); nodeTypeSpecifier = 7; }
 	| UNION { parserOutput("struct_or_union -> UNION"); }
 	;
 
@@ -197,7 +207,27 @@ declarator
 	;
 
 direct_declarator
-	: identifier { parserOutput("direct_declarator -> identifier"); }
+	: identifier    { 
+                        parserOutput("direct_declarator -> identifier");
+                        node node(nodeIdentifier, line, column, nodeTypeSpecifier);
+                        node.setTypeStorageClassIndex(nodeStorageClassSpecifier);
+                        node.setTypeQualifierIndex(nodeTypeQualifier);
+                        node.setIsFunction(nodeIsFunction);
+                        node.setIsSigned(nodeIsSigned);
+                        
+                        if (!st.insert(node))
+                        {
+                            return 1;
+                        }
+
+                        nodeIdentifier = "";
+                        nodeLineNumber = -1;
+                        nodeStorageClassSpecifier = -1;
+                        nodeTypeSpecifier = 3;
+                        nodeTypeQualifier = -1;
+                        nodeIsFunction = false;
+                        nodeIsSigned = true;
+                    }
 	| OPAREN declarator CPAREN { parserOutput("direct_declarator -> OPAREN declarator CPAREN"); }
 	| direct_declarator OBRACKET CBRACKET { parserOutput("direct_declarator -> direct_declarator OBRACKET CBRACKET"); }
 	| direct_declarator OBRACKET constant_expression CBRACKET { parserOutput("direct_declarator -> direct_declarator OBRACKET constant_expression CBRACKET"); }
@@ -481,26 +511,29 @@ string
 	;
 
 identifier
-	: IDENTIFIER { parserOutput("identifier -> IDENTIFIER"); }
+	: IDENTIFIER { parserOutput("identifier -> IDENTIFIER"); nodeIdentifier = yylval.sval; nodeLineNumber = line; }
 	;
 
 %%
 
 int main(int argc, char** argv)
 {
-	int outputIndex = parseCommandLine(argc, argv); //Returns the index of the output file in argv or 0 if there is no -o
-	yyparse();
-    outputFile.open( outputIndex ? argv[outputIndex] : "a.out");
+	  int outputIndex = parseCommandLine(argc, argv); //Returns the index of the output file in argv or 0 if there is no -o
+    yyparse();
+    outputFile.open(outputIndex ? argv[outputIndex] : "a.out");
     if (outputFile.good())
     {
         outputFile << outputStream.str();
+        outputFile << errorStream.str();
+        cerr << errorStream.str();
     }
     else
     {
         cout << outputStream.str();
+        cerr << errorStream.str();
     }
 
-	return 0;
+	  return 0;
 }
 
 void yyerror(const char* s)
