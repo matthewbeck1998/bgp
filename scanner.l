@@ -28,6 +28,7 @@ extern bool command_s;
 void scannerOutput(string outputStr, string token_name);
 
 extern stringstream outputStream;
+extern stringstream errorStream;
 
 extern symbolTable st;
 string nodeIdentifier;
@@ -586,6 +587,11 @@ productions_off         [@][p][-]
 
 {integer_constant}      {
                             scannerOutput(yytext, "INTEGER_CONSTANT");
+							if( strcmp(yytext, "2147483647") > 0 )
+							{
+								
+								errorStream << "WARNING: Integer " << yytext << " too big to be held in an int" << endl;
+							}
 							incrementColumn(yyleng);
                             strcpy(yylval.sval, yytext);
                             return INTEGER_CONSTANT;
@@ -599,6 +605,15 @@ productions_off         [@][p][-]
                         }
 
 {floating_constant}     {
+							try//Test to check if yytext is a valid float.
+							{
+								stof(yytext);
+							}
+							catch(...)
+							{
+								errorStream << "WARNING: float " << yytext << " too big to be held in an float" << endl;
+							}
+							
                             scannerOutput(yytext, "FLOATING_CONSTANT");
 							incrementColumn(yyleng);
                             strcpy(yylval.sval, yytext);
