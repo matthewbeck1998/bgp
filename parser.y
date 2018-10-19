@@ -18,7 +18,7 @@ extern int column;
 extern int tab;
 
 // symbol table
-symbolTable symTable;
+symbolTable st;
 
 bool outputProductions = false;
 ifstream inputFile;
@@ -118,7 +118,7 @@ type_specifier
 	| UNSIGNED { parserOutput("type_specifier -> UNSIGNED"); }
 	| struct_or_union_specifier { parserOutput("type_specifier -> struct_or_union_specifier"); }
 	| enum_specifier { parserOutput("type_specifier -> enum_specifier"); }
-	| TYPEDEF_NAME { parserOutput("type_specifier -> TYPEDEF_NAME"); }
+	| TYPEDEF_NAME { parserOutput("type_specifier -> TYPEDEF_NAME"); /* TODO: typedefs in symbol table */ }
 	;
 
 type_qualifier
@@ -587,7 +587,6 @@ int parseCommandLine(int argc, char** argv)
 			}
 		}
 	}
-
 	if(command_l)//Open the lex debug if the command line argument l was set.
 	{
 		lexDebugOutput.open( "LexDebugOutput.txt" );
@@ -597,7 +596,6 @@ int parseCommandLine(int argc, char** argv)
 			exit(-1);
 		}
 	}
-
 	return outputIndex;
     
 }

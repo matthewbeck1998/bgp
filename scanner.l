@@ -6,6 +6,8 @@
 #include <cstring>
 #include "parser.h"
 #include "symbolTable.h"
+#include "node.h"
+
 using namespace std;
 
 extern bool outputProductions;
@@ -17,15 +19,18 @@ int tab = 0;
 void handleNewline();
 void incrementColumn(int n);
 void incrementTab(int n);
-const char* textToStr(char* text, size_t text_len);
 
 extern ofstream lexDebugOutput;
 extern stringstream outputStream;
-extern symbolTable symTable;
 extern bool command_l;
-void scannerOutput(char* text, size_t text_len);
+void scannerOutput(string outputStr);
 
-int symbolTableIdFound(char* idFound);
+extern stringstream outputStream;
+void scannerOutput(string s);
+
+symbolTable st;
+string nodeIdentifier;
+int nodeType = 3;
 %}
 
 %option noyywrap
@@ -61,206 +66,205 @@ block_comment           [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]
 
 productions_on          [@][p][+]
 productions_off         [@][p][-]
-
-symbol_table_dump		[@]
-
 %%
 
-"auto"                  {   
-							symTable.setInsertMode(true);                         
-                            scannerOutput(yytext, yyleng);
+"auto"                  {                            
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return AUTO;
                         }
                     
 "break"                 {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return BREAK;
                         }
 
 "case"                  {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return CASE;
                         }
 
 "char"                  {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return CHAR;
                         }
 
 "const"                 {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return CONST;
                         }
 
 "continue"              {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return CONTINUE;
                         }
 
 "default"               {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return DEFAULT;
                         }
 
 "do"                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return DO;
                         }
 
 "double"                {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return DOUBLE;
                         }
 
 "..."                   {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return ELLIPSIS;
                         }
 
 "else"                  {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return ELSE;
                         }
 
 "enum"                  {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return ENUM;
                         }
 
 "extern"                {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return EXTERN;
                         }
 
 "float"                 {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return FLOAT;
                         }
 
 "for"                   {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return FOR;
                         }
 
 "goto"                  {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return GOTO;
                         }
 
 "if"                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return IF;
                         }
 
 "int"                   {
-                            scannerOutput(yytext, yyleng);
+                            st.setInsertMode(true);
+                            cout << "INSERT MODE" << endl;
+                            nodeType = 3;
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return INT;
                         }
 
 "long"                  {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return LONG;
                         }
 
 "register"              {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return REGISTER;
                         }
 
 "return"                {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return RETURN;
                         }
 
 "short"                 {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return SHORT;
                         }
 
 "signed"                {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return SIGNED;
                         }
 
 "sizeof"                {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return SIZEOF;
                         }
 
 "static"                {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return STATIC;
                         }
 
 "struct"                {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return STRUCT;
                         }
 
 "switch"                {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return SWITCH;
                         }
 
 "typedef"               {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return TYPEDEF;
                         }
 
 "union"                 {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return UNION;
                         }
 
 "unsigned"              {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return UNSIGNED;
                         }
 
 "void"                  {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return VOID;
                         }
 
 "volatile"              {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return VOLATILE;
                         }
 
 "while"                 {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return WHILE;
                         }
@@ -278,309 +282,321 @@ symbol_table_dump		[@]
                         }
 
 "="                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return ASSIGN;
                         }
 
 "->"                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return ARROW;
                         }
 
 ","                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return COMMA;
                         }
 
 ";"                     {
-							symTable.setInsertMode(false);
-                            scannerOutput(yytext, yyleng);
+                            st.setInsertMode(false);
+                            cout << "LOOKUP MODE" << endl;
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return SEMICOLON;
                         }
 
 "."                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return PERIOD;
                         }
 
 "&"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return AMPERSAND;
                         }
 
 "*"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return STAR;
                         }
 
 "{"                     {
-							symTable.setInsertMode(false); 
-                            scannerOutput(yytext, yyleng);
+                            st.setInsertMode(false);
+                            cout << "LOOKUP MODE" << endl;
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return OBRACE;
                         }
 
 "}"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return CBRACE;
                         }
 
 "["                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return OBRACKET;
                         }
 
 "]"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return CBRACKET;
                         }
 
 "("                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return OPAREN;
                         }
 
 ")"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return CPAREN;
                         }
 
 "?"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return QUESTION;
                         }
 
 ":"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return COLON;
                         }
 
 "+"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return ADD;
                         }
 
 "-"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return SUB;
                         }
 
 "/"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return DIV;
                         }
 
 "%"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return MOD;
                         }
 
 "++"                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return INC_OP;
                         }
 
 "--"                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return DEC_OP;
                         }
 
 "+="                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return ADD_ASSIGN;
                         }
 
 "-="                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return SUB_ASSIGN;
                         }
 
 "*="                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return MUL_ASSIGN;
                         }
 
 "/="                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return DIV_ASSIGN;
                         }
 
 "%="                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return MOD_ASSIGN;
                         }
 
 "!"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return L_NOT;
                         }
 
 "&&"                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return L_AND;
                         }
 
 "||"                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return L_OR;
                         }
 
 ">"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return GT_OP;
                         }
 
 "<"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return LT_OP;
                         }
 
 "=="                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return EQ_OP;
                         }
 
 "!="                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return NE_OP;
                         }
 
 ">="                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return GE_OP;
                         }
 
 "<="                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return LE_OP;
                         }
 
 "~"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return B_NOT;
                         }
 
 "^"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return B_XOR;
                         }
 
 "|"                     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return B_OR;
                         }
 
 "<<"                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return B_SL;
                         }
 
 ">>"                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return B_SR;
                         }
 
 "&="                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return B_AND_ASSIGN;
                         }
 
 "|="                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return B_OR_ASSIGN;
                         }
 
 "^="                    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return B_XOR_ASSIGN;
                         }
 
 "<<="                   {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return B_SL_ASSIGN;
                         }
 
 ">>="                   {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return B_SR_ASSIGN;
                         }
 
 {identifier}            {
-                            scannerOutput(yytext, yyleng);
+                            cout << "CURRENT: " << (st.getInsertMode() ? "INSERT" : "LOOKUP") << endl;
+                            if (st.getInsertMode())
+                            {
+                                st.insert(node(nodeIdentifier, line, nodeType));
+                                nodeType = 3;
+                            }
+                            else
+                            {
+                                st.searchTop(nodeIdentifier);
+                            }
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, textToStr(yytext, yyleng));
-                            return symbolTableIdFound( yylval.sval );
+                            strcpy(yylval.sval, yytext);
+                            return IDENTIFIER;
                         }
 
 {integer_constant}      {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, textToStr(yytext, yyleng));
+                            strcpy(yylval.sval, yytext);
                             return INTEGER_CONSTANT;
                         }
 
 {character_constant}    {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, textToStr(yytext, yyleng));
+                            strcpy(yylval.sval, yytext);
                             return CHARACTER_CONSTANT;
                         }
 
 {floating_constant}     {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, textToStr(yytext, yyleng));
+                            strcpy(yylval.sval, yytext);
                             return FLOATING_CONSTANT;
                         }
 
 {string_literal}        {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, textToStr(yytext, yyleng));
+                            strcpy(yylval.sval, yytext);
                             return STRING_LITERAL;
                         }
 
@@ -594,7 +610,7 @@ symbol_table_dump		[@]
 								symbolTableOut << symTable << endl << endl;
 							}
 						}
-
+						
 {productions_on}        {
                             outputProductions = true;
                         }
@@ -606,9 +622,9 @@ symbol_table_dump		[@]
 {comment}               {}
 
 .                       {
-                            scannerOutput(yytext, yyleng);
+                            scannerOutput(yytext);
 							//incrementColumn(yyleng); //Want the error to point to the start of the error.
-                            strcpy(yylval.sval, textToStr(yytext, yyleng));
+                            strcpy(yylval.sval, yytext);
                             return ERROR;
                         }
 
@@ -631,9 +647,8 @@ inline void incrementTab(int n)
     tab += n;
 }
 
-void scannerOutput(char* text, size_t text_len)
+void scannerOutput(string outputStr)
 {
-	string outputStr = textToStr(text, text_len);
 	if( command_l and lexDebugOutput.good() )
 	{
     	lexDebugOutput << "Token: " << outputStr << endl;
@@ -641,16 +656,8 @@ void scannerOutput(char* text, size_t text_len)
 }
 
 
-int symbolTableIdFound(char* idFound)
+void scannerOutput(string s)
 {
-	if( symTable.getInsertMode() )
-	{
-		//symTable.insert
-	}
+    outputStream << "Token: " << s << endl;
 }
 
-const char* textToStr(char* text, size_t text_len)
-{
-	string st(text, text_len);
-	return st.c_str();
-}

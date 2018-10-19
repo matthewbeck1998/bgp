@@ -23,12 +23,23 @@ bool symbolTable::insert (node &insertNode)
 	if(!table.empty() and insertMode)
 	{
 		insertNode.setVarScopeLevel(currentLevel);
-		if(searchAllExceptTop(insertNode.getIdentifier()).first != -1)
-			errorStream << "Shadowing variable: \"" << insertNode.getIdentifier() << "\" on line " << insertNode.getLineNum();
-		bool insertStatus = table.begin()->insert(pair<string, node>(insertNode.getIdentifier(), insertNode)).second;
-		if(!insertStatus)
-			errorStream << "Identifier: \"" << insertNode.getIdentifier() << "\" already exists";
-		return insertStatus;
+		auto searchReturn = searchAllExceptTop(insertNode.getIdentifier());
+		if(searchReturn.first != -1)
+		{
+			errorStream << "WARNING: Scope " << currentLevel << endl;
+			errorStream << "\tShadowing variable: \"" << insertNode.getIdentifier() << '\"';
+			errorStream << " on line " << searchReturn.second->second.getLineNum();
+			errorStream << " from scope " << searchReturn.second->second.getVarScopeLevel() << endl;
+		}
+		auto insertStatus = table.begin()->insert(pair<string, node>(insertNode.getIdentifier(), insertNode));
+
+		if(!insertStatus.second)
+		{
+			errorStream << "ERROR: Identifier: \"" << insertNode.getIdentifier() << "\" already exists on line ";
+			errorStream << insertStatus.first->second.getLineNum() << endl;
+		}
+
+		return insertStatus.second;
 	}
 	else
 	{
@@ -199,7 +210,6 @@ pair<int, map<string, node>::iterator> symbolTable::searchAllExceptTop (string k
 		if(it != itr ->end())
 			notFound = false;
 	}
-
 
 	if(notFound)
 	{
