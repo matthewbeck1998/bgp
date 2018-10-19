@@ -570,6 +570,10 @@ productions_off         [@][p][-]
 
 {identifier}            {
                             cout << "CURRENT: " << (st.getInsertMode() ? "INSERT" : "LOOKUP") << endl;
+							if( yyleng > 253 )
+							{
+								return ERROR;//ID too long
+							}
                             if (st.getInsertMode())
                             {
                                 //st.insert(node(nodeIdentifier, line, nodeType));
