@@ -22,10 +22,12 @@ const char* textToStr(char* text, size_t text_len);
 
 extern stringstream outputStream;
 void scannerOutput(string s);
-
-symbolTable st;
+extern symbolTable st;
+bool isFunctionScope = false;
+/*
 string nodeIdentifier;
 int nodeType = 3;
+*/
 %}
 
 %option noyywrap
@@ -167,9 +169,6 @@ productions_off         [@][p][-]
                         }
 
 "int"                   {
-                            st.setInsertMode(true);
-                            cout << "INSERT MODE" << endl;
-                            nodeType = 3;
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return INT;
@@ -296,8 +295,6 @@ productions_off         [@][p][-]
                         }
 
 ";"                     {
-                            st.setInsertMode(false);
-                            cout << "LOOKUP MODE" << endl;
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
                             return SEMICOLON;
@@ -322,16 +319,18 @@ productions_off         [@][p][-]
                         }
 
 "{"                     {
-                            st.setInsertMode(false);
-                            cout << "LOOKUP MODE" << endl;
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
+                            cout << "PUSH LEVEL" << endl;
+                            st.pushLevel();
                             return OBRACE;
                         }
 
 "}"                     {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
+                            cout << "POP LEVEL" << endl;
+                            st.popLevel();
                             return CBRACE;
                         }
 
@@ -350,6 +349,11 @@ productions_off         [@][p][-]
 "("                     {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
+                            if (st.getInsertMode())
+                            {
+                                cout << "PUSH LEVEL" << endl;
+                                st.pushLevel();
+                            }
                             return OPAREN;
                         }
 
@@ -552,47 +556,53 @@ productions_off         [@][p][-]
                         }
 
 {identifier}            {
+                            /*
                             cout << "CURRENT: " << (st.getInsertMode() ? "INSERT" : "LOOKUP") << endl;
+                            nodeIdentifier = yytext;
+                            cout << nodeIdentifier << endl;
                             if (st.getInsertMode())
                             {
-                                st.insert(node(nodeIdentifier, line, nodeType));
+                                node node(nodeIdentifier, line, nodeType);
+                                st.insert(node);
                                 nodeType = 3;
+                                cout << st;
                             }
                             else
                             {
-                                st.searchTop(nodeIdentifier);
+                                st.searchAll(nodeIdentifier);
                             }
+                            */
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, textToStr(yytext, yyleng));
+                            strcpy(yylval.sval, yytext);
                             return IDENTIFIER;
                         }
 
 {integer_constant}      {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, textToStr(yytext, yyleng));
+                            strcpy(yylval.sval, yytext);
                             return INTEGER_CONSTANT;
                         }
 
 {character_constant}    {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, textToStr(yytext, yyleng));
+                            strcpy(yylval.sval, yytext);
                             return CHARACTER_CONSTANT;
                         }
 
 {floating_constant}     {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, textToStr(yytext, yyleng));
+                            strcpy(yylval.sval, yytext);
                             return FLOATING_CONSTANT;
                         }
 
 {string_literal}        {
                             scannerOutput(yytext);
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, textToStr(yytext, yyleng));
+                            strcpy(yylval.sval, yytext);
                             return STRING_LITERAL;
                         }
 
@@ -609,7 +619,7 @@ productions_off         [@][p][-]
 .                       {
                             scannerOutput(yytext);
 							//incrementColumn(yyleng); //Want the error to point to the start of the error.
-                            strcpy(yylval.sval, textToStr(yytext, yyleng));
+                            strcpy(yylval.sval, yytext);
                             return ERROR;
                         }
 
@@ -635,10 +645,4 @@ inline void incrementTab(int n)
 void scannerOutput(string s)
 {
     outputStream << "Token: " << s << endl;
-}
-
-const char* textToStr(char* text, size_t text_len)
-{
-	string st(text, text_len);
-	return st.c_str();
 }

@@ -4,6 +4,8 @@
 #include <sstream>
 #include <cstdio>
 #include <cstring>
+#include "symbolTable.h"
+#include "node.h"
 
 using namespace std;
 
@@ -30,6 +32,11 @@ int parseCommandLine(int argc, char** argv);
 bool command_d = false;
 bool command_l = false;
 bool command_s = false;
+
+symbolTable st;
+string nodeIdentifier;
+int nodeLineNumber;
+int nodeType;
 %}
 
 %union
@@ -71,10 +78,10 @@ external_declaration
 	;
 
 function_definition
-	: declarator compound_statement { parserOutput("function_definition -> declarator compound_statement"); }
-	| declarator declaration_list compound_statement { parserOutput("function_definition -> declarator declaration_list compound_statement"); }
-	| declaration_specifiers declarator compound_statement { parserOutput("function_definition -> declaration_specifiers declarator compound_statement"); }
-	| declaration_specifiers declarator declaration_list compound_statement { parserOutput("function_definition -> declaration_specifiers declarator declaration_list compound_statement"); }
+	: declarator compound_statement { parserOutput("function_definition -> declarator compound_statement"); cout << "POP LEVEL" << endl; st.popLevel(); cout << st << endl; }
+	| declarator declaration_list compound_statement { parserOutput("function_definition -> declarator declaration_list compound_statement"); cout << "POP LEVEL" << endl; st.popLevel(); cout << st << endl; }
+	| declaration_specifiers declarator compound_statement { parserOutput("function_definition -> declaration_specifiers declarator compound_statement"); cout << "POP LEVEL" << endl; st.popLevel(); }
+	| declaration_specifiers declarator declaration_list compound_statement { parserOutput("function_definition -> declaration_specifiers declarator declaration_list compound_statement"); cout << "POP LEVEL" << endl; st.popLevel(); }
 	;
 
 declaration
@@ -83,8 +90,8 @@ declaration
 	;
 
 declaration_list
-	: declaration { parserOutput("declaration_list -> declaration"); }
-	| declaration_list declaration { parserOutput("declaration_list -> declaration_list declaration"); }
+	: declaration { parserOutput("declaration_list -> declaration"); st.setInsertMode(false); }
+	| declaration_list declaration { parserOutput("declaration_list -> declaration_list declaration"); st.setInsertMode(false); }
 	;
 
 declaration_specifiers
@@ -105,10 +112,10 @@ storage_class_specifier
 	;
 
 type_specifier
-	: VOID { parserOutput("type_specifier -> VOID"); }
+	: VOID { parserOutput("type_specifier -> VOID");  }
 	| CHAR { parserOutput("type_specifier -> CHAR"); }
 	| SHORT { parserOutput("type_specifier -> SHORT"); }
-	| INT { parserOutput("type_specifier -> INT"); }
+	| INT { parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeType = 3; }
 	| LONG { parserOutput("type_specifier -> LONG"); }
 	| FLOAT { parserOutput("type_specifier -> FLOAT"); }
 	| DOUBLE { parserOutput("type_specifier -> DOUBLE"); }
@@ -194,7 +201,12 @@ declarator
 	;
 
 direct_declarator
-	: identifier { parserOutput("direct_declarator -> identifier"); }
+	: identifier {
+                   parserOutput("direct_declarator -> identifier");
+                   node node(nodeIdentifier, line, nodeType);
+                   if (!st.insert(node)) return 1;
+                   cout << st << endl;
+                 }
 	| OPAREN declarator CPAREN { parserOutput("direct_declarator -> OPAREN declarator CPAREN"); }
 	| direct_declarator OBRACKET CBRACKET { parserOutput("direct_declarator -> direct_declarator OBRACKET CBRACKET"); }
 	| direct_declarator OBRACKET constant_expression CBRACKET { parserOutput("direct_declarator -> direct_declarator OBRACKET constant_expression CBRACKET"); }
@@ -478,7 +490,7 @@ string
 	;
 
 identifier
-	: IDENTIFIER { parserOutput("identifier -> IDENTIFIER"); }
+	: IDENTIFIER { parserOutput("identifier -> IDENTIFIER"); nodeIdentifier = yylval.sval; nodeLineNumber = line; }
 	;
 
 %%
