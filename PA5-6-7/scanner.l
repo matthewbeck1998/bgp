@@ -309,6 +309,9 @@ productions_off         [@][p][-]
                             handleNewline();
                         }
 
+"\r"                    {
+                        }
+
 "="                     {
                             scannerOutput(yytext, "ASSIGN");
 							incrementColumn(yyleng);
