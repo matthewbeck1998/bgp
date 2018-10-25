@@ -53,6 +53,10 @@ public:
 
 	void setIsSigned (bool isSigned);
 
+	bool isIsArray () const;
+
+	void setIsArray (bool isArray);
+
 	friend ostream &operator<< (ostream &os, const node &node1);
 
 private:
@@ -65,6 +69,7 @@ private:
 	int colNum;
 	bool isFunction;
 	bool isSigned;
+	bool isArray;
 
 	///Not implemented yet
 	map<string, node> structVariables;

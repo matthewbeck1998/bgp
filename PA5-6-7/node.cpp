@@ -180,4 +180,15 @@ node::node (const string &identifier, int lineNum, int colNum, int typeSpecifier
 	isSigned = true;
 	typeQualifierIndex = -1;
 	typeStorageClassIndex = -1;
+	isArray = false;
+}
+
+bool node::isIsArray () const
+{
+	return isArray;
+}
+
+void node::setIsArray (bool isArray)
+{
+	node::isArray = isArray;
 }
