@@ -21,8 +21,8 @@ extern int tab;
 bool outputProductions = false;
 ifstream inputFile;
 ofstream outputFile;
-ofstream lexDebugOutput;
-ofstream symbolTableOut;
+//ofstream lexDebugOutput;
+//ofstream symbolTableOut;
 stringstream outputStream;
 stringstream errorStream;
 void parserOutput(string s);
@@ -533,6 +533,8 @@ int main(int argc, char** argv)
     {
         outputFile << outputStream.str();
         outputFile << errorStream.str();
+        cout << outputStream.str();
+        cout << errorStream.str();
         cerr << errorStream.str();
     }
     else
@@ -594,12 +596,13 @@ void parserOutput(string s)
 int parseCommandLine(int argc, char** argv)
 {
 	int outputIndex = 0;
-	const int num_options = 4;
+	const int num_options = 5;
 	const char* valid_options[] {
 		"-d",
 		"-l",
-		"-s",
-		"-o"
+		"-o",
+		"-p",
+		"-s"
 	};
 
     inputFile.open(argv[1]); //Assumes the first command line arguement is the input file.
@@ -627,8 +630,6 @@ int parseCommandLine(int argc, char** argv)
 						break;
 					case 'l': command_l = true;
 						break;
-					case 's': command_s = true;
-						break;
 					case 'o': outputIndex = ++i;
 						if(i >= argc)
 						{
@@ -636,30 +637,19 @@ int parseCommandLine(int argc, char** argv)
 							exit(-1);
 						}
 						break;
+					case 'p': outputProductions = true;
+						break;
+					case 's': command_s = true;
+						break;
 					default:
 						cerr << "Invalid command line argument" << endl;
 						exit(-1);
 						break;
 				}
+			} else {
+				cerr << "Invalid command line argument" << endl;
+				exit(-1);
 			}
-		}
-	}
-	if(command_l)//Open the lex debug if the command line argument l was set.
-	{
-		lexDebugOutput.open( "LexDebugOutput.txt" );
-		if( !lexDebugOutput.good() )
-		{
-			cerr << "Failed to open LexDebugOutput.txt" << endl;
-			exit(-1);
-		}
-	}
-	if(command_s)
-	{
-		symbolTableOut.open( "SymbolTableDump.txt" );
-		if( !symbolTableOut.good() )
-		{
-			cerr << "Failed to open SymbolTableDump.txt" << endl;
-			exit(-1);
 		}
 	}
 	return outputIndex;

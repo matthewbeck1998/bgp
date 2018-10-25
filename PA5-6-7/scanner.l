@@ -21,10 +21,6 @@ int tab = 0;
 extern bool command_l;
 extern bool command_s;
 
-//External output streams for the -l command line option, -s command line option, -d command line option, and the @ token.
-extern ofstream lexDebugOutput;
-extern ofstream symbolTableOut;
-
 //External streams for the final output and error
 extern stringstream outputStream;
 extern stringstream errorStream;
@@ -64,6 +60,8 @@ void scannerOutput(string s, string token_name);
 %}
 
 %option noyywrap
+
+%option yylineno
 
 letter                  [A-Za-z]
 dec                     [0-9]
@@ -356,9 +354,9 @@ productions_off         [@][p][-]
 
 "{"                     {
 							
-							if( command_s and symbolTableOut.good() )
+							if( command_s )
 							{
-								symbolTableOut << st;
+							    outputStream << st;
 							}
                             scannerOutput(yytext, "OBRACE");
 							incrementColumn(yyleng);
@@ -368,9 +366,9 @@ productions_off         [@][p][-]
                         }
 
 "}"                     {
-							if( command_s and symbolTableOut.good() )
+							if( command_s )
 							{
-								symbolTableOut << st;
+							    outputStream << st;
 							}
                             scannerOutput(yytext, "CBRACE");
 							incrementColumn(yyleng);
@@ -655,19 +653,8 @@ productions_off         [@][p][-]
 {symbol_table_dump}		{
 							scannerOutput(yytext, "SYMBOL_TABLE_DUMP");
 							incrementColumn(yyleng);
-							if( !symbolTableOut.is_open() ) //Open the symbol table output file if it's not currently open
-							{
-								symbolTableOut.open( "SymbolTableDump.txt" );
-								if( !symbolTableOut.good() )
-								{
-									cerr << "Failed to open SymbolTableDump.txt" << endl;
-									exit(-1);
-								}
-							}
-							if( symbolTableOut.good() )
-							{
-								symbolTableOut << st;
-							}
+                            outputStream << st;
+
 						}
 						
 {productions_on}        {
@@ -731,8 +718,8 @@ inline void incrementTab(int n)
 */
 void scannerOutput(string outputStr, string token_name)
 {
-	if( command_l and lexDebugOutput.good() )
+	if( command_l )
 	{
-    	lexDebugOutput << "Token: " << token_name << endl << "\tSource: " << outputStr << endl;
+        outputStream << "Token: " << token_name << endl << "\tSource: " << outputStr << endl;
 	}
 }
