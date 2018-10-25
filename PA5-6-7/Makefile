@@ -1,7 +1,7 @@
-bgp: parser.y scanner.l
-	bison -d -v -o parser.c parser.y
-	flex -o scanner.c scanner.l
-	g++ -o bgp -std=gnu++11 parser.c scanner.c node.cpp symbolTable.cpp -lfl
+bin/bgp: src/parser.y src/scanner.l
+	bison -d -v -o src/parser.c src/parser.y
+	flex -o src/scanner.c src/scanner.l
+	g++ -o bin/bgp -std=gnu++11 src/parser.c src/scanner.c src/node.cpp src/symbolTable.cpp -lfl
 
 clean:
-	rm parser.c parser.h scanner.c SymbolTableDump.txt LexDebugOutput.txt bgp
+	rm src/parser.c src/parser.h src/scanner.c output/SymbolTableDump.txt output/LexDebugOutput.txt bin/bgp
