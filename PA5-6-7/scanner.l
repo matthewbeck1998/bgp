@@ -92,7 +92,7 @@ comment                 {line_comment}|{block_comment}
 line_comment            [/][/].*
 block_comment           [/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]
 
-symbol_table_dump		[@]
+symbol_table_dump		[@][s]
 productions_on          [@][p][+]
 productions_off         [@][p][-]
 %%
