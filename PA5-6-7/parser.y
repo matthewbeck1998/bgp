@@ -542,7 +542,6 @@ int main(int argc, char** argv)
 		cerr << "Output file fail." << endl;
         exit(-1);
     }
-
 	  return 0;
 }
 
@@ -645,9 +644,6 @@ int parseCommandLine(int argc, char** argv)
 						exit(-1);
 						break;
 				}
-			} else {
-				cerr << "Invalid command line argument" << endl;
-				exit(-1);
 			}
 		}
 	}
