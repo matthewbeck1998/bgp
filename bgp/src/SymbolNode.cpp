@@ -4,6 +4,7 @@
 
 #include "SymbolNode.h"
 
+///A stringstream to output error/warnings
 extern stringstream errorStream;
 
 const string &SymbolNode::getIdentifier () const
@@ -87,10 +88,12 @@ void SymbolNode::setIsSigned (bool isSigned)
 }
 
 /**
- * @brief An inseration operator to help print the Node
+ * @brief An insertion operator to help print the Node
  * @param os The ostream object
  * @param table The Node to be printed
  * @return The ostream with everything to print
+ * @note Uses the enums: storage_class_specifier, type_specifier, type_qualifier, parameterSign, and parameterIndices
+ * 			from SymbolNode.h
  */
 ostream &operator<< (ostream &os, const SymbolNode &node)
 {
@@ -175,12 +178,12 @@ ostream &operator<< (ostream &os, const SymbolNode &node)
 	if(node.getIsFunction())
 	{
 		os << "\tFunction Parameters: " << endl;
-		if(node.functionParameters.size())
+		if(!node.functionParameters.empty())
 		{
-			for (auto i = node.functionParameters.begin(); i != node.functionParameters.end(); i++)
+			for (auto functionParameter : node.functionParameters)
 			{
 				os << "\t\t";
-				switch (i->begin()[parameterQualifierIndex])
+				switch (functionParameter.begin()[parameterQualifierIndex])
 				{
 					case Const:
 						os << "const ";
@@ -195,7 +198,7 @@ ostream &operator<< (ostream &os, const SymbolNode &node)
 						break;
 				}
 
-				switch (i->begin()[parameterSignIndex])
+				switch (functionParameter.begin()[parameterSignIndex])
 				{
 					case Signed:
 						os << "signed ";
@@ -207,7 +210,7 @@ ostream &operator<< (ostream &os, const SymbolNode &node)
 						break;
 				}
 
-				switch (i->begin()[parameterSpecifierIndex])
+				switch (functionParameter.begin()[parameterSpecifierIndex])
 				{
 					case Void:
 						os << "void";
@@ -266,6 +269,20 @@ void SymbolNode::setIsArray (bool isArray)
 	SymbolNode::isArray = isArray;
 }
 
+/**
+ * @brief A function to push parameters onto a function node in the Symbol Table
+ * @note Uses the enum parameterIndices from SymbolNode.h
+ * @note the default values are:
+ * 			index parameterQualifierIndex (Zero): The qualifier
+ * 															default: -2 (for no qualifier)
+ * 			index parameterSignIndex (One): The sign of parameter
+ * 															default: Signed (Zero)
+* 			index parameterSpecifierIndex (Two): The parameter specifier
+ * 															default: Int (Three)
+ * @return True if the function flag is set to true
+ * 			false if the function flag is set to false
+ * 				Will output an error message to errorStream if the function flag is not set
+ */
 bool SymbolNode::pushFunctionParameter ()
 {
 	if(isFunction)
@@ -281,6 +298,12 @@ bool SymbolNode::pushFunctionParameter ()
 
 }
 
+/**
+ * @brief A function to set the parameter's type using the enum parameterIndices in SymbolNode.h
+ * @return True if the function flag is set to true
+ * 			false if the function flag is set to false
+ * 				Will output an error message to errorStream if the function flag is not set
+ */
 bool SymbolNode::setCurrentFunctionParameterTypeSpecifier (int typeSpecifier)
 {
 	if(isFunction)
@@ -295,6 +318,12 @@ bool SymbolNode::setCurrentFunctionParameterTypeSpecifier (int typeSpecifier)
 	}
 }
 
+/**
+ * @brief A function to set the parameter's sign using the enum parameterIndices in SymbolNode.h
+ * @return True if the function flag is set to true
+ * 			false if the function flag is set to false
+ * 				Will output an error message to errorStream if the function flag is not set
+ */
 bool SymbolNode::setCurrentFunctionParameterSign (int sign)
 {
 	if(isFunction)
@@ -304,11 +333,17 @@ bool SymbolNode::setCurrentFunctionParameterSign (int sign)
 	}
 	else
 	{
-		errorStream << "ERROR: Node: \"" << identifier << "\" is not a function. Cannot set parameter sign" << endl;
+		errorStream << "ERROR: Node: \"" << identifier << "\" is not a function. Cannot set parameter parameterSign" << endl;
 		return false;
 	}
 }
 
+/**
+ * @brief A function to set the parameter's qualifier using the enum parameterIndices in SymbolNode.h
+ * @return True if the function flag is set to true
+ * 			false if the function flag is set to false
+ * 				Will output an error message to errorStream if the function flag is not set
+ */
 bool SymbolNode::setCurrentFunctionParameterTypeQualifier (int typeQualifier)
 {
 	if(isFunction)
@@ -323,6 +358,12 @@ bool SymbolNode::setCurrentFunctionParameterTypeQualifier (int typeQualifier)
 	}
 }
 
+/**
+ * @brief A function to get the parameter's type using the enum parameterIndices in SymbolNode.h
+ * @return The integer mapped to the type using the enum in SymbolNode.h
+ * 			-1 if the function flag is set to false
+ * 				Will output an error message to errorStream if the function flag is not set
+ */
 int SymbolNode::getCurrentFunctionParameterTypeSpecifier ()
 {
 	if(isFunction)
@@ -334,17 +375,29 @@ int SymbolNode::getCurrentFunctionParameterTypeSpecifier ()
 	}
 }
 
+/**
+ * @brief A function to get the parameter's sign using the enum parameterIndices in SymbolNode.h
+ * @return The integer mapped to the type using the enum in SymbolNode.h
+ * 			-1 if the function flag is set to false
+ * 				Will output an error message to errorStream if the function flag is not set
+ */
 int SymbolNode::getCurrentFunctionParameterSign ()
 {
 	if(isFunction)
 		return functionParameters.back()[parameterSignIndex];
 	else
 	{
-		errorStream << "ERROR: Node: \"" << identifier << "\" is not a function. Cannot get parameter sign" << endl;
+		errorStream << "ERROR: Node: \"" << identifier << "\" is not a function. Cannot get parameter parameterSign" << endl;
 		return -1;
 	}
 }
 
+/**
+ * @brief A function to get the parameter's qualifier using the enum parameterIndices in SymbolNode.h
+ * @return The integer mapped to the type using the enum in SymbolNode.h
+ * 			-1 if the function flag is set to false
+ * 				Will output an error message to errorStream if the function flag is not set
+ */
 int SymbolNode::getCurrentFunctionParameterTypeQualifier ()
 {
 	if(isFunction)
