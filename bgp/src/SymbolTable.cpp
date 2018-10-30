@@ -109,13 +109,12 @@ ostream &operator<< (ostream &os, const SymbolTable &table)
 			}
 
 		}
-		return os;
 	}
 	else
 	{
 		os << "Table is empty" << endl;
 	}
-
+	return os;
 }
 /**
  * @brief Will create a symbol table with 1 level for file level identifiers
