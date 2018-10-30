@@ -60,13 +60,13 @@ public:
 
 	void setIsArray (bool isArray);
 
-	void pushFunctionParameter();
+	bool pushFunctionParameter ();
 
-	void setCurrentFunctionParameterTypeSpecifier (int typeSpecifier);
+	bool setCurrentFunctionParameterTypeSpecifier (int typeSpecifier);
 
-	void setCurrentFunctionParameterSign (int sign);
+	bool setCurrentFunctionParameterSign (int sign);
 
-	void setCurrentFunctionParameterTypeQualifier (int typeQualifier);
+	bool setCurrentFunctionParameterTypeQualifier (int typeQualifier);
 
 	int getCurrentFunctionParameterTypeSpecifier();
 
