@@ -4,84 +4,84 @@
 
 #include "SymbolNode.h"
 
-const string &Node::getIdentifier () const
+const string &SymbolNode::getIdentifier () const
 {
 	return identifier;
 }
 
-void Node::setIdentifier (const string &identifier)
+void SymbolNode::setIdentifier (const string &identifier)
 {
-	Node::identifier = identifier;
+	SymbolNode::identifier = identifier;
 }
 
-int Node::getTypeStorageClassIndex () const
+int SymbolNode::getTypeStorageClassIndex () const
 {
 	return typeStorageClassIndex;
 }
 
-void Node::setTypeStorageClassIndex (int typeStorageClassIndex)
+void SymbolNode::setTypeStorageClassIndex (int typeStorageClassIndex)
 {
-	Node::typeStorageClassIndex = typeStorageClassIndex;
+	SymbolNode::typeStorageClassIndex = typeStorageClassIndex;
 }
 
-int Node::getTypeQualifierIndex () const
+int SymbolNode::getTypeQualifierIndex () const
 {
 	return typeQualifierIndex;
 }
 
-void Node::setTypeQualifierIndex (int typeQualifierIndex)
+void SymbolNode::setTypeQualifierIndex (int typeQualifierIndex)
 {
-	Node::typeQualifierIndex = typeQualifierIndex;
+	SymbolNode::typeQualifierIndex = typeQualifierIndex;
 }
 
-int Node::getTypeSpecifierIndex () const
+int SymbolNode::getTypeSpecifierIndex () const
 {
 	return typeSpecifierIndex;
 }
 
-void Node::setTypeSpecifierIndex (int typeSpecifierIndex)
+void SymbolNode::setTypeSpecifierIndex (int typeSpecifierIndex)
 {
-	Node::typeSpecifierIndex = typeSpecifierIndex;
+	SymbolNode::typeSpecifierIndex = typeSpecifierIndex;
 }
 
-int Node::getVarScopeLevel () const
+int SymbolNode::getVarScopeLevel () const
 {
 	return varScopeLevel;
 }
 
-void Node::setVarScopeLevel (int varScopeLevel)
+void SymbolNode::setVarScopeLevel (int varScopeLevel)
 {
-	Node::varScopeLevel = varScopeLevel;
+	SymbolNode::varScopeLevel = varScopeLevel;
 }
 
-int Node::getLineNum () const
+int SymbolNode::getLineNum () const
 {
 	return lineNum;
 }
 
-void Node::setLineNum (int lineNum)
+void SymbolNode::setLineNum (int lineNum)
 {
-	Node::lineNum = lineNum;
+	SymbolNode::lineNum = lineNum;
 }
 
-bool Node::getIsFunction () const
+bool SymbolNode::getIsFunction () const
 {
 	return isFunction;
 }
 
-void Node::setIsFunction (bool isFunction)
+void SymbolNode::setIsFunction (bool isFunction)
 {
-	Node::isFunction = isFunction;
+	SymbolNode::isFunction = isFunction;
 }
 
-bool Node::getIsSigned () const
+bool SymbolNode::getIsSigned () const
 {
 	return isSigned;
 }
 
-void Node::setIsSigned (bool isSigned)
+void SymbolNode::setIsSigned (bool isSigned)
 {
-	Node::isSigned = isSigned;
+	SymbolNode::isSigned = isSigned;
 }
 
 /**
@@ -90,7 +90,7 @@ void Node::setIsSigned (bool isSigned)
  * @param table The Node to be printed
  * @return The ostream with everything to print
  */
-ostream &operator<< (ostream &os, const Node &node)
+ostream &operator<< (ostream &os, const SymbolNode &node)
 {
 	os << "identifier: \"" << node.identifier << "\"" << endl;
 	os << "\tlineNum: " << node.lineNum << " colNum: " << node.colNum << " scopeLevel: " << node.varScopeLevel;
@@ -169,10 +169,81 @@ ostream &operator<< (ostream &os, const Node &node)
 	}
 
 	os << "\"" << endl;
+
+	if(node.getIsFunction())
+	{
+		os << "\tFunction Parameters: " << endl;
+		if(node.functionParameters.size())
+		{
+			for (auto i = node.functionParameters.begin(); i != node.functionParameters.end(); i++)
+			{
+				os << "\t\t";
+				switch (i->begin()[parameterQualifierIndex])
+				{
+					case Const:
+						os << "const ";
+						break;
+					case Volatile:
+						os << "volatile ";
+						break;
+					case Both:
+						os << "const volatile ";
+						break;
+					default:
+						break;
+				}
+
+				switch (i->begin()[parameterSignIndex])
+				{
+					case Signed:
+						os << "signed ";
+						break;
+					case Unsigned:
+						os << "unsigned ";
+						break;
+					default:
+						break;
+				}
+
+				switch (i->begin()[parameterSpecifierIndex])
+				{
+					case Void:
+						os << "void";
+						break;
+					case Char:
+						os << "char";
+						break;
+					case Short:
+						os << "short";
+						break;
+					case Int:
+						os << "int";
+						break;
+					case Long:
+						os << "long";
+						break;
+					case Float:
+						os << "float";
+						break;
+					case Double:
+						os << "double";
+						break;
+					case Struct:
+						os << "struct";
+						break;
+					default:
+						break;
+				}
+				os << endl;
+			}
+		} else{
+			os << "\t\tNone" << endl;
+		}
+	}
 	return os;
 }
 
-Node::Node (const string &identifier, int lineNum, int colNum, int typeSpecifier)
+SymbolNode::SymbolNode (const string &identifier, int lineNum, int colNum, int typeSpecifier)
 		: identifier(identifier), lineNum(lineNum), typeSpecifierIndex(typeSpecifier), colNum(colNum)
 {
 	varScopeLevel = -1;
@@ -183,12 +254,49 @@ Node::Node (const string &identifier, int lineNum, int colNum, int typeSpecifier
 	isArray = false;
 }
 
-bool Node::isIsArray () const
+bool SymbolNode::isIsArray () const
 {
 	return isArray;
 }
 
-void Node::setIsArray (bool isArray)
+void SymbolNode::setIsArray (bool isArray)
 {
-	Node::isArray = isArray;
+	SymbolNode::isArray = isArray;
+}
+
+void SymbolNode::pushFunctionParameter ()
+{
+	array<int, 3> ar = {-1, Signed, Int};
+	functionParameters.push_back(ar);
+
+}
+
+void SymbolNode::setCurrentFunctionParameterTypeSpecifier (int typeSpecifier)
+{
+	functionParameters.back()[parameterSpecifierIndex] = typeSpecifier;
+}
+
+void SymbolNode::setCurrentFunctionParameterSign (int sign)
+{
+	functionParameters.back()[parameterSignIndex] = sign;
+}
+
+void SymbolNode::setCurrentFunctionParameterTypeQualifier (int typeQualifier)
+{
+	functionParameters.back()[parameterQualifierIndex] = typeQualifier;
+}
+
+int SymbolNode::getCurrentFunctionParameterTypeSpecifier ()
+{
+	return functionParameters.back()[parameterSpecifierIndex];
+}
+
+int SymbolNode::getCurrentFunctionParameterSign ()
+{
+	return functionParameters.back()[parameterSignIndex];
+}
+
+int SymbolNode::getCurrentFunctionParameterTypeQualifier ()
+{
+	return functionParameters.back()[parameterQualifierIndex];
 }

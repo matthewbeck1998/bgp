@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <cstring>
 #include "SymbolTable.h"
-#include "Node.h"
+#include "SymbolNode.h"
 
 using namespace std;
 
@@ -205,7 +205,7 @@ declarator
 direct_declarator
 	: identifier    { 
                         parserOutput("direct_declarator -> identifier");
-                        Node node(nodeIdentifier, line, column, nodeTypeSpecifier);
+                        SymbolNode node(nodeIdentifier, line, column, nodeTypeSpecifier);
                         node.setTypeStorageClassIndex(nodeStorageClassSpecifier);
                         node.setTypeQualifierIndex(nodeTypeQualifier);
                         node.setIsFunction(nodeIsFunction);

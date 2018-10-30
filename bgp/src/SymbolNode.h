@@ -8,6 +8,7 @@
 #include <string>
 #include <ostream>
 #include <map>
+#include <list>
 
 using namespace std;
 
@@ -15,11 +16,13 @@ using namespace std;
 enum storage_class_specifier{Auto, Register, Static, Extern, Typedef};
 enum type_specifier{Void, Char, Short, Int, Long, Float, Double, Struct};
 enum type_qualifier{Const, Volatile, Both};
+enum sign{Signed, Unsigned};
+enum{parameterQualifierIndex, parameterSignIndex, parameterSpecifierIndex};
 
-class Node
+class SymbolNode
 {
 public:
-	Node (const string &identifier, int lineNum, int colNum, int typeSpecifier = 3);
+	SymbolNode (const string &identifier, int lineNum, int colNum, int typeSpecifier = 3);
 
 	const string &getIdentifier () const;
 
@@ -57,7 +60,21 @@ public:
 
 	void setIsArray (bool isArray);
 
-	friend ostream &operator<< (ostream &os, const Node &node);
+	void pushFunctionParameter();
+
+	void setCurrentFunctionParameterTypeSpecifier (int typeSpecifier);
+
+	void setCurrentFunctionParameterSign (int sign);
+
+	void setCurrentFunctionParameterTypeQualifier (int typeQualifier);
+
+	int getCurrentFunctionParameterTypeSpecifier();
+
+	int getCurrentFunctionParameterSign();
+
+	int getCurrentFunctionParameterTypeQualifier();
+
+	friend ostream &operator<< (ostream &os, const SymbolNode &node);
 
 private:
 	string identifier;
@@ -70,9 +87,10 @@ private:
 	bool isFunction;
 	bool isSigned;
 	bool isArray;
+	list<array<int, 3>> functionParameters;
 
 	///Not implemented yet
-	map<string, Node> structVariables;
+	map<string, SymbolNode> structVariables;
 };
 
 
