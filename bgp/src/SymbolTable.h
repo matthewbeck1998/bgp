@@ -31,6 +31,8 @@ public:
 
 	int getCurrentLevel () const;
 
+	bool isLastSearchValid () const;
+
 	pair<int, map<string, SymbolNode>::iterator> searchAll(string key);
 	pair<int, map<string, SymbolNode>::iterator> searchTop(string key);
 	pair<int, map<string, SymbolNode>::iterator> searchAllExceptTop(string key);
@@ -39,6 +41,7 @@ private:
 	list<map<string, SymbolNode>> table;
 	int currentLevel;
 	bool insertMode;
+	bool lastSearchValid;
 
 };
 

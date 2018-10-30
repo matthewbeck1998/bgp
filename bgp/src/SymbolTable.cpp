@@ -123,6 +123,7 @@ ostream &operator<< (ostream &os, const SymbolTable &table)
 SymbolTable::SymbolTable () : currentLevel(0)
 {
 	insertMode = true;
+	lastSearchValid = false;
 	pushLevel();
 }
 
@@ -152,9 +153,11 @@ pair<int, map<string, SymbolNode>::iterator> SymbolTable::searchAll (string key)
 	{
 		rt.first = FAILURE;
 		rt.second = it;
+		lastSearchValid = false;
 	}
 	else
 	{
+		lastSearchValid = true;
 		rt.first = it->second.getVarScopeLevel();
 		rt.second = it;
 	}
@@ -176,11 +179,13 @@ pair<int, map<string, SymbolNode>::iterator> SymbolTable::searchTop (string key)
 	pair<int, map<string, SymbolNode>::iterator> rt;
 	if(itr == table.begin()->end())
 	{
+		lastSearchValid = false;
 		rt.first = FAILURE;
 		rt.second = itr;
 	}
 	else
 	{
+		lastSearchValid = true;
 		rt.first = itr->second.getVarScopeLevel();
 		rt.second = itr;
 	}
@@ -225,11 +230,13 @@ pair<int, map<string, SymbolNode>::iterator> SymbolTable::searchAllExceptTop (st
 
 	if(notFound)
 	{
+		lastSearchValid = false;
 		rt.first = FAILURE;
 		rt.second = it;
 	}
 	else
 	{
+		lastSearchValid = true;
 		rt.first = it->second.getVarScopeLevel();
 		rt.second = it;
 	}
@@ -244,4 +251,9 @@ void SymbolTable::resetTable ()
 	while(!table.empty())
 		popLevel();
 	pushLevel();
+}
+
+bool SymbolTable::isLastSearchValid () const
+{
+	return lastSearchValid;
 }
