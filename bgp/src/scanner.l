@@ -402,7 +402,6 @@ productions_off         [@][p][-]
 
                                 functionPair.second->second.setIsFunction(true);
                                 st.pushLevel();
-                                cerr << st << endl;
                             }
                             return OPAREN;
                         }

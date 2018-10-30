@@ -2395,7 +2395,7 @@ yyreduce:
 #line 206 "parser.y" /* yacc.c:1646  */
     { 
                         parserOutput("direct_declarator -> identifier");
-                        Node node(nodeIdentifier, line, column, nodeTypeSpecifier);
+                        SymbolNode node(nodeIdentifier, line, column, nodeTypeSpecifier);
                         node.setTypeStorageClassIndex(nodeStorageClassSpecifier);
                         node.setTypeQualifierIndex(nodeTypeQualifier);
                         node.setIsFunction(nodeIsFunction);
@@ -3601,7 +3601,6 @@ int main(int argc, char** argv)
         outputFile << outputStream.str();
         outputFile << errorStream.str();
         cout << outputStream.str();
-        cout << errorStream.str();
         cerr << errorStream.str();
     }
     else

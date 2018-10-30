@@ -534,7 +534,6 @@ int main(int argc, char** argv)
         outputFile << outputStream.str();
         outputFile << errorStream.str();
         cout << outputStream.str();
-        cout << errorStream.str();
         cerr << errorStream.str();
     }
     else
