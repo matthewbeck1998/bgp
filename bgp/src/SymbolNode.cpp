@@ -4,6 +4,8 @@
 
 #include "SymbolNode.h"
 
+extern stringstream errorStream;
+
 const string &SymbolNode::getIdentifier () const
 {
 	return identifier;
@@ -266,37 +268,59 @@ void SymbolNode::setIsArray (bool isArray)
 
 void SymbolNode::pushFunctionParameter ()
 {
-	array<int, 3> ar = {-1, Signed, Int};
-	functionParameters.push_back(ar);
+	if(isFunction)
+	{
+		array<int, 3> ar = {-1, Signed, Int};
+		functionParameters.push_back(ar);
+	} else
+		errorStream << "ERROR: Node: \"" << identifier << "\" is not a function. Cannot add parameter" << endl;
 
 }
 
 void SymbolNode::setCurrentFunctionParameterTypeSpecifier (int typeSpecifier)
 {
-	functionParameters.back()[parameterSpecifierIndex] = typeSpecifier;
+	if(isFunction)
+		functionParameters.back()[parameterSpecifierIndex] = typeSpecifier;
+	else
+		errorStream << "ERROR: Node: \"" << identifier << "\" is not a function. Cannot set type specifier" << endl;
 }
 
 void SymbolNode::setCurrentFunctionParameterSign (int sign)
 {
-	functionParameters.back()[parameterSignIndex] = sign;
+	if(isFunction)
+		functionParameters.back()[parameterSignIndex] = sign;
+	else
+		errorStream << "ERROR: Node: \"" << identifier << "\" is not a function. Cannot set parameter sign" << endl;
 }
 
 void SymbolNode::setCurrentFunctionParameterTypeQualifier (int typeQualifier)
 {
-	functionParameters.back()[parameterQualifierIndex] = typeQualifier;
+	if(isFunction)
+		functionParameters.back()[parameterQualifierIndex] = typeQualifier;
+	else
+		errorStream << "ERROR: Node: \"" << identifier << "\" is not a function. Cannot type qualifier" << endl;
 }
 
 int SymbolNode::getCurrentFunctionParameterTypeSpecifier ()
 {
-	return functionParameters.back()[parameterSpecifierIndex];
+	if(isFunction)
+		return functionParameters.back()[parameterSpecifierIndex];
+	else
+		errorStream << "ERROR: Node: \"" << identifier << "\" is not a function. Cannot get type specifier" << endl;
 }
 
 int SymbolNode::getCurrentFunctionParameterSign ()
 {
-	return functionParameters.back()[parameterSignIndex];
+	if(isFunction)
+		return functionParameters.back()[parameterSignIndex];
+	else
+		errorStream << "ERROR: Node: \"" << identifier << "\" is not a function. Cannot get parameter sign" << endl;
 }
 
 int SymbolNode::getCurrentFunctionParameterTypeQualifier ()
 {
-	return functionParameters.back()[parameterQualifierIndex];
+	if(isFunction)
+		return functionParameters.back()[parameterQualifierIndex];
+	else
+		errorStream << "ERROR: Node: \"" << identifier << "\" is not a function. Cannot get parameter qualifier" << endl;
 }

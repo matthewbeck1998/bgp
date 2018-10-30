@@ -9,9 +9,9 @@
 #include <ostream>
 #include <map>
 #include <list>
+#include <sstream>
 
 using namespace std;
-
 
 enum storage_class_specifier{Auto, Register, Static, Extern, Typedef};
 enum type_specifier{Void, Char, Short, Int, Long, Float, Double, Struct};

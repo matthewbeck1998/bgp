@@ -12,7 +12,7 @@ int main()
 {
 	SymbolTable symTable;
 	SymbolNode node("foo", 1, 1, Char);
-	node.setIsFunction(true);
+	//node.setIsFunction(true);
 	node.pushFunctionParameter();
 	node.setCurrentFunctionParameterSign(Unsigned);
 	node.setCurrentFunctionParameterTypeQualifier(Volatile);
@@ -25,6 +25,8 @@ int main()
 	symTable.insert(node);
 
 	cout << symTable;
+
+	cout << errorStream.str();
 
 }
 
