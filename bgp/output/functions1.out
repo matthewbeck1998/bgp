@@ -1,0 +1,138 @@
+Token: INT
+	Source: int
+Rule: type_specifier -> INT
+Token: IDENTIFIER
+	Source: foo
+Rule: declaration_specifiers -> type_specifier
+Rule: identifier -> IDENTIFIER
+Rule: direct_declarator -> identifier
+Token: SYMBOL_TABLE_DUMP
+	Source: @s
+Level: 1
+	Key: foo
+	Node: 	identifier: "foo"
+	lineNum: 2 colNum: 8 scopeLevel: 1 Function: False
+	Signature: "signed int"
+Token: OPAREN
+	Source: (
+Token: SYMBOL_TABLE_DUMP
+	Source: @s
+Level: 2
+Level: 1
+	Key: foo
+	Node: 	identifier: "foo"
+	lineNum: 2 colNum: 8 scopeLevel: 1 Function: True
+	Signature: "signed int"
+Token: INT
+	Source: int
+Rule: type_specifier -> INT
+Token: IDENTIFIER
+	Source: bar
+Rule: declaration_specifiers -> type_specifier
+Rule: identifier -> IDENTIFIER
+Rule: direct_declarator -> identifier
+Token: COMMA
+	Source: ,
+Rule: declarator -> direct_declarator
+Rule: parameter_declaration -> declaration_specifiers declarator
+Rule: parameter_list -> parameter_declaration
+Token: CHAR
+	Source: char
+Rule: type_specifier -> CHAR
+Token: IDENTIFIER
+	Source: baz
+Rule: declaration_specifiers -> type_specifier
+Rule: identifier -> IDENTIFIER
+Rule: direct_declarator -> identifier
+Token: CPAREN
+	Source: )
+Rule: declarator -> direct_declarator
+Rule: parameter_declaration -> declaration_specifiers declarator
+Rule: parameter_list -> parameter_list COMMA parameter_declaration
+Rule: parameter_type_list -> parameter_list
+Rule: direct_declarator -> direct_declarator OPAREN parameter_type_list CPAREN
+Token: SEMICOLON
+	Source: ;
+Rule: declarator -> direct_declarator
+Rule: init_declarator -> declarator
+Rule: init_declarator_list -> init_declarator
+Rule: declaration -> declaration_specifiers init_declarator_list SEMICOLON
+Rule: external_declaration -> declaration
+Rule: translation_unit -> external_declaration
+Token: SYMBOL_TABLE_DUMP
+	Source: @s
+Level: 2
+	Key: bar
+	Node: 	identifier: "bar"
+	lineNum: 2 colNum: 23 scopeLevel: 2 Function: False
+	Signature: "signed int"
+	Key: baz
+	Node: 	identifier: "baz"
+	lineNum: 2 colNum: 33 scopeLevel: 2 Function: False
+	Signature: "signed char"
+Level: 1
+	Key: foo
+	Node: 	identifier: "foo"
+	lineNum: 2 colNum: 8 scopeLevel: 1 Function: True
+	Signature: "signed int"
+Token: INT
+	Source: int
+Rule: type_specifier -> INT
+Token: IDENTIFIER
+	Source: main
+Rule: declaration_specifiers -> type_specifier
+Rule: identifier -> IDENTIFIER
+Rule: direct_declarator -> identifier
+Token: OPAREN
+	Source: (
+Token: CPAREN
+	Source: )
+Rule: direct_declarator -> direct_declarator OPAREN CPAREN
+Level: 3
+Level: 2
+	Key: bar
+	Node: 	identifier: "bar"
+	lineNum: 2 colNum: 23 scopeLevel: 2 Function: False
+	Signature: "signed int"
+	Key: baz
+	Node: 	identifier: "baz"
+	lineNum: 2 colNum: 33 scopeLevel: 2 Function: False
+	Signature: "signed char"
+	Key: main
+	Node: 	identifier: "main"
+	lineNum: 5 colNum: 9 scopeLevel: 2 Function: True
+	Signature: "signed int"
+Level: 1
+	Key: foo
+	Node: 	identifier: "foo"
+	lineNum: 2 colNum: 8 scopeLevel: 1 Function: True
+	Signature: "signed int"
+Token: OBRACE
+	Source: {
+Rule: declarator -> direct_declarator
+Level: 4
+Level: 3
+Level: 2
+	Key: bar
+	Node: 	identifier: "bar"
+	lineNum: 2 colNum: 23 scopeLevel: 2 Function: False
+	Signature: "signed int"
+	Key: baz
+	Node: 	identifier: "baz"
+	lineNum: 2 colNum: 33 scopeLevel: 2 Function: False
+	Signature: "signed char"
+	Key: main
+	Node: 	identifier: "main"
+	lineNum: 5 colNum: 9 scopeLevel: 2 Function: True
+	Signature: "signed int"
+Level: 1
+	Key: foo
+	Node: 	identifier: "foo"
+	lineNum: 2 colNum: 8 scopeLevel: 1 Function: True
+	Signature: "signed int"
+Token: CBRACE
+	Source: }
+Rule: compound_statement -> OBRACE CBRACE
+Rule: function_definition -> declaration_specifiers declarator compound_statement
+Rule: external_declaration -> function_definition
+Rule: translation_unit -> translation_unit external_declaration

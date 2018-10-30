@@ -1,0 +1,77 @@
+Token: INT
+	Source: int
+Rule: type_specifier -> INT
+Token: IDENTIFIER
+	Source: main
+Rule: declaration_specifiers -> type_specifier
+Rule: identifier -> IDENTIFIER
+Rule: direct_declarator -> identifier
+Token: OPAREN
+	Source: (
+Token: CPAREN
+	Source: )
+Rule: direct_declarator -> direct_declarator OPAREN CPAREN
+Level: 2
+Level: 1
+	Key: main
+	Node: 	identifier: "main"
+	lineNum: 2 colNum: 9 scopeLevel: 1 Function: True
+	Signature: "signed int"
+
+Token: OBRACE
+	Source: {
+Rule: declarator -> direct_declarator
+Token: INT
+	Source: int
+Rule: type_specifier -> INT
+Token: IDENTIFIER
+	Source: a
+Rule: declaration_specifiers -> type_specifier
+Rule: identifier -> IDENTIFIER
+Rule: direct_declarator -> identifier
+Token: SEMICOLON
+	Source: ;
+Rule: declarator -> direct_declarator
+Rule: init_declarator -> declarator
+Rule: init_declarator_list -> init_declarator
+Rule: declaration -> declaration_specifiers init_declarator_list SEMICOLON
+Rule: declaration_list -> declaration
+Token: INT
+	Source: int
+Rule: type_specifier -> INT
+Token: IDENTIFIER
+	Source: b
+Rule: declaration_specifiers -> type_specifier
+Rule: identifier -> IDENTIFIER
+Rule: direct_declarator -> identifier
+Token: SEMICOLON
+	Source: ;
+Rule: declarator -> direct_declarator
+Rule: init_declarator -> declarator
+Rule: init_declarator_list -> init_declarator
+Rule: declaration -> declaration_specifiers init_declarator_list SEMICOLON
+Rule: declaration_list -> declaration_list declaration
+Level: 3
+	Key: a
+	Node: 	identifier: "a"
+	lineNum: 4 colNum: 10 scopeLevel: 3 Function: False
+	Signature: "signed int"
+
+	Key: b
+	Node: 	identifier: "b"
+	lineNum: 5 colNum: 10 scopeLevel: 3 Function: False
+	Signature: "signed int"
+
+Level: 2
+Level: 1
+	Key: main
+	Node: 	identifier: "main"
+	lineNum: 2 colNum: 9 scopeLevel: 1 Function: True
+	Signature: "signed int"
+
+Token: CBRACE
+	Source: }
+Rule: compound_statement -> OBRACE declaration_list CBRACE
+Rule: function_definition -> declaration_specifiers declarator compound_statement
+Rule: external_declaration -> function_definition
+Rule: translation_unit -> external_declaration
