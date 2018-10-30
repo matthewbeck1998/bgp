@@ -11,7 +11,7 @@
 #include <map>
 #include <list>
 #include <iterator>
-#include "Node.h"
+#include "SymbolNode.h"
 
 using namespace std;
 

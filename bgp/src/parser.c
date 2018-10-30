@@ -70,7 +70,7 @@
 #include <cstdio>
 #include <cstring>
 #include "SymbolTable.h"
-#include "Node.h"
+#include "SymbolNode.h"
 
 using namespace std;
 

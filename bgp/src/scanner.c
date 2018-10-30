@@ -645,7 +645,7 @@ char *yytext;
 #include <cstring>
 #include "parser.h"
 #include "SymbolTable.h"
-#include "Node.h"
+#include "SymbolNode.h"
 
 using namespace std;
 
