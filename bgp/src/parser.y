@@ -41,11 +41,17 @@ int nodeTypeQualifier = -1;
 bool nodeIsFunction = false;
 bool nodeIsSigned = true;
 string lastNodeInserted = "";
+
+
+
+ASTNode* root = new ASTNode("Translation Unit");
+AST tree(root);
 %}
 
 %union
 {
     char sval[255];
+    ASTNode *nodePtr;
 }
 
 %define parse.error verbose
@@ -69,39 +75,55 @@ string lastNodeInserted = "";
 %token <sval> STRING_LITERAL TYPEDEF_NAME IDENTIFIER
 %token <sval> ERROR
 
+%type <nodePtr> translation_unit external_declaration function_definition declaration declaration_list
+%type <nodePtr> declaration_specifiers type_specifier init_declarator_list init_declarator declarator
+%type <nodePtr> direct_declarator compound_statement
+
 %%
 
 translation_unit
-	: external_declaration { parserOutput("translation_unit -> external_declaration"); }
+	: external_declaration {root->addChild($1);  parserOutput("translation_unit -> external_declaration"); }
 	| translation_unit external_declaration { parserOutput("translation_unit -> translation_unit external_declaration"); }
 	;
 
 external_declaration
-	: function_definition { parserOutput("external_declaration -> function_definition"); }
+	: function_definition { $$ = $1; parserOutput("external_declaration -> function_definition"); }
 	| declaration { parserOutput("external_declaration -> declaration"); }
 	;
 
 function_definition
 	: declarator compound_statement { parserOutput("function_definition -> declarator compound_statement"); st.popLevel(); }
 	| declarator declaration_list compound_statement { parserOutput("function_definition -> declarator declaration_list compound_statement"); st.popLevel(); }
-	| declaration_specifiers declarator compound_statement { parserOutput("function_definition -> declaration_specifiers declarator compound_statement"); st.popLevel(); }
+	| declaration_specifiers declarator compound_statement {
+	                                                        ASTNode* temp = new ASTNode("function_definition");
+	                                                        temp->addChild($1);
+	                                                        temp->addChild($2);
+	                                                        temp->addChild($3);
+	                                                        $$ = temp;
+	                                                        parserOutput("function_definition -> declaration_specifiers declarator compound_statement");
+	                                                        st.popLevel(); }
 	| declaration_specifiers declarator declaration_list compound_statement { parserOutput("function_definition -> declaration_specifiers declarator declaration_list compound_statement"); st.popLevel(); }
 	;
 
 declaration
 	: declaration_specifiers SEMICOLON { parserOutput("declaration -> declaration_specifiers SEMICOLON"); }
-	| declaration_specifiers init_declarator_list SEMICOLON { parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON"); }
+	| declaration_specifiers init_declarator_list SEMICOLON {
+	                                                            ASTNode* temp = new ASTNode("Declaration");
+	                                                            temp->addChild($1);
+	                                                            temp->addChild($2);
+	                                                            $$ = temp;
+	                                                            parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON"); }
 	;
 
 declaration_list
-	: declaration { parserOutput("declaration_list -> declaration"); st.setInsertMode(false); }
+	: declaration { $$ = $1; parserOutput("declaration_list -> declaration"); st.setInsertMode(false); }
 	| declaration_list declaration { parserOutput("declaration_list -> declaration_list declaration"); st.setInsertMode(false); }
 	;
 
 declaration_specifiers
 	: storage_class_specifier { parserOutput("declaration_specifiers -> storage_class_specifier"); }
 	| storage_class_specifier declaration_specifiers { parserOutput("declaration_specifiers -> storage_class_specifier declaration_specifiers"); }
-	| type_specifier { parserOutput("declaration_specifiers -> type_specifier"); }
+	| type_specifier { $$ = $1; parserOutput("declaration_specifiers -> type_specifier"); }
 	| type_specifier declaration_specifiers { parserOutput("declaration_specifiers -> type_specifier declaration_specifiers"); }
 	| type_qualifier { parserOutput("declaration_specifiers -> type_qualifier"); }
 	| type_qualifier declaration_specifiers { parserOutput("declaration_specifiers -> type_qualifier declaration_specifiers"); }
@@ -119,7 +141,7 @@ type_specifier
 	: VOID { parserOutput("type_specifier -> VOID"); st.setInsertMode(true); nodeTypeSpecifier = 0; }
 	| CHAR { parserOutput("type_specifier -> CHAR"); st.setInsertMode(true); nodeTypeSpecifier = 1; }
 	| SHORT { parserOutput("type_specifier -> SHORT"); st.setInsertMode(true); nodeTypeSpecifier = 2; }
-	| INT { parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeTypeSpecifier = 3; }
+	| INT { $$ = new ASTNode("INT"); parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeTypeSpecifier = 3; }
 	| LONG { parserOutput("type_specifier -> LONG"); st.setInsertMode(true); nodeTypeSpecifier = 4; }
 	| FLOAT { parserOutput("type_specifier -> FLOAT"); st.setInsertMode(true); nodeTypeSpecifier = 5; }
 	| DOUBLE { parserOutput("type_specifier -> DOUBLE"); st.setInsertMode(true); nodeTypeSpecifier = 6; }
@@ -152,12 +174,12 @@ struct_declaration_list
 	;
 
 init_declarator_list
-	: init_declarator { parserOutput("init_declarator_list -> init_declarator"); }
+	: init_declarator {$$ = $1; parserOutput("init_declarator_list -> init_declarator"); }
 	| init_declarator_list COMMA init_declarator { parserOutput("init_declarator_list -> init_declarator_list COMMA init_declarator"); }
 	;
 
 init_declarator
-	: declarator { parserOutput("init_declarator -> declarator"); }
+	: declarator {$$ = $1; parserOutput("init_declarator -> declarator"); }
 	| declarator ASSIGN initializer { parserOutput("init_declarator -> declarator ASSIGN initializer"); }
 	;
 
@@ -200,7 +222,7 @@ enumerator
 	;
 
 declarator
-	: direct_declarator { parserOutput("declarator -> direct_declarator"); }
+	: direct_declarator {$$ = $1; parserOutput("declarator -> direct_declarator"); }
 	| pointer direct_declarator { parserOutput("declarator -> pointer direct_declarator"); }
 	;
 
@@ -226,6 +248,7 @@ direct_declarator
                         nodeTypeQualifier = -1;
                         nodeIsFunction = false;
                         nodeIsSigned = true;
+                        $$ = new ASTNode("IDENTIFIER");
                     }
 	| OPAREN declarator CPAREN { parserOutput("direct_declarator -> OPAREN declarator CPAREN"); }
 	| direct_declarator OBRACKET CBRACKET { parserOutput("direct_declarator -> direct_declarator OBRACKET CBRACKET"); }
@@ -325,7 +348,7 @@ expression_statement
 compound_statement
 	: OBRACE CBRACE { parserOutput("compound_statement -> OBRACE CBRACE"); }
 	| OBRACE statement_list CBRACE { parserOutput("compound_statement -> OBRACE statement_list CBRACE"); }
-	| OBRACE declaration_list CBRACE { parserOutput("compound_statement -> OBRACE declaration_list CBRACE"); }
+	| OBRACE declaration_list CBRACE { $$ = $2; parserOutput("compound_statement -> OBRACE declaration_list CBRACE"); }
 	| OBRACE declaration_list statement_list CBRACE { parserOutput("compound_statement -> OBRACE declaration_list statement_list CBRACE"); }
 	;
 
@@ -529,6 +552,7 @@ int main(int argc, char** argv)
 	int outputIndex = parseCommandLine(argc, argv); //Returns the index of the output file in argv or 0 if there is no -o
 
 	yyparse();
+	tree.printTree();
 
     outputFile.open( outputIndex ? argv[outputIndex] : "output/defaultOutput.txt");
     if (outputFile.good())

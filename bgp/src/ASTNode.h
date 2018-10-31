@@ -6,6 +6,7 @@
 #define PROJECT_ASTNODE_H
 
 #include <list>
+#include <string>
 #include <iostream>
 #include "SymbolNode.h"
 
@@ -14,21 +15,26 @@ using namespace std;
 class ASTNode
 {
     public:
-        ASTNode();
-        ASTNode(int node_label, int line_num, list<ASTNode*> child_list);
-        list<ASTNode*> getChildren() const;
-        int getLabel() const;
-        int getLineNum() const;
-        virtual bool walk() = 0;
+        ASTNode(string node_label); //Add line and col num when ready
+        void addChild(ASTNode* addNode);
+        string getLabel() const;
+        //int getLineNum() const;
+        list<ASTNode *> &getChildren ();
+		static int totalNodeCount;
 
-    protected:
-        int label; //Need enum for labels
-        int lineNum; //Do we need a column number?
+	int getNodeNum () const;
+
+protected:
+	string label;
+    int colNum; //Not implemented yet
+    int lineNum; //Not implemented yet
+	int nodeNum;
+
         list<ASTNode*> children;
-        friend ostream& operator<< (ostream &os, const ASTNode& output);
+        //friend ostream& operator<< (ostream &os, const ASTNode& output);
 };
 
-class ASTSwitchNode : public ASTNode
+/*class ASTSwitchNode : public ASTNode
 {
     public:
         ASTSwitchNode();
@@ -79,5 +85,6 @@ class ASTFunctionNode : public ASTNode
 
     private:
         SymbolNode function;
-};
+};*/
+
 #endif //PROJECT_ASTNODE_H

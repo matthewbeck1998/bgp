@@ -16,12 +16,19 @@
 #define PROJECT_AST_H
 
 
+#include "ASTNode.h"
+
 class AST
 {
     public:
-        AST();
-        bool walk();
+        explicit AST(ASTNode* root);
+        //bool walk();
+        void printTree();
+        void printTreeHelper(ASTNode* nodePtr, ofstream& treeOutFile);
+
+
     private:
+		ASTNode* root;
 
 
 };

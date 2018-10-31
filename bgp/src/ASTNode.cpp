@@ -1,6 +1,6 @@
 #include "ASTNode.h"
 
-ASTNode::ASTNode() {}
+/*ASTNode::ASTNode() {}
 ASTNode::ASTNode(int node_label, int line_num, list<ASTNode*> child_list)
 {
     label = node_label;
@@ -60,4 +60,36 @@ ASTFunctionNode::ASTFunctionNode(int node_label, int line_num, list<ASTNode*> ch
         ASTNode::ASTNode(node_label, line_num, child_list),
         function(inputSymbolNode.getIdentifier(), inputSymbolNode.getLineNum(), 0, inputSymbolNode.getTypeSpecifierIndex()) // This calls the SymbolTableNode constructor. The 0 is column num
 {}
-bool ASTFunctionNode::walk() {}
+bool ASTFunctionNode::walk() {}*/
+
+int ASTNode::totalNodeCount = 0;
+
+ASTNode::ASTNode (string node_label) : label(move(node_label))
+{
+	nodeNum = totalNodeCount++;
+}
+
+void ASTNode::addChild (ASTNode *addNode)
+{
+    children.push_front(addNode);
+}
+
+string ASTNode::getLabel () const
+{
+    return label;
+}
+
+list<ASTNode *> &ASTNode::getChildren ()
+{
+    return children;
+}
+
+int ASTNode::getNodeNum () const
+{
+	return nodeNum;
+}
+
+/*int ASTNode::getLineNum () const
+{
+    return 0;
+}*/
