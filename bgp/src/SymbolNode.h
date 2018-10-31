@@ -16,7 +16,7 @@ using namespace std;
 enum storage_class_specifier{Auto, Register, Static, Extern, Typedef};
 enum type_specifier{Void, Char, Short, Int, Long, Float, Double, Struct};
 enum type_qualifier{Const, Volatile, Both};
-enum parameterSign{Signed, Unsigned};
+enum parameterSign{Unsigned, Signed};
 enum parameterIndices{parameterQualifierIndex, parameterSignIndex, parameterSpecifierIndex};
 
 class SymbolNode
