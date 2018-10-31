@@ -41,6 +41,8 @@ int nodeTypeQualifier = -1;
 bool nodeIsFunction = false;
 bool nodeIsSigned = true;
 string lastNodeInserted = "";
+bool inFunctionParameters = false;
+string currentFunctionNode = "";
 
 
 
@@ -227,8 +229,24 @@ declarator
 	;
 
 direct_declarator
-	: identifier    { 
+	: identifier    {
                         parserOutput("direct_declarator -> identifier");
+
+                        if (inFunctionParameters)
+                        {
+                            auto functionPair = st.searchAll(currentFunctionNode);
+
+                            if (!st.isLastSearchValid())
+                            {
+                                return 1;
+                            }
+
+                            functionPair.second->second.pushFunctionParameter();
+                            functionPair.second->second.setCurrentFunctionParameterTypeSpecifier(nodeTypeSpecifier);
+                            functionPair.second->second.setCurrentFunctionParameterTypeQualifier(nodeTypeQualifier);
+                            functionPair.second->second.setCurrentFunctionParameterSign(nodeIsSigned);
+                        }
+
                         SymbolNode node(nodeIdentifier, line, column, nodeTypeSpecifier);
                         node.setTypeStorageClassIndex(nodeStorageClassSpecifier);
                         node.setTypeQualifierIndex(nodeTypeQualifier);
