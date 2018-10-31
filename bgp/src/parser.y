@@ -6,6 +6,8 @@
 #include <cstring>
 #include "SymbolTable.h"
 #include "SymbolNode.h"
+#include "AST.h"
+#include "ASTNode.h"
 
 using namespace std;
 
