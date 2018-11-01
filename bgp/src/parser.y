@@ -97,10 +97,11 @@ AST tree(root);
 
 translation_unit
 	: external_declaration {root->addChild($1);  parserOutput("translation_unit -> external_declaration"); }
-	| translation_unit external_declaration { ASTNode* temp = new ASTNode("translation_unit");
-	                                          temp -> addChild($1);
-	                                          temp -> addChild($2);
-	                                          $$ = temp;
+	| translation_unit external_declaration { //ASTNode* temp = new ASTNode("translation_unit");
+	                                          //temp -> addChild($1);
+	                                          //temp -> addChild($2);
+	                                          //$$ = temp;
+	                                          root->addChild($2);
 	                                          parserOutput("translation_unit -> translation_unit external_declaration"); }
 	;
 

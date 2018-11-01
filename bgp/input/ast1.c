@@ -1,3 +1,6 @@
+int test;
+
+int test1;
 int main()
 {
 	int a = 1 + 2, b = 0;
