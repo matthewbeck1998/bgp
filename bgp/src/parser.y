@@ -708,7 +708,9 @@ conditional_expression
 	: logical_or_expression { $$ = $1; parserOutput("conditional_expression -> logical_or_expression"); }
 	| logical_or_expression QUESTION expression COLON conditional_expression { ASTNode* temp = new ASTNode("conditional_expression");
                                                                                temp -> addChild($1);
+                                                                               temp -> addChild(new ASTNode("QUESTION"));
                                                                                temp -> addChild($3);
+                                                                               temp -> addChild(new ASTNode("COLON"));
                                                                                temp -> addChild($5);
                                                                                $$ = temp;
                                                                                parserOutput("conditional_expression -> logical_or_expression QUESTION expression COLON conditional_expression"); }
@@ -723,6 +725,7 @@ logical_or_expression
 	                           parserOutput("logical_or_expression -> logical_and_expression"); }
 	| logical_or_expression L_OR logical_and_expression { ASTNode* temp = new ASTNode("logical_or_expression");
                                                              temp -> addChild($1);
+                                                             temp -> addChild(new ASTNode("L_OR"));
                                                              temp -> addChild($3);
                                                              $$ = temp;
                                                              parserOutput("logical_or_expression -> logical_or_expression L_OR logical_and_expression"); }
@@ -732,6 +735,7 @@ logical_and_expression
 	: inclusive_or_expression { $$ = $1; parserOutput("logical_and_expression -> inclusive_or_expression"); }
 	| logical_and_expression L_AND inclusive_or_expression { ASTNode* temp = new ASTNode("logical_and_expression");
                                                               temp -> addChild($1);
+                                                              temp -> addChild(new ASTNode("L_AND"));
                                                               temp -> addChild($3);
                                                               $$ = temp;
                                                               parserOutput("logical_and_expression -> logical_and_expression L_AND inclusive_or_expression"); }
@@ -741,6 +745,7 @@ inclusive_or_expression
 	: exclusive_or_expression { $$ = $1; parserOutput("inclusive_or_expression -> exclusive_or_expression"); }
 	| inclusive_or_expression B_OR exclusive_or_expression { ASTNode* temp = new ASTNode("inclusive_or_expression");
                                                                temp -> addChild($1);
+                                                               temp -> addChild(new ASTNode("B_OR"));
                                                                temp -> addChild($3);
                                                                $$ = temp;
                                                                parserOutput("inclusive_or_expression -> inclusive_or_expression B_OR exclusive_or_expression"); }
@@ -750,6 +755,7 @@ exclusive_or_expression
 	: and_expression { $$ = $1; parserOutput("exclusive_or_expression -> and_expression"); }
 	| exclusive_or_expression B_XOR and_expression { ASTNode* temp = new ASTNode("exclusive_or_expression");
                                                         temp -> addChild($1);
+                                                        temp -> addChild(new ASTNode("B_XOR"));
                                                         temp -> addChild($3);
                                                         $$ = temp;
                                                         parserOutput("exclusive_or_expression -> exclusive_or_expression B_XOR and_expression"); }
@@ -759,6 +765,7 @@ and_expression
 	: equality_expression { $$ = $1; parserOutput("and_expression -> equality_expression"); }
 	| and_expression AMPERSAND equality_expression { ASTNode* temp = new ASTNode("and_expression");
                                                      temp -> addChild($1);
+                                                     temp -> addChild(new ASTNode("AMPERSAND"));
                                                      temp -> addChild($3);
                                                      $$ = temp;
                                                      parserOutput("and_expression -> and_expression AMPERSAND equality_expression"); }
@@ -768,11 +775,13 @@ equality_expression
 	: relational_expression { $$ = $1; parserOutput("equality_expression -> relational_expression"); }
 	| equality_expression EQ_OP relational_expression { ASTNode* temp = new ASTNode("equality_expression");
                                                          temp -> addChild($1);
+                                                         temp -> addChild(new ASTNode("EQ_OP"));
                                                          temp -> addChild($3);
                                                          $$ = temp;
                                                          parserOutput("equality_expression -> equality_expression EQ_OP relational_expression"); }
 	| equality_expression NE_OP relational_expression { ASTNode* temp = new ASTNode("equality_expression");
                                                          temp -> addChild($1);
+                                                         temp -> addChild(new ASTNode("NE_OP"));
                                                          temp -> addChild($3);
                                                          $$ = temp;
                                                          parserOutput("equality_expression -> equality_expression NE_OP relational_expression"); }
@@ -782,21 +791,25 @@ relational_expression
 	: shift_expression { $$ = $1; parserOutput("relational_expression -> shift_expression"); }
 	| relational_expression LT_OP shift_expression { ASTNode* temp = new ASTNode("relational_expression");
                                                       temp -> addChild($1);
+                                                      temp -> addChild(new ASTNode("LT_OP"));
                                                       temp -> addChild($3);
                                                       $$ = temp;
                                                       parserOutput("relational_expression -> relational_expression LT_OP shift_expression"); }
 	| relational_expression GT_OP shift_expression { ASTNode* temp = new ASTNode("relational_expression");
                                                        temp -> addChild($1);
+                                                       temp -> addChild(new ASTNode("GT_OP"));
                                                        temp -> addChild($3);
                                                        $$ = temp;
                                                        parserOutput("relational_expression -> relational_expression GT_OP shift_expression"); }
 	| relational_expression LE_OP shift_expression { ASTNode* temp = new ASTNode("relational_expression");
                                                        temp -> addChild($1);
+                                                       temp -> addChild(new ASTNode("LE_OP"));
                                                        temp -> addChild($3);
                                                        $$ = temp;
                                                        parserOutput("relational_expression -> relational_expression LE_OP shift_expression"); }
 	| relational_expression GE_OP shift_expression { ASTNode* temp = new ASTNode("relational_expression");
                                                        temp -> addChild($1);
+                                                       temp -> addChild(new ASTNode("GE_OP"));
                                                        temp -> addChild($3);
                                                        $$ = temp;
                                                        parserOutput("relational_expression -> relational_expression GE_OP shift_expression"); }
@@ -806,11 +819,13 @@ shift_expression
 	: additive_expression { $$ = $1; parserOutput("shift_expression -> additive_expression"); }
 	| shift_expression B_SL additive_expression { ASTNode* temp = new ASTNode("shift_expression");
                                                     temp -> addChild($1);
+                                                    temp -> addChild(new ASTNode("B_SL"));
                                                     temp -> addChild($3);
                                                     $$ = temp;
                                                     parserOutput("shift_expression -> shift_expression B_SL additive_expression"); }
 	| shift_expression B_SR additive_expression { ASTNode* temp = new ASTNode("shift_expression");
                                                       temp -> addChild($1);
+                                                      temp -> addChild(new ASTNode("B_SR"));
                                                       temp -> addChild($3);
                                                       $$ = temp;
                                                       parserOutput("shift_expression -> shift_expression B_SR additive_expression"); }
@@ -826,6 +841,7 @@ additive_expression
 	                                                      parserOutput("additive_expression -> additive_expression ADD multiplicative_expression"); }
 	| additive_expression SUB multiplicative_expression { ASTNode* temp = new ASTNode("additive_expression");
                                                           temp -> addChild($1);
+                                                          temp -> addChild(new ASTNode("SUB"));
                                                           temp -> addChild($3);
                                                           $$ = temp;
                                                           parserOutput("additive_expression -> additive_expression SUB multiplicative_expression"); }
@@ -835,16 +851,19 @@ multiplicative_expression
 	: cast_expression { $$ = $1; parserOutput("multiplicative_expression -> cast_expression"); }
 	| multiplicative_expression STAR cast_expression { ASTNode* temp = new ASTNode("multiplicative_expression");
                                                          temp -> addChild($1);
+                                                         temp -> addChild(new ASTNode("STAR"));
                                                          temp -> addChild($3);
                                                          $$ = temp;
                                                          parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
 	| multiplicative_expression DIV cast_expression { ASTNode* temp = new ASTNode("multiplicative_expression");
                                                            temp -> addChild($1);
+                                                           temp -> addChild(new ASTNode("DIV"));
                                                            temp -> addChild($3);
                                                            $$ = temp;
                                                            parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
 	| multiplicative_expression MOD cast_expression { ASTNode* temp = new ASTNode("multiplicative_expression");
                                                        temp -> addChild($1);
+                                                       temp -> addChild(new ASTNode("MOD"));
                                                        temp -> addChild($3);
                                                        $$ = temp;
                                                        parserOutput("multiplicative_expression -> multiplicative_expression MOD cast_expression"); }
