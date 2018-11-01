@@ -1,0 +1,15 @@
+digraph G {
+0[label = "Translation Unit"];
+0 -> 8
+8[label = "function_definition"];
+8 -> 1
+1[label = "INT"];
+8 -> 3
+3[label = "IDENTIFIER"];
+8 -> 7
+7[label = "Declaration"];
+7 -> 4
+4[label = "INT"];
+7 -> 6
+6[label = "IDENTIFIER"];
+}
