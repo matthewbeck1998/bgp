@@ -24,9 +24,8 @@ AST.o: AST.cpp AST.h
 ASTNode.o: ASTNode.cpp ASTNode.h
 	$(CXX) $(CXXFLAGS) -c ASTNode.cpp
 
+graph:
+	dot -Tpng ..\output\treeOut.dot -o ..\output\ASTree.png
+
 clean:
-	rm parser.c
-	rm parser.h
-	rm scanner.c
-	rm *.o
-	rm ../bin/bgp
+	rm parser.c parser.h scanner.c *.o ../bin/bgp

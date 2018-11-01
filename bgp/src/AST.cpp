@@ -27,7 +27,7 @@ void AST::printTree ()
 	if(root != nullptr)
 	{
 		ofstream treeOutFile;
-		treeOutFile.open("output/treeOut.txt");
+		treeOutFile.open("output/treeOut.dot");
 		treeOutFile << "digraph G {" << endl;
 		printTreeHelper(root, treeOutFile);
 		treeOutFile << '}';
