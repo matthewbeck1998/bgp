@@ -19,7 +19,7 @@ bool ASTNode::walk() const
 {
     for(auto it = children.begin() ; it != children.end() ; ++it)
     {
-        if( (*it)->walk() == false )
+        if(not (*it)->walk())
         {
             return false;
         }
@@ -43,7 +43,7 @@ int ASTNode::getNodeNum () const
 }
 
 
-ASTMathNode::ASTMathNode (string node_label) : ASTNode::ASTNode(node_label)
+ASTMathNode::ASTMathNode (string node_label) : ASTNode::ASTNode(move(node_label))
 {
 }
 
