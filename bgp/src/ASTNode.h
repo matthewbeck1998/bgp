@@ -8,6 +8,7 @@
 #include <list>
 #include <string>
 #include <iostream>
+#include <cstring>
 #include "SymbolNode.h"
 
 using namespace std;
@@ -18,7 +19,7 @@ class ASTNode
         ASTNode(string node_label); //Add line and col num when ready
         void addChild(ASTNode* addNode);
         string getLabel() const;
-        //int getLineNum() const;
+        virtual bool walk() const;
         list<ASTNode *> &getChildren ();
 		static int totalNodeCount;
 
@@ -30,8 +31,29 @@ protected:
     int lineNum; //Not implemented yet
 	int nodeNum;
 
-        list<ASTNode*> children;
+    list<ASTNode*> children;
         //friend ostream& operator<< (ostream &os, const ASTNode& output);
+};
+
+class ASTMathNode : public ASTNode
+{
+    public:
+        ASTMathNode(string node_label);
+        bool walk() const;
+};
+
+class ASTVariableNode : public ASTNode
+{
+    public:
+        ASTVariableNode(string node_label);
+        bool walk() const;
+        int getType() const;
+        const char* getValue() const;
+        void setValue(char* inputValue);
+        void setType(int inputType);
+    private:
+        char value[256];
+        int type;
 };
 
 /*class ASTSwitchNode : public ASTNode
@@ -40,51 +62,6 @@ protected:
         ASTSwitchNode();
         ASTSwitchNode(int node_label, int line_num, list<ASTNode*> child_list);
         bool walk();
-};
-
-class ASTMathNode : public  ASTNode
-{
-    public:
-        ASTMathNode();
-        ASTMathNode(int node_label, int line_num, list<ASTNode*> child_list, int operator_type);
-        bool walk();
-
-    private:
-        int operatorType; //Need an enum for the +, -, *, ect
-};
-
-class ASTSingleMathNode : public ASTNode //The walk for this function will be different than the math node
-{
-    public:
-        ASTSingleMathNode();
-        ASTSingleMathNode(int node_label, int line_num, list<ASTNode*> child_list, int operator_type);
-        bool walk();
-
-    private:
-        int operatorType;
-};
-
-class ASTDeclaritors : public  ASTNode
-{
-    public:
-        ASTDeclaritors();
-        ASTDeclaritors(int node_label, int line_num, list<ASTNode*> child_list, SymbolNode inputSymbolNode);
-        bool walk();
-        int getType();
-
-    private:
-        SymbolNode variable;
-};
-
-class ASTFunctionNode : public ASTNode
-{
-    public:
-        ASTFunctionNode();
-        ASTFunctionNode(int node_label, int line_num, list<ASTNode*> child_list, SymbolNode inputSymbolNode);
-        bool walk();
-
-    private:
-        SymbolNode function;
 };*/
 
 #endif //PROJECT_ASTNODE_H

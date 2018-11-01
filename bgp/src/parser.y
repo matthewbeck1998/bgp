@@ -79,7 +79,12 @@ AST tree(root);
 
 %type <nodePtr> translation_unit external_declaration function_definition declaration declaration_list
 %type <nodePtr> declaration_specifiers type_specifier init_declarator_list init_declarator declarator
-%type <nodePtr> direct_declarator compound_statement
+%type <nodePtr> direct_declarator compound_statement constant initializer assignment_expression
+%type <nodePtr> conditional_expression logical_or_expression logical_and_expression inclusive_or_expression
+%type <nodePtr> exclusive_or_expression and_expression equality_expression relational_expression
+%type <nodePtr> shift_expression additive_expression multiplicative_expression cast_expression unary_expression
+%type <nodePtr> postfix_expression primary_expression statement expression_statement
+%type <nodePtr> identifier statement_list expression constant_expression
 
 %%
 
@@ -140,13 +145,13 @@ storage_class_specifier
 	;
 
 type_specifier
-	: VOID { parserOutput("type_specifier -> VOID"); st.setInsertMode(true); nodeTypeSpecifier = 0; }
-	| CHAR { parserOutput("type_specifier -> CHAR"); st.setInsertMode(true); nodeTypeSpecifier = 1; }
-	| SHORT { parserOutput("type_specifier -> SHORT"); st.setInsertMode(true); nodeTypeSpecifier = 2; }
+	: VOID { $$ = new ASTNode("VOID"); parserOutput("type_specifier -> VOID"); st.setInsertMode(true); nodeTypeSpecifier = 0; }
+	| CHAR { $$ = new ASTNode("CHAR"); parserOutput("type_specifier -> CHAR"); st.setInsertMode(true); nodeTypeSpecifier = 1; }
+	| SHORT { $$ = new ASTNode("SHORT"); parserOutput("type_specifier -> SHORT"); st.setInsertMode(true); nodeTypeSpecifier = 2; }
 	| INT { $$ = new ASTNode("INT"); parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeTypeSpecifier = 3; }
-	| LONG { parserOutput("type_specifier -> LONG"); st.setInsertMode(true); nodeTypeSpecifier = 4; }
-	| FLOAT { parserOutput("type_specifier -> FLOAT"); st.setInsertMode(true); nodeTypeSpecifier = 5; }
-	| DOUBLE { parserOutput("type_specifier -> DOUBLE"); st.setInsertMode(true); nodeTypeSpecifier = 6; }
+	| LONG { $$ = new ASTNode("LONG"); parserOutput("type_specifier -> LONG"); st.setInsertMode(true); nodeTypeSpecifier = 4; }
+	| FLOAT { $$ = new ASTNode("FLOAT"); parserOutput("type_specifier -> FLOAT"); st.setInsertMode(true); nodeTypeSpecifier = 5; }
+	| DOUBLE { $$ = new ASTNode("DOUBLE"); parserOutput("type_specifier -> DOUBLE"); st.setInsertMode(true); nodeTypeSpecifier = 6; }
 	| SIGNED { parserOutput("type_specifier -> SIGNED"); st.setInsertMode(true); nodeIsSigned = true; }
 	| UNSIGNED { parserOutput("type_specifier -> UNSIGNED"); st.setInsertMode(true); nodeIsSigned = false; }
 	| struct_or_union_specifier { parserOutput("type_specifier -> struct_or_union_specifier"); }
@@ -182,7 +187,12 @@ init_declarator_list
 
 init_declarator
 	: declarator {$$ = $1; parserOutput("init_declarator -> declarator"); }
-	| declarator ASSIGN initializer { parserOutput("init_declarator -> declarator ASSIGN initializer"); }
+	| declarator ASSIGN initializer { ASTNode* temp = new ASTNode("init_declarator");
+                                      temp->addChild($1);
+                                      temp->addChild(new ASTNode("ASSIGN"));
+                                      temp->addChild($3);
+                                      $$ = temp;
+parserOutput("init_declarator -> declarator ASSIGN initializer"); }
 	;
 
 struct_declaration
@@ -310,7 +320,8 @@ identifier_list
 	;
 
 initializer
-	: assignment_expression { parserOutput("initializer -> assignment_expression"); }
+	: assignment_expression { $$ = $1;
+	                          parserOutput("initializer -> assignment_expression"); }
 	| OBRACE initializer_list CBRACE { parserOutput("initializer -> OBRACE initializer_list CBRACE"); }
 	| OBRACE initializer_list COMMA CBRACE { parserOutput("initializer -> OBRACE initializer_list COMMA CBRACE"); }
 	;
@@ -346,7 +357,7 @@ direct_abstract_declarator
 statement
 	: labeled_statement { parserOutput("statement -> labeled_statement"); }
 	| compound_statement { parserOutput("statement -> compound_statement"); }
-	| expression_statement { parserOutput("statement -> expression_statement"); }
+	| expression_statement { $$ = $1; parserOutput("statement -> expression_statement"); }
 	| selection_statement { parserOutput("statement -> selection_statement"); }
 	| iteration_statement { parserOutput("statement -> iteration_statement"); }
 	| jump_statement { parserOutput("statement -> jump_statement"); }
@@ -360,18 +371,18 @@ labeled_statement
 
 expression_statement
 	: SEMICOLON { parserOutput("expression_statement -> SEMICOLON"); }
-	| expression SEMICOLON { parserOutput("expression_statement -> expression SEMICOLON"); }
+	| expression SEMICOLON { $$ = $1; parserOutput("expression_statement -> expression SEMICOLON"); }
 	;
 
 compound_statement
-	: OBRACE CBRACE { parserOutput("compound_statement -> OBRACE CBRACE"); }
-	| OBRACE statement_list CBRACE { parserOutput("compound_statement -> OBRACE statement_list CBRACE"); }
+	: OBRACE CBRACE { $$ = new ASTNode("NAN"); parserOutput("compound_statement -> OBRACE CBRACE"); }
+	| OBRACE statement_list CBRACE { $$ = $2; parserOutput("compound_statement -> OBRACE statement_list CBRACE"); }
 	| OBRACE declaration_list CBRACE { $$ = $2; parserOutput("compound_statement -> OBRACE declaration_list CBRACE"); }
 	| OBRACE declaration_list statement_list CBRACE { parserOutput("compound_statement -> OBRACE declaration_list statement_list CBRACE"); }
 	;
 
 statement_list
-	: statement { parserOutput("statement_list -> statement"); }
+	: statement { $$ = $1; parserOutput("statement_list -> statement"); }
 	| statement_list statement { parserOutput("statement_list -> statement_list statement"); }
 	;
 
@@ -403,12 +414,13 @@ jump_statement
 	;
 
 expression
-	: assignment_expression { parserOutput("expression -> assignment_expression"); }
+	: assignment_expression { $$ = $1; parserOutput("expression -> assignment_expression"); }
 	| expression COMMA assignment_expression { parserOutput("expression -> expression COMMA assignment_expression"); }
 	;
 
 assignment_expression
-	: conditional_expression { parserOutput("assignment_expression -> conditional_expression"); }
+	: conditional_expression { $$ = $1;
+	                           parserOutput("assignment_expression -> conditional_expression"); }
 	| unary_expression assignment_operator assignment_expression { parserOutput("assignment_expression -> unary_expression assignment_operator assignment_expression"); }
 	;
 
@@ -427,47 +439,55 @@ assignment_operator
 	;
 
 conditional_expression
-	: logical_or_expression { parserOutput("conditional_expression -> logical_or_expression"); }
+	: logical_or_expression { $$ = $1;
+	                          parserOutput("conditional_expression -> logical_or_expression"); }
 	| logical_or_expression QUESTION expression COLON conditional_expression { parserOutput("conditional_expression -> logical_or_expression QUESTION expression COLON conditional_expression"); }
 	;
 
 constant_expression
-	: conditional_expression { parserOutput("constant_expression -> conditional_expression"); }
+	: conditional_expression { $$ = $1; parserOutput("constant_expression -> conditional_expression"); }
 	;
 
 logical_or_expression
-	: logical_and_expression { parserOutput("logical_or_expression -> logical_and_expression"); }
+	: logical_and_expression { $$ = $1;
+	                           parserOutput("logical_or_expression -> logical_and_expression"); }
 	| logical_or_expression L_OR logical_and_expression { parserOutput("logical_or_expression -> logical_or_expression L_OR logical_and_expression"); }
 	;
 
 logical_and_expression
-	: inclusive_or_expression { parserOutput("logical_and_expression -> inclusive_or_expression"); }
+	: inclusive_or_expression { $$ = $1;
+	                            parserOutput("logical_and_expression -> inclusive_or_expression"); }
 	| logical_and_expression L_AND inclusive_or_expression { parserOutput("logical_and_expression -> logical_and_expression L_AND inclusive_or_expression"); }
 	;
 
 inclusive_or_expression
-	: exclusive_or_expression { parserOutput("inclusive_or_expression -> exclusive_or_expression"); }
+	: exclusive_or_expression { $$ = $1;
+	                            parserOutput("inclusive_or_expression -> exclusive_or_expression"); }
 	| inclusive_or_expression B_OR exclusive_or_expression { parserOutput("inclusive_or_expression -> inclusive_or_expression B_OR exclusive_or_expression"); }
 	;
 
 exclusive_or_expression
-	: and_expression { parserOutput("exclusive_or_expression -> and_expression"); }
+	: and_expression { $$ = $1;
+	                   parserOutput("exclusive_or_expression -> and_expression"); }
 	| exclusive_or_expression B_XOR and_expression { parserOutput("exclusive_or_expression -> exclusive_or_expression B_XOR and_expression"); }
 	;
 
 and_expression
-	: equality_expression { parserOutput("and_expression -> equality_expression"); }
+	: equality_expression { $$ = $1;
+	                        parserOutput("and_expression -> equality_expression"); }
 	| and_expression AMPERSAND equality_expression { parserOutput("and_expression -> and_expression AMPERSAND equality_expression"); }
 	;
 
 equality_expression
-	: relational_expression { parserOutput("equality_expression -> relational_expression"); }
+	: relational_expression { $$ = $1;
+	                          parserOutput("equality_expression -> relational_expression"); }
 	| equality_expression EQ_OP relational_expression { parserOutput("equality_expression -> equality_expression EQ_OP relational_expression"); }
 	| equality_expression NE_OP relational_expression { parserOutput("equality_expression -> equality_expression NE_OP relational_expression"); }
 	;
 
 relational_expression
-	: shift_expression { parserOutput("relational_expression -> shift_expression"); }
+	: shift_expression { $$ = $1;
+	                     parserOutput("relational_expression -> shift_expression"); }
 	| relational_expression LT_OP shift_expression { parserOutput("relational_expression -> relational_expression LT_OP shift_expression"); }
 	| relational_expression GT_OP shift_expression { parserOutput("relational_expression -> relational_expression GT_OP shift_expression"); }
 	| relational_expression LE_OP shift_expression { parserOutput("relational_expression -> relational_expression LE_OP shift_expression"); }
@@ -475,31 +495,41 @@ relational_expression
 	;
 
 shift_expression
-	: additive_expression { parserOutput("shift_expression -> additive_expression"); }
+	: additive_expression { $$ = $1;
+	                        parserOutput("shift_expression -> additive_expression"); }
 	| shift_expression B_SL additive_expression { parserOutput("shift_expression -> shift_expression B_SL additive_expression"); }
 	| shift_expression B_SR additive_expression { parserOutput("shift_expression -> shift_expression B_SR additive_expression"); }
 	;
 
 additive_expression
-	: multiplicative_expression { parserOutput("additive_expression -> multiplicative_expression"); }
-	| additive_expression ADD multiplicative_expression { parserOutput("additive_expression -> additive_expression ADD multiplicative_expression"); }
+	: multiplicative_expression { $$ = $1;
+	                              parserOutput("additive_expression -> multiplicative_expression"); }
+	| additive_expression ADD multiplicative_expression { ASTNode* temp = new ASTMathNode("additive_expression");
+                                                          temp->addChild($1);
+                                                          temp->addChild(new ASTNode("ADD"));
+                                                          temp->addChild($3);
+                                                          $$ = temp;
+	                                                      parserOutput("additive_expression -> additive_expression ADD multiplicative_expression"); }
 	| additive_expression SUB multiplicative_expression { parserOutput("additive_expression -> additive_expression SUB multiplicative_expression"); }
 	;
 
 multiplicative_expression
-	: cast_expression { parserOutput("multiplicative_expression -> cast_expression"); }
+	: cast_expression { $$ = $1;
+	                    parserOutput("multiplicative_expression -> cast_expression"); }
 	| multiplicative_expression STAR cast_expression { parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
 	| multiplicative_expression DIV cast_expression { parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
 	| multiplicative_expression MOD cast_expression { parserOutput("multiplicative_expression -> multiplicative_expression MOD cast_expression"); }
 	;
 
 cast_expression
-	: unary_expression { parserOutput("cast_expression -> unary_expression"); }
+	: unary_expression { $$ = $1;
+	                     parserOutput("cast_expression -> unary_expression"); }
 	| OPAREN type_name CPAREN cast_expression { parserOutput("cast_expression -> OPAREN type_name CPAREN cast_expression"); }
 	;
 
 unary_expression
-	: postfix_expression { parserOutput("unary_expression -> postfix_expression"); }
+	: postfix_expression { $$ = $1;
+	                       parserOutput("unary_expression -> postfix_expression"); }
 	| INC_OP unary_expression { parserOutput("unary_expression -> INC_OP unary_expression"); }
 	| DEC_OP unary_expression { parserOutput("unary_expression -> DEC_OP unary_expression"); }
 	| unary_operator cast_expression { parserOutput("unary_expression -> unary_operator cast_expression"); }
@@ -517,7 +547,8 @@ unary_operator
 	;
 
 postfix_expression
-	: primary_expression { parserOutput("postfix_expression -> primary_expression"); }
+	: primary_expression { $$ = $1;
+	                       parserOutput("postfix_expression -> primary_expression"); }
 	| postfix_expression OBRACKET expression CBRACKET { parserOutput("postfix_expression -> postfix_expression OBRACKET expression CBRACKET"); }
 	| postfix_expression OPAREN CPAREN { parserOutput("postfix_expression -> postfix_expression OPAREN CPAREN"); }
 	| postfix_expression OPAREN argument_expression_list CPAREN { parserOutput("postfix_expression -> postfix_expression OPAREN argument_expression_list CPAREN"); }
@@ -529,7 +560,8 @@ postfix_expression
 
 primary_expression
 	: identifier { parserOutput("primary_expression -> identifier"); }
-	| constant { parserOutput("primary_expression -> constant"); }
+	| constant { $$ = $1;
+	             parserOutput("primary_expression -> constant"); }
 	| string { parserOutput("primary_expression -> string"); }
 	| OPAREN expression CPAREN { parserOutput("primary_expression -> OPAREN expression CPAREN"); }
 	;
@@ -540,9 +572,21 @@ argument_expression_list
 	;
 
 constant
-	: INTEGER_CONSTANT { parserOutput("constant -> INTEGER_CONSTANT"); }
-	| CHARACTER_CONSTANT { parserOutput("constant -> CHARACTER_CONSTANT"); }
-	| FLOATING_CONSTANT { parserOutput("constant -> FLOATING_CONSTANT"); }
+	: INTEGER_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("INT_CONST");
+						 temp->setValue(yylval.sval);
+						 temp->setType(Int);
+						 $$ = temp;
+	                     parserOutput("constant -> INTEGER_CONSTANT"); }
+	| CHARACTER_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("CHAR_CONST");
+						   temp->setValue(yylval.sval);
+						   temp->setType(Char);
+						   $$ = temp;
+                           parserOutput("constant -> CHARACTER_CONSTANT"); }
+	| FLOATING_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("FLOAT_CONST");
+						  temp->setValue(yylval.sval);
+						  temp->setType(Float);
+						  $$ = temp;
+                          parserOutput("constant -> FLOATING_CONSTANT"); }
 	| ENUMERATION_CONSTANT { parserOutput("constant -> ENUMERATION_CONSTANT"); }
 	;
 
@@ -551,7 +595,7 @@ string
 	;
 
 identifier
-	: IDENTIFIER {
+	: IDENTIFIER {  $$ = new ASTNode("IDENTIFIER");
                     parserOutput("identifier -> IDENTIFIER"); 
                     nodeIdentifier = yylval.sval; 
                     nodeLineNumber = line;
@@ -571,6 +615,7 @@ int main(int argc, char** argv)
 
 	yyparse();
 	tree.printTree();
+	cout << "Is tree valid? " << ( tree.walkTree() ? "Yes" : "Nopers" ) << endl;
 
     outputFile.open( outputIndex ? argv[outputIndex] : "output/defaultOutput.txt");
     if (outputFile.good())

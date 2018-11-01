@@ -22,7 +22,7 @@ class AST
 {
     public:
         explicit AST(ASTNode* root);
-        //bool walk();
+        bool walkTree() const;
         void printTree();
         void printTreeHelper(ASTNode* nodePtr, ofstream& treeOutFile);
 

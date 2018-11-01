@@ -6,6 +6,22 @@ AST::AST (ASTNode* root)
 	AST::root = root;
 }
 
+bool AST::walkTree() const
+{
+    if( root != nullptr)
+    {
+
+		for(auto it = root->getChildren().begin() ; it != root->getChildren().end() ; ++it)
+		{
+			if((*it)->walk() == false)
+			{
+				return false;
+			}
+		}
+		return true;
+    }
+}
+
 void AST::printTree ()
 {
 	if(root != nullptr)
@@ -18,6 +34,7 @@ void AST::printTree ()
 		treeOutFile.close();
 	}
 }
+
 
 void AST::printTreeHelper (ASTNode *nodePtr, ofstream& treeOutFile)
 {
