@@ -83,10 +83,15 @@ AST tree(root);
 %type <nodePtr> conditional_expression logical_or_expression logical_and_expression inclusive_or_expression
 %type <nodePtr> exclusive_or_expression and_expression equality_expression relational_expression
 %type <nodePtr> shift_expression additive_expression multiplicative_expression cast_expression unary_expression
-%type <nodePtr> postfix_expression primary_expression statement expression_statement
+%type <nodePtr> postfix_expression primary_expression statement expression_statement unary_operator
 %type <nodePtr> identifier statement_list expression constant_expression storage_class_specifier type_qualifier
-%type <nodePtr> struct_or_union_specifier enum_specifier
-%type <nodePtr> struct_declaration_list struct_declaration specifier_qualifier_list
+%type <nodePtr> struct_or_union_specifier enum_specifier string argument_expression_list jump_statement
+%type <nodePtr> struct_declaration_list struct_declaration specifier_qualifier_list assignment_operator
+%type <nodePtr> iteration_statement selection_statement labeled_statement direct_abstract_declarator
+%type <nodePtr> abstract_declarator type_name initializer_list identifier_list parameter_declaration
+%type <nodePtr> parameter_list parameter_type_list type_qualifier_list pointer enumerator enumerator_list
+%type <nodePtr> struct_declarator struct_declarator_list struct_or_union
+//%type <nodePtr>
 
 %%
 
@@ -316,8 +321,8 @@ enum_specifier
 enumerator_list
 	: enumerator { $$ = $1; parserOutput("enumerator_list -> enumerator"); }
 	| enumerator_list COMMA enumerator { ASTNode* temp = new ASTNode("enumerator_list");
-                                         temp -> addChild($2);
-                                         temp -> addChild($4);
+                                         temp -> addChild($1);
+                                         temp -> addChild($3);
                                          $$ = temp;
                                          parserOutput("enumerator_list -> enumerator_list COMMA enumerator"); }
 	;
@@ -325,8 +330,8 @@ enumerator_list
 enumerator
 	: identifier { $$ = $1; parserOutput("enumerator -> identifier"); }
 	| identifier ASSIGN constant_expression {ASTNode* temp = new ASTNode("enumerator");
-                                              temp -> addChild($2);
-                                              temp -> addChild($4);
+                                              temp -> addChild($1);
+                                              temp -> addChild($3);
                                               $$ = temp;
                                               parserOutput("enumerator -> identifier ASSIGN constant_expression"); }
 	;
@@ -334,8 +339,8 @@ enumerator
 declarator
 	: direct_declarator {$$ = $1; parserOutput("declarator -> direct_declarator"); }
 	| pointer direct_declarator { ASTNode* temp = new ASTNode("declarator");
+                                    temp -> addChild($1);
                                     temp -> addChild($2);
-                                    temp -> addChild($3);
                                     $$ = temp;
                                     parserOutput("declarator -> pointer direct_declarator"); }
 	;
@@ -839,12 +844,12 @@ cast_expression
 unary_expression
 	: postfix_expression { $$ = $1;  parserOutput("unary_expression -> postfix_expression"); }
 	| INC_OP unary_expression { ASTNode* temp = new ASTNode("unary_expression");
-                                   temp -> addChild(new ASTNode(INC_OP));
+                                   temp -> addChild(new ASTNode("INC_OP"));
                                    temp -> addChild($2);
                                    $$ = temp;
                                    parserOutput("unary_expression -> INC_OP unary_expression"); }
 	| DEC_OP unary_expression { ASTNode* temp = new ASTNode("unary_expression");
-                                   temp -> addChild(new ASTNode(DEC_OP));
+                                   temp -> addChild(new ASTNode("DEC_OP"));
                                    temp -> addChild($2);
                                    $$ = temp;
                                    parserOutput("unary_expression -> DEC_OP unary_expression"); }
@@ -854,12 +859,12 @@ unary_expression
                                       $$ = temp;
                                       parserOutput("unary_expression -> unary_operator cast_expression"); }
 	| SIZEOF unary_expression { ASTNode* temp = new ASTNode("unary_expression");
-                                   temp -> addChild(new ASTNode(SIZEOF));
+                                   temp -> addChild(new ASTNode("SIZEOF"));
                                    temp -> addChild($2);
                                    $$ = temp;
                                    parserOutput("unary_expression -> SIZEOF unary_expression"); }
 	| SIZEOF OPAREN type_name CPAREN { ASTNode* temp = new ASTNode("unary_expression");
-                                          temp -> addChild(new ASTNode(SIZEOF));
+                                          temp -> addChild(new ASTNode("SIZEOF"));
                                           temp -> addChild($3);
                                           $$ = temp;
                                           parserOutput("unary_expression -> SIZEOF OPAREN type_name CPAREN"); }
@@ -889,13 +894,13 @@ postfix_expression
                                                                    parserOutput("postfix_expression -> postfix_expression OPAREN argument_expression_list CPAREN"); }
 	| postfix_expression PERIOD identifier { ASTNode* temp = new ASTNode("postfix_expression");
                                                temp -> addChild($1);
-                                               temp -> addChild(new ASTNode("PERIOD"))
+                                               temp -> addChild(new ASTNode("PERIOD"));
                                                temp -> addChild($3);
                                                $$ = temp;
                                                parserOutput("postfix_expression -> postfix_expression PERIOD identifier"); }
 	| postfix_expression ARROW identifier { ASTNode* temp = new ASTNode("postfix_expression");
                                               temp -> addChild($1);
-                                              temp -> addChild("ARROW");
+                                              temp -> addChild(new ASTNode("ARROW"));
                                               temp -> addChild($3);
                                               $$ = temp;
                                               parserOutput("postfix_expression -> postfix_expression ARROW identifier"); }
@@ -914,7 +919,7 @@ postfix_expression
 primary_expression
 	: identifier { $$ = $1; parserOutput("primary_expression -> identifier"); }
 	| constant { $$ = $1; parserOutput("primary_expression -> constant"); }
-	| string { $$ = $1 parserOutput("primary_expression -> string"); }
+	| string { $$ = $1; parserOutput("primary_expression -> string"); }
 	| OPAREN expression CPAREN { $$ = $2; parserOutput("primary_expression -> OPAREN expression CPAREN"); }
 	;
 
