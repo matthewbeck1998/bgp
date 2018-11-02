@@ -79,12 +79,12 @@ bool ASTMathNode::walk() const
 
 ASTVariableNode::ASTVariableNode(string node_label) : ASTNode::ASTNode(node_label), type(Int)
 {
-    strcpy(value, "NO_VALUE");
+    value = "NO_VALUE";
 }
 
 ASTVariableNode::ASTVariableNode(ASTNode*& RHS) : ASTNode::ASTNode(RHS->getLabel()), type(Int)
 {
-    strcpy(value, "NO_VALUE");
+    value = "NO_VALUE";
 }
 
 bool ASTVariableNode::walk() const
@@ -97,13 +97,24 @@ int ASTVariableNode::getType() const
 }
 
 
-const char* ASTVariableNode::getValue() const
+string ASTVariableNode::getValue() const
 {
     return value;
 }
-void ASTVariableNode::setValue(char* inputValue)
+
+
+string ASTVariableNode::getId() const
 {
-    strcpy(value, inputValue);
+    return id;
+}
+void ASTVariableNode::setId(string inputId)
+{
+    id = inputId;
+}
+
+void ASTVariableNode::setValue(string inputValue)
+{
+    value = inputValue;
 }
 
 void ASTVariableNode::setType(int inputType)
