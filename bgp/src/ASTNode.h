@@ -57,11 +57,14 @@ class ASTVariableNode : public ASTNode
         ASTVariableNode(ASTNode*& RHS);
         bool walk() const;
         int getType() const;
-        const char* getValue() const;
-        void setValue(char* inputValue);
+        string getValue() const;
+        string getId() const;
+        void setId(string inputId);
+        void setValue(string inputValue);
         void setType(int inputType);
     private:
-        char value[256];
+        string value;
+        string id;
         int type;
 };
 
