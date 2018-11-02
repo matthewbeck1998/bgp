@@ -11,7 +11,7 @@
 #include <map>
 #include <list>
 #include <iterator>
-#include "Node.h"
+#include "SymbolNode.h"
 
 using namespace std;
 
@@ -22,7 +22,7 @@ public:
 
 	friend ostream &operator<< (ostream &os, const SymbolTable &table);
 
-	bool insert (Node &insertNode);
+	bool insert (SymbolNode &insertNode);
 	bool popLevel ();
 	void pushLevel();
 	bool getInsertMode () const;
@@ -31,14 +31,17 @@ public:
 
 	int getCurrentLevel () const;
 
-	pair<int, map<string, Node>::iterator> searchAll(string key);
-	pair<int, map<string, Node>::iterator> searchTop(string key);
-	pair<int, map<string, Node>::iterator> searchAllExceptTop(string key);
+	bool isLastSearchValid () const;
+
+	pair<int, map<string, SymbolNode>::iterator> searchAll(string key);
+	pair<int, map<string, SymbolNode>::iterator> searchTop(string key);
+	pair<int, map<string, SymbolNode>::iterator> searchAllExceptTop(string key);
 
 private:
-	list<map<string, Node>> table;
+	list<map<string, SymbolNode>> table;
 	int currentLevel;
 	bool insertMode;
+	bool lastSearchValid;
 
 };
 

@@ -4,9 +4,11 @@
 #include <sstream>
 #include <cstdio>
 #include <cstring>
+#include "ASTNode.h"
 #include "parser.h"
 #include "SymbolTable.h"
-#include "Node.h"
+#include "SymbolNode.h"
+
 
 using namespace std;
 
@@ -28,6 +30,8 @@ extern stringstream errorStream;
 //External variable for the symbol table
 extern SymbolTable st;
 extern string lastNodeInserted;
+extern bool inFunctionParameters;
+extern string currentFunctionNode;
 
 //Functions to handle incrementing of globals.
 /*
@@ -393,6 +397,7 @@ productions_off         [@][p][-]
 							incrementColumn(yyleng);
                             if (st.getInsertMode())
                             {
+                                inFunctionParameters = true;
                                 auto functionPair = st.searchTop(lastNodeInserted);
 
                                 if (functionPair.first == -1)
@@ -401,13 +406,19 @@ productions_off         [@][p][-]
                                 }
 
                                 functionPair.second->second.setIsFunction(true);
+                                currentFunctionNode = lastNodeInserted;
                                 st.pushLevel();
-                                cerr << st << endl;
                             }
                             return OPAREN;
                         }
 
 ")"                     {
+                            if (inFunctionParameters)
+                            {
+                                inFunctionParameters = false;
+                                currentFunctionNode = "";
+                            }
+
                             scannerOutput(yytext, "CPAREN");
 							incrementColumn(yyleng);
                             return CPAREN;

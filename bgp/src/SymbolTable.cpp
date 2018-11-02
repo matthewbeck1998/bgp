@@ -19,7 +19,7 @@ extern stringstream errorStream;
  * @return True if the Node was successfully inserted
  * 			False if the table was empty or the Node could not be inserted
  */
-bool SymbolTable::insert (Node &insertNode)
+bool SymbolTable::insert (SymbolNode &insertNode)
 {
 	//cout << "SearchTop: " << searchTop(insertNode.getIdentifier()).first << endl;
 	if(!table.empty() and insertMode)
@@ -33,7 +33,7 @@ bool SymbolTable::insert (Node &insertNode)
 			errorStream << " on line " << searchReturn.second->second.getLineNum();
 			errorStream << " from scope " << searchReturn.second->second.getVarScopeLevel() << endl;
 		}
-		auto insertStatus = table.begin()->insert(pair<string, Node>(insertNode.getIdentifier(), insertNode));
+		auto insertStatus = table.begin()->insert(pair<string, SymbolNode>(insertNode.getIdentifier(), insertNode));
 
 		if(!insertStatus.second)
 		{
@@ -84,7 +84,7 @@ bool SymbolTable::popLevel ()
 void SymbolTable::pushLevel ()
 {
 	currentLevel++;
-	map<string, Node> temp;
+	map<string, SymbolNode> temp;
 	table.push_front(temp);
 }
 
@@ -109,13 +109,12 @@ ostream &operator<< (ostream &os, const SymbolTable &table)
 			}
 
 		}
-		return os;
 	}
 	else
 	{
 		os << "Table is empty" << endl;
 	}
-
+	return os;
 }
 /**
  * @brief Will create a symbol table with 1 level for file level identifiers
@@ -123,6 +122,7 @@ ostream &operator<< (ostream &os, const SymbolTable &table)
 SymbolTable::SymbolTable () : currentLevel(0)
 {
 	insertMode = true;
+	lastSearchValid = false;
 	pushLevel();
 }
 
@@ -135,10 +135,10 @@ SymbolTable::SymbolTable () : currentLevel(0)
  * 			second: an iterator to the map where the key was found
  * 					will return an iterator to the end if the key wasn't found
  */
-pair<int, map<string, Node>::iterator> SymbolTable::searchAll (string key)
+pair<int, map<string, SymbolNode>::iterator> SymbolTable::searchAll (string key)
 {
 	auto it = table.begin()->end();
-	pair<int, map<string, Node>::iterator> rt;
+	pair<int, map<string, SymbolNode>::iterator> rt;
 	bool notFound = true;
 	for(auto itr = table.begin(); itr != table.end() && notFound; itr++)
 	{
@@ -152,9 +152,11 @@ pair<int, map<string, Node>::iterator> SymbolTable::searchAll (string key)
 	{
 		rt.first = FAILURE;
 		rt.second = it;
+		lastSearchValid = false;
 	}
 	else
 	{
+		lastSearchValid = true;
 		rt.first = it->second.getVarScopeLevel();
 		rt.second = it;
 	}
@@ -170,17 +172,19 @@ pair<int, map<string, Node>::iterator> SymbolTable::searchAll (string key)
  * 			second: an iterator to the map where the key was found
  * 					will return an iterator to the end if the key wasn't found
  */
-pair<int, map<string, Node>::iterator> SymbolTable::searchTop (string key)
+pair<int, map<string, SymbolNode>::iterator> SymbolTable::searchTop (string key)
 {
 	auto itr = table.begin()->find(key);
-	pair<int, map<string, Node>::iterator> rt;
+	pair<int, map<string, SymbolNode>::iterator> rt;
 	if(itr == table.begin()->end())
 	{
+		lastSearchValid = false;
 		rt.first = FAILURE;
 		rt.second = itr;
 	}
 	else
 	{
+		lastSearchValid = true;
 		rt.first = itr->second.getVarScopeLevel();
 		rt.second = itr;
 	}
@@ -211,10 +215,10 @@ void SymbolTable::setInsertMode (bool insertMode)
  * 			second: an iterator to the map where the key was found
  * 					will return an iterator to the end if the key wasn't found
  */
-pair<int, map<string, Node>::iterator> SymbolTable::searchAllExceptTop (string key)
+pair<int, map<string, SymbolNode>::iterator> SymbolTable::searchAllExceptTop (string key)
 {
 	auto it = table.begin()->end();
-	pair<int, map<string, Node>::iterator> rt;
+	pair<int, map<string, SymbolNode>::iterator> rt;
 	bool notFound = true;
 	for(auto itr = ++table.begin(); itr != table.end() && notFound; itr++)
 	{
@@ -225,11 +229,13 @@ pair<int, map<string, Node>::iterator> SymbolTable::searchAllExceptTop (string k
 
 	if(notFound)
 	{
+		lastSearchValid = false;
 		rt.first = FAILURE;
 		rt.second = it;
 	}
 	else
 	{
+		lastSearchValid = true;
 		rt.first = it->second.getVarScopeLevel();
 		rt.second = it;
 	}
@@ -244,4 +250,9 @@ void SymbolTable::resetTable ()
 	while(!table.empty())
 		popLevel();
 	pushLevel();
+}
+
+bool SymbolTable::isLastSearchValid () const
+{
+	return lastSearchValid;
 }
