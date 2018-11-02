@@ -1,17 +1,5 @@
-int test;
-
-int test1;
 int main()
 {
-	int a = 1 + 2, b = 0;
-	1 + 2;
-	if(a == 1)
-	{
-		a += 5;
-	}
-	while(b < 5)
-	{
-		b++;
-	}
+	int array[] = {1,2,3,4,56,7,7,8,9};
 
 }
