@@ -121,3 +121,23 @@ void ASTVariableNode::setType(int inputType)
 {
     type = inputType;
 }
+
+ASTSelectionNode::ASTSelectionNode(string node_label) : ASTNode::ASTNode(move(node_label))
+{
+    
+}
+
+bool ASTSelectionNode::walk() const
+{
+    
+}
+
+ASTIterationNode::ASTIterationNode(string node_label) : ASTNode::ASTNode(move(node_label))
+{
+
+}
+
+bool ASTIterationNode::walk() const
+{
+
+}
