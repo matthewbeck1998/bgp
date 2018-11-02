@@ -81,6 +81,12 @@ ASTVariableNode::ASTVariableNode(string node_label) : ASTNode::ASTNode(node_labe
 {
     strcpy(value, "NO_VALUE");
 }
+
+ASTVariableNode::ASTVariableNode(ASTNode*& RHS) : ASTNode::ASTNode(RHS->getLabel()), type(Int)
+{
+    strcpy(value, "NO_VALUE");
+}
+
 bool ASTVariableNode::walk() const
 {
     return true;
