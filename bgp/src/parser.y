@@ -46,8 +46,8 @@ string currentFunctionNode = "";
 
 
 
-ASTNode* root = new ASTNode("Translation Unit");
-AST tree(root);
+ASTNode* root;
+//AST tree(root);
 %}
 
 %union
@@ -1014,6 +1014,8 @@ int main(int argc, char** argv)
 {
 	int outputIndex = parseCommandLine(argc, argv); //Returns the index of the output file in argv or 0 if there is no -o
 
+    root = new ASTNode(argv[1]);
+    AST tree(root);
 	yyparse();
 	tree.printTree();
 	//cout << "Is tree valid? " << ( tree.walkTree() ? "Yes" : "Nopers" ) << endl;
