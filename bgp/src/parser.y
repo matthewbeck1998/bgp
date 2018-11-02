@@ -97,11 +97,7 @@ AST tree(root);
 
 translation_unit
 	: external_declaration {root->addChild($1);  parserOutput("translation_unit -> external_declaration"); }
-	| translation_unit external_declaration { //ASTNode* temp = new ASTNode("translation_unit");
-	                                          //temp -> addChild($1);
-	                                          //temp -> addChild($2);
-	                                          //$$ = temp;
-	                                          root->addChild($2);
+	| translation_unit external_declaration { root->addChild($2);
 	                                          parserOutput("translation_unit -> translation_unit external_declaration"); }
 	;
 
@@ -218,7 +214,8 @@ type_qualifier
 struct_or_union_specifier
 	: struct_or_union identifier OBRACE struct_declaration_list CBRACE {ASTNode* temp = new ASTNode("struct_or_union_specifier");
                                                                           temp -> addChild($1);
-                                                                          temp -> addChild($2);
+                                                                          ASTVariableNode* tempIdNode = new ASTVariableNode($2);
+                                                                          temp -> addChild(tempIdNode);
                                                                           temp -> addChild($4);
                                                                           $$ = temp;
                                                                           parserOutput("struct_or_union_specifier -> struct_or_union identifier OBRACE struct_declaration_list CBRACE"); }
@@ -456,7 +453,7 @@ parameter_declaration
 
 identifier_list
 	: identifier { $$ = $1; parserOutput("identifier_list -> identifier"); }
-	| identifier_list COMMA identifier {ASTNode* temp = new ASTNode("identifier_list");
+	| identifier_list COMMA identifier {   ASTNode* temp = new ASTNode("identifier_list");
                                            temp -> addChild($1);
                                            temp -> addChild($3);
                                            $$ = temp;
@@ -998,7 +995,8 @@ string
 	;
 
 identifier
-	: IDENTIFIER {  $$ = new ASTNode("IDENTIFIER");
+	: IDENTIFIER {  ASTVariableNode* temp = new ASTVariableNode(yylval.sval);
+                    $$ = temp;
                     parserOutput("identifier -> IDENTIFIER"); 
                     nodeIdentifier = yylval.sval; 
                     nodeLineNumber = line;

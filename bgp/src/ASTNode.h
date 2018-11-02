@@ -46,6 +46,7 @@ class ASTVariableNode : public ASTNode
 {
     public:
         ASTVariableNode(string node_label);
+        ASTVariableNode(ASTNode*& RHS);
         bool walk() const;
         int getType() const;
         const char* getValue() const;
