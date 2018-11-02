@@ -583,13 +583,13 @@ statement_list
 	;
 
 selection_statement
-	: IF OPAREN expression CPAREN statement { ASTNode* temp = new ASTNode("selection_statement");
+	: IF OPAREN expression CPAREN statement { ASTNode* temp = new ASTSelectionNode("selection_statement");
 	                                            temp -> addChild(new ASTNode("IF"));
                                                 temp -> addChild($3);
                                                 temp -> addChild($5);
                                                 $$ = temp;
                                                 parserOutput("selection_statement -> IF OPAREN expression CPAREN statement"); }
-	| IF OPAREN expression CPAREN statement ELSE statement {ASTNode* temp = new ASTNode("selection_statement");
+	| IF OPAREN expression CPAREN statement ELSE statement {ASTNode* temp = new ASTSelectionNode("selection_statement");
                                                             temp -> addChild(new ASTNode("IF"));
                                                             temp -> addChild($3);
                                                             temp -> addChild($5);
@@ -597,7 +597,7 @@ selection_statement
                                                             temp -> addChild($7);
                                                             $$ = temp;
                                                             parserOutput("selection_statement -> IF OPAREN expression CPAREN statement ELSE statement"); }
-	| SWITCH OPAREN expression CPAREN statement {ASTNode* temp = new ASTNode("selection_statement");
+	| SWITCH OPAREN expression CPAREN statement {ASTNode* temp = new ASTNode("selection_statement"); // TODO: Switch statements? Unlikely but we will see.
                                                      temp -> addChild(new ASTNode("SWITCH"));
                                                      temp -> addChild($3);
                                                      temp -> addChild($5);
@@ -606,20 +606,20 @@ selection_statement
 	;
 
 iteration_statement
-	: WHILE OPAREN expression CPAREN statement {ASTNode* temp = new ASTNode("iteration_statement");
+	: WHILE OPAREN expression CPAREN statement {ASTNode* temp = new ASTIterationNode("iteration_statement");
                                                     temp -> addChild(new ASTNode("WHILE"));
                                                     temp -> addChild($3);
                                                     temp -> addChild($5);
                                                     $$ = temp;
                                                     parserOutput("iteration_statement -> WHILE OPAREN expression CPAREN statement"); }
-	| DO statement WHILE OPAREN expression CPAREN SEMICOLON { ASTNode* temp = new ASTNode("iteration_statement");
+	| DO statement WHILE OPAREN expression CPAREN SEMICOLON { ASTNode* temp = new ASTNode("iteration_statement"); // TODO: Don't need to do but maybe possible
                                                               temp -> addChild(new ASTNode("DO"));
                                                               temp -> addChild($2);
                                                               temp -> addChild(new ASTNode("WHILE"));
                                                               temp -> addChild($5);
                                                               $$ = temp;
                                                               parserOutput("iteration_statement -> DO statement WHILE OPAREN expression CPAREN SEMICOLON"); }
-	| FOR OPAREN SEMICOLON SEMICOLON CPAREN statement { ASTNode* temp = new ASTNode("iteration_statement");
+	| FOR OPAREN SEMICOLON SEMICOLON CPAREN statement { ASTNode* temp = new ASTNode("iteration_statement"); // TODO: Same as do while
                                                           temp -> addChild(new ASTNode("FOR"));
                                                           temp -> addChild($6);
                                                           $$ = temp;
