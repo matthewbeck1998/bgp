@@ -1,6 +1,4 @@
 /* TODO
- * Node for nonterminal to nonterminals
- * Node for math operations
  * Node for single input math operations(like ++)
  * Node for declaritors
  * Different node for =? and stuff like /=, +=
@@ -8,7 +6,7 @@
  * Node for comparitors?
  * Make will get discord?
  * Node for functions?
- * Node for loops?
+ * Node for loops
  * Node for labels?
  */
 

@@ -470,11 +470,11 @@ initializer
 	;
 
 initializer_list
-	: initializer { $$ = $1; parserOutput("initializer_list -> initializer"); }
-	| initializer_list COMMA initializer { ASTNode* temp = new ASTNode("initializer_list");
-                                              temp -> addChild($1);
-                                              temp -> addChild($3);
-                                              $$ = temp;
+	: initializer { ASTNode* temp = new ASTNode("initializer_list");
+	                temp -> addChild($1);
+	                $$ = temp;
+	                parserOutput("initializer_list -> initializer"); }
+	| initializer_list COMMA initializer {    $$ -> addChild($3);
                                               parserOutput("initializer_list -> initializer_list COMMA initializer"); }
 	;
 
