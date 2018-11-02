@@ -23,6 +23,14 @@ class ASTNode
         list<ASTNode *> &getChildren ();
 		static int totalNodeCount;
 
+	int getColNum () const;
+
+	void setColNum (int colNum);
+
+	int getLineNum () const;
+
+	void setLineNum (int lineNum);
+
 	int getNodeNum () const;
 
 protected:

@@ -42,6 +42,26 @@ int ASTNode::getNodeNum () const
 	return nodeNum;
 }
 
+int ASTNode::getColNum () const
+{
+	return colNum;
+}
+
+void ASTNode::setColNum (int colNum)
+{
+	ASTNode::colNum = colNum;
+}
+
+int ASTNode::getLineNum () const
+{
+	return lineNum;
+}
+
+void ASTNode::setLineNum (int lineNum)
+{
+	ASTNode::lineNum = lineNum;
+}
+
 
 ASTMathNode::ASTMathNode (string node_label) : ASTNode::ASTNode(move(node_label))
 {
