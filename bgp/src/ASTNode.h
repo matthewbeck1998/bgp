@@ -68,6 +68,20 @@ class ASTVariableNode : public ASTNode
         int type;
 };
 
+class ASTSelectionNode : public ASTNode
+{
+    public:
+        ASTSelectionNode(string node_label);
+        bool walk() const;
+};
+
+class ASTIterationNode : public ASTNode
+{
+    public:
+        ASTIterationNode(string node_label);
+        bool walk() const;
+};
+
 /*class ASTSwitchNode : public ASTNode
 {
     public:
