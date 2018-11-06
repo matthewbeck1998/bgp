@@ -433,3 +433,17 @@ void ASTIdNode::printNode(ASTNode* nodePtr, ofstream& treeOutFile)
 		}
 	}
 }
+
+
+ASTTypeNode::ASTTypeNode(string node_label) : ASTNode::ASTNode(move(node_label))
+{}
+ASTTypeNode::ASTTypeNode(string node_label, int inputType) : ASTNode::ASTNode(move(node_label)), type(inputType)
+{}
+int ASTTypeNode::getType() const
+{
+    return type;
+}
+void ASTTypeNode::setType(int inputType)
+{
+    type = inputType;
+}

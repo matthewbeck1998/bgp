@@ -14,6 +14,7 @@
 
 using namespace std;
 extern stringstream errorStream;
+extern stringstream outputStream;
 
 union valueUnion
 {
@@ -44,28 +45,28 @@ class ASTNode
 		int getNodeNum () const;
 
 		virtual void setType(int newType) {
-		    cout << "setType, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "setType, YOU DID SOMETHING BAD" << endl;
 		}
 
 		virtual int getType() const {
-		    cout << "getType, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getType, YOU DID SOMETHING BAD" << endl;
 		}
 
 		virtual void setId(string newId) {
-		    cout << "setId, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "setId, YOU DID SOMETHING BAD" << endl;
 		}
 
 		virtual  string getId() {
-		    cout << "getId, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getId, YOU DID SOMETHING BAD" << endl;
 		}
 
 		virtual string getValue() {
-		    cout << "getType, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getType, YOU DID SOMETHING BAD" << endl;
 		}
 
 		virtual void setValue(string newValue)
         {
-		    cout << "getValue, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getValue, YOU DID SOMETHING BAD" << endl;
         }
 
 	virtual void printNode(ASTNode* nodePtr, ofstream& treeOutFile);
@@ -163,6 +164,19 @@ class ASTIdNode : public ASTNode
 
     private:
         string id;
+};
+
+class ASTTypeNode : public  ASTNode
+{
+    public:
+        ASTTypeNode(string node_label);
+        ASTTypeNode(string node_label, int inputType);
+        bool walk() const{}
+        void printNode(ASTNode* nodePtr, ofstream& treeOutFile){/*NOTHING HERE YET HELP*/}
+        int getType() const;
+        void setType( int inputType );
+    private:
+        int type;
 };
 
 /*class ASTSwitchNode : public ASTNode

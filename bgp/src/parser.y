@@ -192,13 +192,13 @@ storage_class_specifier
 	;
 
 type_specifier
-	: VOID { $$ = new ASTNode("VOID"); parserOutput("type_specifier -> VOID"); st.setInsertMode(true); nodeTypeSpecifier = 0; }
-	| CHAR { $$ = new ASTNode("CHAR"); parserOutput("type_specifier -> CHAR"); st.setInsertMode(true); nodeTypeSpecifier = 1; }
-	| SHORT { $$ = new ASTNode("SHORT"); parserOutput("type_specifier -> SHORT"); st.setInsertMode(true); nodeTypeSpecifier = 2; }
-	| INT { $$ = new ASTNode("INT"); parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeTypeSpecifier = 3; }
-	| LONG { $$ = new ASTNode("LONG"); parserOutput("type_specifier -> LONG"); st.setInsertMode(true); nodeTypeSpecifier = 4; }
-	| FLOAT { $$ = new ASTNode("FLOAT"); parserOutput("type_specifier -> FLOAT"); st.setInsertMode(true); nodeTypeSpecifier = 5; }
-	| DOUBLE { $$ = new ASTNode("DOUBLE"); parserOutput("type_specifier -> DOUBLE"); st.setInsertMode(true); nodeTypeSpecifier = 6; }
+	: VOID { $$ = new ASTTypeNode("VOID", Void); parserOutput("type_specifier -> VOID"); st.setInsertMode(true); nodeTypeSpecifier = 0; }
+	| CHAR { $$ = new ASTTypeNode("CHAR", Char); parserOutput("type_specifier -> CHAR"); st.setInsertMode(true); nodeTypeSpecifier = 1; }
+	| SHORT { $$ = new ASTTypeNode("SHORT", Short); parserOutput("type_specifier -> SHORT"); st.setInsertMode(true); nodeTypeSpecifier = 2; }
+	| INT { $$ = new ASTTypeNode("INT", Int); parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeTypeSpecifier = 3; }
+	| LONG { $$ = new ASTTypeNode("LONG", Long); parserOutput("type_specifier -> LONG"); st.setInsertMode(true); nodeTypeSpecifier = 4; }
+	| FLOAT { $$ = new ASTTypeNode("FLOAT", Float); parserOutput("type_specifier -> FLOAT"); st.setInsertMode(true); nodeTypeSpecifier = 5; }
+	| DOUBLE { $$ = new ASTTypeNode("DOUBLE", Double); parserOutput("type_specifier -> DOUBLE"); st.setInsertMode(true); nodeTypeSpecifier = 6; }
 	| SIGNED { parserOutput("type_specifier -> SIGNED"); st.setInsertMode(true); nodeIsSigned = true; }
 	| UNSIGNED { parserOutput("type_specifier -> UNSIGNED"); st.setInsertMode(true); nodeIsSigned = false; }
 	| struct_or_union_specifier { $$ = $1; parserOutput("type_specifier -> struct_or_union_specifier"); }
@@ -253,11 +253,7 @@ init_declarator_list
 
 init_declarator
 	: declarator {$$ = $1; parserOutput("init_declarator -> declarator"); }
-	| declarator ASSIGN initializer { ASTNode* temp = new ASTNode("init_declarator");
-                                      temp->addChild($1);
-                                      temp->addChild(new ASTNode("ASSIGN"));
-                                      temp->addChild($3);
-                                      $$ = temp;
+	| declarator ASSIGN initializer { $$ = new ASTMathNode("init_declarator", $1, new ASTNode("ASSIGN"), $3);
                                       parserOutput("init_declarator -> declarator ASSIGN initializer"); }
 	;
 
@@ -328,10 +324,7 @@ enumerator_list
 enumerator
 	: identifier {  $$ = $1;
                     parserOutput("enumerator -> identifier"); }
-	| identifier ASSIGN constant_expression { ASTNode* temp = new ASTNode("enumerator");
-                                              temp -> addChild($1);
-                                              temp -> addChild($3);
-                                              $$ = temp;
+	| identifier ASSIGN constant_expression { $$ = new ASTMathNode("enumerator", $1, new ASTNode("ASSIGN"), $3);
                                               parserOutput("enumerator -> identifier ASSIGN constant_expression"); }
 	;
 
@@ -684,11 +677,7 @@ expression
 
 assignment_expression
 	: conditional_expression { $$ = $1; parserOutput("assignment_expression -> conditional_expression"); }
-	| unary_expression assignment_operator assignment_expression { ASTNode* temp = new ASTNode("assignment_expression");
-                                                                    temp -> addChild($1);
-                                                                    temp -> addChild($2);
-                                                                    temp -> addChild($3);
-                                                                    $$ = temp;
+	| unary_expression assignment_operator assignment_expression { $$ = new ASTMathNode("enumerator", $1, $2, $3);
                                                                     parserOutput("assignment_expression -> unary_expression assignment_operator assignment_expression"); }
 	;
 
@@ -847,7 +836,7 @@ multiplicative_expression
                                                        parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
 	| multiplicative_expression DIV cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("DIVs"), $3);
 													   parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
-	| multiplicative_expression MOD cast_expression {  $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("MOD"), $3);
+	| multiplicative_expression MOD cast_expression {  $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("MOD"), $3); //TODO check for ints in MOD
                                                        parserOutput("multiplicative_expression -> multiplicative_expression MOD cast_expression"); }
 	;
 
