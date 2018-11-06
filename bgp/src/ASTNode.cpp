@@ -65,7 +65,7 @@ void ASTNode::setLineNum (int lineNum)
 
 void ASTNode::printNode (ASTNode* nodePtr, ofstream& treeOutFile)
 {
-	cout << "BASE NODE" << endl;
+	//cout << "BASE NODE" << endl;
 	if(nodePtr)
 	{
 		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << "\"];" << endl;
@@ -84,10 +84,11 @@ ASTMathNode::ASTMathNode (string node_label) : ASTNode::ASTNode(move(node_label)
 
 ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNode* RHS) : ASTNode::ASTNode(move(node_label))
 {
-	//ADD SOME TYPE CHECKYBOIII
 	addChild(LHS);
 	addChild(mathOp);
 	addChild(RHS);
+	//cout << "Type " << LHS->getType() << " LHS type:  " << RHS->getType() << endl;
+	setType( LHS->getType() );
 }
 
 
@@ -102,7 +103,7 @@ bool ASTMathNode::walk() const
 
 void ASTMathNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
 {
-	cout << "MATH NODE" << endl;
+	//cout << "MATH NODE" << endl;
 	if(nodePtr)
 	{
 		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl << "MATH NODE" <<"\"];" << endl;
@@ -179,7 +180,7 @@ void ASTVariableNode::setType(int inputType)
 
 void ASTVariableNode::printNode (ASTNode* nodePtr, ofstream& treeOutFile)
 {
-	cout << "VARIABLE NODE" << endl;
+	//cout << "VARIABLE NODE" << endl;
 	if(nodePtr)
 	{
 		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl << "Value: " << value << endl;
@@ -231,7 +232,7 @@ bool ASTSelectionNode::walk() const
 
 void ASTSelectionNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
 {
-	cout << "SELECTION NODE" << endl;
+	//cout << "SELECTION NODE" << endl;
 	if(nodePtr)
 	{
 		treeOutFile << nodeNum << "[label = \"" << label << endl << "SELECTION NODE" <<"\"];" << endl;
@@ -255,7 +256,7 @@ bool ASTIterationNode::walk() const
 
 void ASTIterationNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
 {
-	cout << "ITERATION NODE" << endl;
+	//cout << "ITERATION NODE" << endl;
 	if(nodePtr)
 	{
 		treeOutFile << nodeNum << "[label = \"" << label << endl << "ITERATION NODE" <<"\"];" << endl;

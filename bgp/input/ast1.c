@@ -1,7 +1,4 @@
 int main()
 {
-	int a = 3;
-	float f = 5.5;
-	int array[] = {1,2,3};
-	array[0] = 5;
+	int a = 3 + 2 + 4.0 / 4 + 3 * 2 % 1.0 + 'a';
 }

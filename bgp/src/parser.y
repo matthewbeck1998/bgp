@@ -835,39 +835,19 @@ shift_expression
 
 additive_expression
 	: multiplicative_expression { $$ = $1; parserOutput("additive_expression -> multiplicative_expression"); }
-	| additive_expression ADD multiplicative_expression { ASTNode* temp = new ASTMathNode("additive_expression");
-                                                          temp->addChild($1);
-                                                          temp->addChild(new ASTNode("ADD"));
-                                                          temp->addChild($3);
-                                                          $$ = temp;
+	| additive_expression ADD multiplicative_expression { $$ = new ASTMathNode("additive_expression", $1, new ASTNode("ADD"), $3);
 	                                                      parserOutput("additive_expression -> additive_expression ADD multiplicative_expression"); }
-	| additive_expression SUB multiplicative_expression { ASTNode* temp = new ASTMathNode("additive_expression");
-                                                          temp -> addChild($1);
-                                                          temp -> addChild(new ASTNode("SUB"));
-                                                          temp -> addChild($3);
-                                                          $$ = temp;
+	| additive_expression SUB multiplicative_expression { $$ = new ASTMathNode("additive_expression", $1, new ASTNode("SUB"), $3);
                                                           parserOutput("additive_expression -> additive_expression SUB multiplicative_expression"); }
 	;
 
 multiplicative_expression
 	: cast_expression { $$ = $1; parserOutput("multiplicative_expression -> cast_expression"); }
-	| multiplicative_expression STAR cast_expression { ASTNode* temp = new ASTMathNode("multiplicative_expression");
-                                                         temp -> addChild($1);
-                                                         temp -> addChild(new ASTNode("STAR"));
-                                                         temp -> addChild($3);
-                                                         $$ = temp;
-                                                         parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
-	| multiplicative_expression DIV cast_expression { ASTNode* temp = new ASTMathNode("multiplicative_expression");
-                                                           temp -> addChild($1);
-                                                           temp -> addChild(new ASTNode("DIV"));
-                                                           temp -> addChild($3);
-                                                           $$ = temp;
-                                                           parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
-	| multiplicative_expression MOD cast_expression { ASTNode* temp = new ASTMathNode("multiplicative_expression");
-                                                       temp -> addChild($1);
-                                                       temp -> addChild(new ASTNode("MOD"));
-                                                       temp -> addChild($3);
-                                                       $$ = temp;
+	| multiplicative_expression STAR cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("STAR"), $3);
+                                                       parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
+	| multiplicative_expression DIV cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("DIVs"), $3);
+													   parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
+	| multiplicative_expression MOD cast_expression {  $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("MOD"), $3);
                                                        parserOutput("multiplicative_expression -> multiplicative_expression MOD cast_expression"); }
 	;
 
@@ -1038,8 +1018,6 @@ int main(int argc, char** argv)
 		cerr << "Output file fail." << endl;
         exit(-1);
     }
-
-    cout << "Is tree valid? " << ( tree.walkTree() ? "Yes" : "Nopers" ) << endl;
     return 0;
 }
 
