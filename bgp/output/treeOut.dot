@@ -1,14 +1,10 @@
 digraph G {
-0[label = "input/ast1.c"];
+0[label = "input\ast1.c"];
 0 -> 33
 33[label = "function_definition"];
 33 -> 1
 1[label = "INT"];
 33 -> 2
-2[label = "IDENTIFIER
-Value: NO_VALUE
-ID: main
-Type: int"];
 33 -> 32
 32[label = "compound_statement"];
 32 -> 25
@@ -22,16 +18,12 @@ Type: int"];
 8 -> 6
 6[label = "init_declarator"];
 6 -> 4
-4[label = "IDENTIFIER
-Value: NO_VALUE
-ID: a
-Type: int"];
 6 -> 7
 7[label = "ASSIGN"];
 6 -> 5
 5[label = "INT_CONST
 Value: 3
-ID:
+ID: 
 Type: int"];
 15 -> 14
 14[label = "Declaration"];
@@ -40,16 +32,12 @@ Type: int"];
 14 -> 12
 12[label = "init_declarator"];
 12 -> 10
-10[label = "IDENTIFIER
-Value: NO_VALUE
-ID: f
-Type: int"];
 12 -> 13
 13[label = "ASSIGN"];
 12 -> 11
 11[label = "FLOAT_CONST
 Value: 5.5
-ID:
+ID: 
 Type: float"];
 25 -> 24
 24[label = "Declaration"];
@@ -58,10 +46,6 @@ Type: float"];
 24 -> 22
 22[label = "init_declarator"];
 22 -> 17
-17[label = "IDENTIFIER
-Value: NO_VALUE
-ID: array
-Type: int"];
 22 -> 23
 23[label = "ASSIGN"];
 22 -> 19
@@ -69,37 +53,33 @@ Type: int"];
 19 -> 18
 18[label = "INT_CONST
 Value: 1
-ID:
+ID: 
 Type: int"];
 19 -> 20
 20[label = "INT_CONST
 Value: 2
-ID:
+ID: 
 Type: int"];
 19 -> 21
 21[label = "INT_CONST
 Value: 3
-ID:
+ID: 
 Type: int"];
 32 -> 31
 31[label = "assignment_expression"];
 31 -> 28
 28[label = "postfix_expression"];
 28 -> 26
-26[label = "IDENTIFIER
-Value: NO_VALUE
-ID: array
-Type: int"];
 28 -> 27
 27[label = "INT_CONST
 Value: 0
-ID:
+ID: 
 Type: int"];
 31 -> 29
 29[label = "ASSIGN"];
 31 -> 30
 30[label = "INT_CONST
 Value: 5
-ID:
+ID: 
 Type: int"];
 }

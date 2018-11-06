@@ -82,6 +82,15 @@ ASTMathNode::ASTMathNode (string node_label) : ASTNode::ASTNode(move(node_label)
 {
 }
 
+ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNode* RHS) : ASTNode::ASTNode(move(node_label))
+{
+	//ADD SOME TYPE CHECKYBOIII
+	addChild(LHS);
+	addChild(mathOp);
+	addChild(RHS);
+}
+
+
 bool ASTMathNode::walk() const
 {
     if( ( (ASTVariableNode*) children.front() )->getType() != ( (ASTVariableNode*) children.back() )->getType())
@@ -106,14 +115,31 @@ void ASTMathNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
 }
 
 
-ASTVariableNode::ASTVariableNode(string node_label) : ASTNode::ASTNode(node_label), type(Int)
+void ASTMathNode::setType(int newType)
+{
+    type = newType;
+}
+int ASTMathNode::getType() const
+{
+    return type;
+}
+
+
+ASTVariableNode::ASTVariableNode(string node_label) : ASTNode::ASTNode(move(node_label)), type(Int)
 {
     value = "NO_VALUE";
 }
 
-ASTVariableNode::ASTVariableNode(ASTNode*& RHS) : ASTNode::ASTNode(RHS->getLabel()), type(Int)
+ASTVariableNode::ASTVariableNode(ASTNode*& RHS) : ASTNode::ASTNode(move( RHS->getLabel() )), type(Int)
 {
     value = "NO_VALUE";
+}
+
+
+ASTVariableNode::ASTVariableNode(string node_label, int inputType, string inputValue, string inputId)
+: ASTNode::ASTNode(move(node_label)), type(inputType), value(inputValue), id(inputId)
+{
+
 }
 
 bool ASTVariableNode::walk() const
@@ -239,4 +265,22 @@ void ASTIterationNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
 			(*it)->printNode(*it, treeOutFile);
 		}
 	}
+}
+
+
+ASTIdNode::ASTIdNode(string node_label) : ASTNode::ASTNode(move(node_label))
+{
+}
+
+ASTIdNode::ASTIdNode(string node_label, string inputId) : ASTNode::ASTNode(move(node_label)), id(inputId)
+{
+}
+
+string ASTIdNode::getId() const
+{
+	return id;
+}
+void ASTIdNode::setId(string inputId)
+{
+	id = inputId;
 }

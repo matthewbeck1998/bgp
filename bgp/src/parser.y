@@ -90,9 +90,7 @@ ASTNode* root;
 %type <nodePtr> iteration_statement selection_statement labeled_statement direct_abstract_declarator
 %type <nodePtr> abstract_declarator type_name initializer_list identifier_list parameter_declaration
 %type <nodePtr> parameter_list parameter_type_list type_qualifier_list pointer enumerator enumerator_list
-%type <nodePtr> struct_declarator struct_declarator_list struct_or_union
-
-%type <sval> identifier
+%type <nodePtr> struct_declarator struct_declarator_list struct_or_union identifier
 //%type <nodePtr>
 
 %%
@@ -216,8 +214,7 @@ type_qualifier
 struct_or_union_specifier
 	: struct_or_union identifier OBRACE struct_declaration_list CBRACE {  ASTNode* temp = new ASTNode("struct_or_union_specifier");
                                                                           temp -> addChild($1);
-                                                                          ASTVariableNode* tempIdNode = new ASTVariableNode("IDENTIFIER");
-                                                                          temp -> addChild(tempIdNode);
+                                                                          temp -> addChild($2);
                                                                           temp -> addChild($4);
                                                                           $$ = temp;
                                                                           parserOutput("struct_or_union_specifier -> struct_or_union identifier OBRACE struct_declaration_list CBRACE"); }
@@ -226,11 +223,7 @@ struct_or_union_specifier
                                                                temp -> addChild($3);
                                                                $$ = temp;
                                                                parserOutput("struct_or_union_specifier -> struct_or_union OBRACE struct_declaration_list CBRACE"); }
-	| struct_or_union identifier { ASTNode* temp = new ASTNode("struct_or_union_specifier");
-                                     temp -> addChild($1);
-                                     ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                                     tempId->setType(Struct);
-                                     temp -> addChild(tempId);
+	| struct_or_union identifier { 	 ASTVariableNode* temp = new ASTVariableNode("struct_or_union_specifier", Struct, $2->getValue(), $2->getId() );
                                      $$ = temp;
                                      parserOutput("struct_or_union_specifier -> struct_or_union identifier"); }
 	;
@@ -313,13 +306,11 @@ struct_declarator
 enum_specifier
 	: ENUM OBRACE enumerator_list CBRACE { $$ = $3; parserOutput("enum_specifier -> ENUM OBRACE enumerator_list CBRACE"); }
 	| ENUM identifier OBRACE enumerator_list CBRACE {   ASTNode* temp = new ASTNode("enum_specifier");
-	                                                    ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-	                                                    tempId->setType(Enum);
-                                                        temp -> addChild(tempId);
+	                                                    ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER", Enum, "ENUM VALUES", $2->getId());
                                                         temp -> addChild($4);
                                                         $$ = temp;
                                                         parserOutput("enum_specifier -> ENUM identifier OBRACE enumerator_list CBRACE"); }
-	| ENUM identifier { ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
+	| ENUM identifier { ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER", Enum, "NO_VALUE", $2->getId());
 	                    tempId->setType(Enum);
 	                    $$ = tempId;
 	                    parserOutput("enum_specifier -> ENUM identifier"); }
@@ -335,10 +326,10 @@ enumerator_list
 	;
 
 enumerator
-	: identifier {  ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                    $$ = tempId; parserOutput("enumerator -> identifier"); }
+	: identifier {  $$ = $1;
+                    parserOutput("enumerator -> identifier"); }
 	| identifier ASSIGN constant_expression { ASTNode* temp = new ASTNode("enumerator");
-                                              temp -> addChild(new ASTVariableNode("IDENTIFIER"));
+                                              temp -> addChild($1);
                                               temp -> addChild($3);
                                               $$ = temp;
                                               parserOutput("enumerator -> identifier ASSIGN constant_expression"); }
@@ -377,11 +368,9 @@ direct_declarator
                         node.setTypeQualifierIndex(nodeTypeQualifier);
                         node.setIsFunction(nodeIsFunction);
                         node.setIsSigned(nodeIsSigned);
-						ASTVariableNode* temp = new ASTVariableNode("IDENTIFIER");
-						temp->setId($1);
-						temp->setColNum(column);
-						temp->setLineNum(line);
-						$$ = temp;
+						$1->setColNum(column);
+						$1->setLineNum(line);
+						$$ = $1;
                         
                         if (!st.insert(node))
                         {
@@ -466,14 +455,11 @@ parameter_declaration
 	;
 
 identifier_list
-	: identifier { ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-					tempId->setId($1);
-				   $$ = tempId; parserOutput("identifier_list -> identifier"); }
+	: identifier { $$ = $1;
+				   parserOutput("identifier_list -> identifier"); }
 	| identifier_list COMMA identifier {   ASTNode* temp = new ASTNode("identifier_list");
                                            temp -> addChild($1);
-											ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-											tempId->setId($3);
-                                           temp -> addChild( tempId );
+                                           temp -> addChild( $3 );
                                            $$ = temp;
                                            parserOutput("identifier_list -> identifier_list COMMA identifier"); }
 	;
@@ -543,9 +529,7 @@ statement
 
 labeled_statement
 	: identifier COLON statement {ASTNode* temp = new ASTNode("labeled_statement");
-								  ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-								  tempId->setId($1);
-                                  temp -> addChild(tempId);
+                                  temp -> addChild($1);
                                   temp -> addChild($3);
                                   $$ = temp;
                                   parserOutput("labeled_statement -> identifier COLON statement"); }
@@ -676,9 +660,7 @@ iteration_statement
 jump_statement
 	: GOTO identifier SEMICOLON { ASTNode* temp = new ASTNode("jump_statement");
                                   temp -> addChild(new ASTNode("GOTO"));
-                                  ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                                  tempId->setId($2);
-                                  temp -> addChild(tempId);
+                                  temp -> addChild($2);
                                   $$ = temp;
                                   parserOutput("jump_statement -> GOTO identifier SEMICOLON"); }
 	| CONTINUE SEMICOLON { $$ = new ASTNode("CONTINUE"); parserOutput("jump_statement -> CONTINUE SEMICOLON"); }
@@ -952,17 +934,13 @@ postfix_expression
 	| postfix_expression PERIOD identifier { ASTNode* temp = new ASTNode("postfix_expression");
                                                temp -> addChild($1);
                                                temp -> addChild(new ASTNode("PERIOD"));
-                                               ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                                               tempId->setId($3);
-                                               temp -> addChild(tempId);
+                                               temp -> addChild($3);
                                                $$ = temp;
                                                parserOutput("postfix_expression -> postfix_expression PERIOD identifier"); }
 	| postfix_expression ARROW identifier { ASTNode* temp = new ASTNode("postfix_expression");
                                               temp -> addChild($1);
                                               temp -> addChild(new ASTNode("ARROW"));
-                                              ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                                              tempId->setId($3);
-                                              temp -> addChild(new ASTVariableNode($3));
+                                              temp -> addChild($3);
                                               $$ = temp;
                                               parserOutput("postfix_expression -> postfix_expression ARROW identifier"); }
 	| postfix_expression INC_OP { ASTNode* temp = new ASTNode("postfix_expression");
@@ -978,9 +956,8 @@ postfix_expression
 	;
 
 primary_expression
-	: identifier { 	ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-					tempId->setId($1);
-					$$ = tempId; parserOutput("primary_expression -> identifier"); }
+	: identifier {  $$ = $1;
+					parserOutput("primary_expression -> identifier"); }
 	| constant { $$ = $1; parserOutput("primary_expression -> constant"); }
 	| string { $$ = $1; parserOutput("primary_expression -> string"); }
 	| OPAREN expression CPAREN { $$ = $2; parserOutput("primary_expression -> OPAREN expression CPAREN"); }
@@ -1024,7 +1001,8 @@ string
 
 identifier
 	: IDENTIFIER {
-                    strcpy($$, yylval.sval);
+					ASTIdNode* temp = new ASTIdNode("IDENTIFIER", yylval.sval);
+                    $$ = temp;
                     parserOutput("identifier -> IDENTIFIER"); 
                     nodeIdentifier = yylval.sval; 
                     nodeLineNumber = line;
