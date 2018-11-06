@@ -1,4 +1,5 @@
 #include "ASTNode.h"
+#include <fstream>
 
 int ASTNode::totalNodeCount = 0;
 
@@ -62,6 +63,20 @@ void ASTNode::setLineNum (int lineNum)
 	ASTNode::lineNum = lineNum;
 }
 
+void ASTNode::printNode (ASTNode* nodePtr, ofstream& treeOutFile)
+{
+	cout << "BASE NODE" << endl;
+	if(nodePtr)
+	{
+		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << "\"];" << endl;
+		for (auto it = children.begin(); it != children.end(); ++it)
+		{
+			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
+			(*it)->printNode(*it, treeOutFile);
+		}
+	}
+}
+
 
 ASTMathNode::ASTMathNode (string node_label) : ASTNode::ASTNode(move(node_label))
 {
@@ -74,6 +89,20 @@ bool ASTMathNode::walk() const
         return false;
     }
     return true;
+}
+
+void ASTMathNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
+{
+	cout << "MATH NODE" << endl;
+	if(nodePtr)
+	{
+		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl << "MATH NODE" <<"\"];" << endl;
+		for (auto it = children.begin(); it != children.end(); ++it)
+		{
+			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
+			(*it)->printNode(*it, treeOutFile);
+		}
+	}
 }
 
 
@@ -122,6 +151,48 @@ void ASTVariableNode::setType(int inputType)
     type = inputType;
 }
 
+void ASTVariableNode::printNode (ASTNode* nodePtr, ofstream& treeOutFile)
+{
+	cout << "VARIABLE NODE" << endl;
+	if(nodePtr)
+	{
+		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl << "Value: " << value << endl;
+		treeOutFile << "ID: " << id << endl << "Type: " << printType() <<"\"];" << endl;
+		for (auto it = children.begin(); it != children.end(); ++it)
+		{
+			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
+			(*it)->printNode(*it, treeOutFile);
+		}
+	}
+}
+
+string ASTVariableNode::printType ()
+{
+	switch (type)
+	{
+		case Void:
+			return "void";
+		case Char:
+			return "char";
+		case Short:
+			return "short";
+		case Int:
+			return "int";
+		case Long:
+			return "long";
+		case Float:
+			return "float";
+		case Double:
+			return "double";
+		case Struct:
+			return "struct";
+		case Enum:
+			return "enum";
+		default:
+			return "type not found";
+	}
+}
+
 ASTSelectionNode::ASTSelectionNode(string node_label) : ASTNode::ASTNode(move(node_label))
 {
     
@@ -132,6 +203,20 @@ bool ASTSelectionNode::walk() const
     
 }
 
+void ASTSelectionNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
+{
+	cout << "SELECTION NODE" << endl;
+	if(nodePtr)
+	{
+		treeOutFile << nodeNum << "[label = \"" << label << endl << "SELECTION NODE" <<"\"];" << endl;
+		for (auto it = children.begin(); it != children.end(); ++it)
+		{
+			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
+			(*it)->printNode(*it, treeOutFile);
+		}
+	}
+}
+
 ASTIterationNode::ASTIterationNode(string node_label) : ASTNode::ASTNode(move(node_label))
 {
 
@@ -140,4 +225,18 @@ ASTIterationNode::ASTIterationNode(string node_label) : ASTNode::ASTNode(move(no
 bool ASTIterationNode::walk() const
 {
 
+}
+
+void ASTIterationNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
+{
+	cout << "ITERATION NODE" << endl;
+	if(nodePtr)
+	{
+		treeOutFile << nodeNum << "[label = \"" << label << endl << "ITERATION NODE" <<"\"];" << endl;
+		for (auto it = children.begin(); it != children.end(); ++it)
+		{
+			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
+			(*it)->printNode(*it, treeOutFile);
+		}
+	}
 }

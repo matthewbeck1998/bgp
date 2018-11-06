@@ -16,22 +16,24 @@ using namespace std;
 class ASTNode
 {
     public:
-        ASTNode(string node_label); //Add line and col num when ready
+        explicit ASTNode(string node_label); //Add line and col num when ready
         void addChild(ASTNode* addNode);
         string getLabel() const;
         virtual bool walk() const;
         list<ASTNode *> &getChildren ();
 		static int totalNodeCount;
 
-	int getColNum () const;
+		int getColNum () const;
 
-	void setColNum (int colNum);
+		void setColNum (int colNum);
 
-	int getLineNum () const;
+		int getLineNum () const;
 
-	void setLineNum (int lineNum);
+		void setLineNum (int lineNum);
 
-	int getNodeNum () const;
+		int getNodeNum () const;
+
+	virtual void printNode(ASTNode* nodePtr, ofstream& treeOutFile);
 
 protected:
 	string label;
@@ -48,6 +50,7 @@ class ASTMathNode : public ASTNode
     public:
         ASTMathNode(string node_label);
         bool walk() const;
+        void printNode(ASTNode* nodePtr, ofstream& treeOutFile) override;
 };
 
 class ASTVariableNode : public ASTNode
@@ -62,10 +65,12 @@ class ASTVariableNode : public ASTNode
         void setId(string inputId);
         void setValue(string inputValue);
         void setType(int inputType);
+        void printNode(ASTNode* nodePtr, ofstream& treeOutFile) override;
     private:
         string value;
         string id;
         int type;
+        string printType();
 };
 
 class ASTSelectionNode : public ASTNode
@@ -73,6 +78,7 @@ class ASTSelectionNode : public ASTNode
     public:
         ASTSelectionNode(string node_label);
         bool walk() const;
+        void printNode(ASTNode* nodePtr, ofstream& treeOutFile) override;
 };
 
 class ASTIterationNode : public ASTNode
@@ -80,6 +86,7 @@ class ASTIterationNode : public ASTNode
     public:
         ASTIterationNode(string node_label);
         bool walk() const;
+        void printNode(ASTNode* nodePtr, ofstream& treeOutFile) override;
 };
 
 /*class ASTSwitchNode : public ASTNode
