@@ -244,7 +244,15 @@ ostream &operator<< (ostream &os, const SymbolNode &node)
 		} else{
 			os << "\t\tNone" << endl;
 		}
+
 	}
+	if(node.getIsArray())
+	{
+		os << "\tArray Dimensions: " << node.getIdentifier();
+		for(int arrayDimensions : node.arrayDimensions)
+			os << '[' << arrayDimensions << ']';
+	}
+
 	return os;
 }
 
@@ -259,7 +267,7 @@ SymbolNode::SymbolNode (const string &identifier, int lineNum, int colNum, int t
 	isArray = false;
 }
 
-bool SymbolNode::isIsArray () const
+bool SymbolNode::getIsArray() const
 {
 	return isArray;
 }
@@ -406,5 +414,19 @@ int SymbolNode::getCurrentFunctionParameterTypeQualifier ()
 	{
 		errorStream << "ERROR: Node: \"" << identifier << "\" is not a function. Cannot get parameter qualifier" << endl;
 		return -1;
+	}
+}
+
+bool SymbolNode::addArrayDimension (int dimension)
+{
+	if(isArray)
+	{
+		arrayDimensions.push_back(dimension);
+		return true;
+	}
+	else
+	{
+		errorStream << "ERROR: Node: \"" << identifier << "\" is not an array. Cannot add array dimension" << endl;
+		return false;
 	}
 }
