@@ -90,7 +90,7 @@ ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNo
 	setType( getHigherType(LHS, RHS) );
 	if( LHS->getType() != RHS->getType() )
 	{
-		errorStream << "WARNING: implicit conversion to " << printType() << endl;
+        outputStream << "WARNING: implicit conversion to " << printType() << endl;
 	}
 }
 
@@ -143,7 +143,7 @@ int ASTMathNode::getHigherType(ASTNode* LHS, ASTNode* RHS) const
 	{
 		return Char;
 	}
-	cerr << "Unsupported types: " << LHS->getType() << ", " << RHS->getType() << endl;
+    outputStream << "Unsupported types: " << LHS->getType() << ", " << RHS->getType() << endl;
 }
 string ASTMathNode::printType() const
 {
@@ -289,7 +289,7 @@ void ASTConstNode::setValue(valueUnion inputValue)
 			value.fVal = inputValue.fVal;
 			break;
 		default:
-			cerr << "Unsupported type " << printType() << endl;
+            outputStream << "Unsupported type " << printType() << endl;
 			exit(-1);
 	}
 }
@@ -313,7 +313,7 @@ void ASTConstNode::printNode (ASTNode* nodePtr, ofstream& treeOutFile)
 				treeOutFile << value.fVal;
 				break;
 			default:
-				cerr << "Unsupported type for a constant" << endl;
+                outputStream << "Unsupported type for a constant" << endl;
 				exit(-1);
 		}
 		treeOutFile << endl;
@@ -420,6 +420,15 @@ void ASTIdNode::setId(string inputId)
 }
 
 
+int ASTIdNode::getType() const
+{
+    return type;
+}
+void ASTIdNode::setType( int inputType )
+{
+    type = inputType;
+}
+
 void ASTIdNode::printNode(ASTNode* nodePtr, ofstream& treeOutFile)
 {
 	if(nodePtr)
@@ -446,4 +455,46 @@ int ASTTypeNode::getType() const
 void ASTTypeNode::setType(int inputType)
 {
     type = inputType;
+}
+
+
+void ASTTypeNode::printNode(ASTNode* nodePtr, ofstream& treeOutFile)
+{
+	if(nodePtr)
+	{
+		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl;
+		treeOutFile << "type: " << printType() << endl <<"\"];" << endl;
+		for (auto it = children.begin(); it != children.end(); ++it)
+		{
+			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
+			(*it)->printNode(*it, treeOutFile);
+		}
+	}
+}
+
+string ASTTypeNode::printType() const
+{
+	switch (type)
+	{
+		case Void:
+			return "void";
+		case Char:
+			return "char";
+		case Short:
+			return "short";
+		case Int:
+			return "int";
+		case Long:
+			return "long";
+		case Float:
+			return "float";
+		case Double:
+			return "double";
+		case Struct:
+			return "struct";
+		case Enum:
+			return "enum";
+		default:
+			return "type not found";
+	}
 }

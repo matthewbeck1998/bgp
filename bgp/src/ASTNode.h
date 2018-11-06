@@ -161,9 +161,12 @@ class ASTIdNode : public ASTNode
         void printNode(ASTNode* nodePtr, ofstream& treeOutFile);
         string getId() const;
         void setId(string inputId);
+        int getType() const;
+        void setType( int inputType );
 
     private:
         string id;
+        int type;
 };
 
 class ASTTypeNode : public  ASTNode
@@ -172,10 +175,11 @@ class ASTTypeNode : public  ASTNode
         ASTTypeNode(string node_label);
         ASTTypeNode(string node_label, int inputType);
         bool walk() const{}
-        void printNode(ASTNode* nodePtr, ofstream& treeOutFile){/*NOTHING HERE YET HELP*/}
+        void printNode(ASTNode* nodePtr, ofstream& treeOutFile);
         int getType() const;
         void setType( int inputType );
     private:
+        string printType() const;
         int type;
 };
 

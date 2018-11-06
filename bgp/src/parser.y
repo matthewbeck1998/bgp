@@ -122,9 +122,6 @@ function_definition
                                                          st.popLevel(); }
 	| declaration_specifiers declarator compound_statement {
 	                                                        ASTNode* temp = new ASTNode("function_definition");
-	                                                        //cout << $1 -> getLabel() << endl;
-	                                                        //cout << $2 -> getLabel() << endl;
-	                                                        //cout << $3 -> getLabel() << endl;
 	                                                        temp->addChild($1);
 	                                                        temp->addChild($2);
 	                                                        temp->addChild($3);
@@ -192,13 +189,13 @@ storage_class_specifier
 	;
 
 type_specifier
-	: VOID { $$ = new ASTTypeNode("VOID", Void); parserOutput("type_specifier -> VOID"); st.setInsertMode(true); nodeTypeSpecifier = 0; }
-	| CHAR { $$ = new ASTTypeNode("CHAR", Char); parserOutput("type_specifier -> CHAR"); st.setInsertMode(true); nodeTypeSpecifier = 1; }
-	| SHORT { $$ = new ASTTypeNode("SHORT", Short); parserOutput("type_specifier -> SHORT"); st.setInsertMode(true); nodeTypeSpecifier = 2; }
-	| INT { $$ = new ASTTypeNode("INT", Int); parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeTypeSpecifier = 3; }
-	| LONG { $$ = new ASTTypeNode("LONG", Long); parserOutput("type_specifier -> LONG"); st.setInsertMode(true); nodeTypeSpecifier = 4; }
-	| FLOAT { $$ = new ASTTypeNode("FLOAT", Float); parserOutput("type_specifier -> FLOAT"); st.setInsertMode(true); nodeTypeSpecifier = 5; }
-	| DOUBLE { $$ = new ASTTypeNode("DOUBLE", Double); parserOutput("type_specifier -> DOUBLE"); st.setInsertMode(true); nodeTypeSpecifier = 6; }
+	: VOID { $$ = new ASTTypeNode("type_specifier", Void); parserOutput("type_specifier -> VOID"); st.setInsertMode(true); nodeTypeSpecifier = 0; }
+	| CHAR { $$ = new ASTTypeNode("type_specifier", Char); parserOutput("type_specifier -> CHAR"); st.setInsertMode(true); nodeTypeSpecifier = 1; }
+	| SHORT { $$ = new ASTTypeNode("type_specifier", Short); parserOutput("type_specifier -> SHORT"); st.setInsertMode(true); nodeTypeSpecifier = 2; }
+	| INT { $$ = new ASTTypeNode("type_specifier", Int); parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeTypeSpecifier = 3; }
+	| LONG { $$ = new ASTTypeNode("type_specifier", Long); parserOutput("type_specifier -> LONG"); st.setInsertMode(true); nodeTypeSpecifier = 4; }
+	| FLOAT { $$ = new ASTTypeNode("type_specifier", Float); parserOutput("type_specifier -> FLOAT"); st.setInsertMode(true); nodeTypeSpecifier = 5; }
+	| DOUBLE { $$ = new ASTTypeNode("type_specifier", Double); parserOutput("type_specifier -> DOUBLE"); st.setInsertMode(true); nodeTypeSpecifier = 6; }
 	| SIGNED { parserOutput("type_specifier -> SIGNED"); st.setInsertMode(true); nodeIsSigned = true; }
 	| UNSIGNED { parserOutput("type_specifier -> UNSIGNED"); st.setInsertMode(true); nodeIsSigned = false; }
 	| struct_or_union_specifier { $$ = $1; parserOutput("type_specifier -> struct_or_union_specifier"); }
@@ -361,8 +358,6 @@ direct_declarator
                         node.setTypeQualifierIndex(nodeTypeQualifier);
                         node.setIsFunction(nodeIsFunction);
                         node.setIsSigned(nodeIsSigned);
-						$1->setColNum(column);
-						$1->setLineNum(line);
 						$$ = $1;
                         
                         if (!st.insert(node))
@@ -994,15 +989,20 @@ string
 identifier
 	: IDENTIFIER {
 					ASTIdNode* temp = new ASTIdNode("IDENTIFIER", yylval.sval);
-                    $$ = temp;
                     parserOutput("identifier -> IDENTIFIER"); 
                     nodeIdentifier = yylval.sval; 
                     nodeLineNumber = line;
-                    if (!st.getInsertMode() && st.searchAll(nodeIdentifier).first == -1)
+                    if (!st.getInsertMode())
                     {
-                        yyerror(NULL);
-                        return 1;
+                    	if(st.searchAll(nodeIdentifier).first == -1)
+						{
+                        	yyerror(NULL);
+                        	return 1;
+						}
+						SymbolNode idNode = st.searchAll(yylval.sval).second->second;
+						temp->setType( idNode.getTypeSpecifierIndex() );
                     }
+					$$ = temp;
                  }
 	;
 

@@ -1,28 +1,50 @@
 digraph G {
 0[label = "input\ast1.c"];
-0 -> 9
-9[label = "function_definition"];
-9 -> 1
-1[label = "INT"];
-9 -> 2
+0 -> 15
+15[label = "function_definition"];
+15 -> 1
+1[label = "type_specifier
+type: int
+"];
+15 -> 2
 2[label = "IDENTIFIER
 id: main
 "];
-9 -> 8
-8[label = "Declaration"];
-8 -> 3
-3[label = "INT"];
-8 -> 7
-7[label = "init_declarator
-MATH NODE"];
-7 -> 4
+15 -> 14
+14[label = "compound_statement"];
+14 -> 9
+9[label = "declaration_list"];
+9 -> 5
+5[label = "Declaration"];
+5 -> 3
+3[label = "type_specifier
+type: int
+"];
+5 -> 4
 4[label = "IDENTIFIER
 id: a
 "];
-7 -> 6
-6[label = "ASSIGN"];
-7 -> 5
-5[label = "INT_CONSTANT
-Value: 2
-Type: int"];
+9 -> 8
+8[label = "Declaration"];
+8 -> 6
+6[label = "type_specifier
+type: float
+"];
+8 -> 7
+7[label = "IDENTIFIER
+id: b
+"];
+14 -> 13
+13[label = "enumerator
+MATH NODE"];
+13 -> 10
+10[label = "IDENTIFIER
+id: a
+"];
+13 -> 11
+11[label = "ASSIGN"];
+13 -> 12
+12[label = "IDENTIFIER
+id: b
+"];
 }
