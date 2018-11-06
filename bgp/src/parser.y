@@ -90,9 +90,7 @@ ASTNode* root;
 %type <nodePtr> iteration_statement selection_statement labeled_statement direct_abstract_declarator
 %type <nodePtr> abstract_declarator type_name initializer_list identifier_list parameter_declaration
 %type <nodePtr> parameter_list parameter_type_list type_qualifier_list pointer enumerator enumerator_list
-%type <nodePtr> struct_declarator struct_declarator_list struct_or_union
-
-%type <sval> identifier
+%type <nodePtr> struct_declarator struct_declarator_list struct_or_union identifier
 //%type <nodePtr>
 
 %%
@@ -194,13 +192,13 @@ storage_class_specifier
 	;
 
 type_specifier
-	: VOID { $$ = new ASTNode("VOID"); parserOutput("type_specifier -> VOID"); st.setInsertMode(true); nodeTypeSpecifier = 0; }
-	| CHAR { $$ = new ASTNode("CHAR"); parserOutput("type_specifier -> CHAR"); st.setInsertMode(true); nodeTypeSpecifier = 1; }
-	| SHORT { $$ = new ASTNode("SHORT"); parserOutput("type_specifier -> SHORT"); st.setInsertMode(true); nodeTypeSpecifier = 2; }
-	| INT { $$ = new ASTNode("INT"); parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeTypeSpecifier = 3; }
-	| LONG { $$ = new ASTNode("LONG"); parserOutput("type_specifier -> LONG"); st.setInsertMode(true); nodeTypeSpecifier = 4; }
-	| FLOAT { $$ = new ASTNode("FLOAT"); parserOutput("type_specifier -> FLOAT"); st.setInsertMode(true); nodeTypeSpecifier = 5; }
-	| DOUBLE { $$ = new ASTNode("DOUBLE"); parserOutput("type_specifier -> DOUBLE"); st.setInsertMode(true); nodeTypeSpecifier = 6; }
+	: VOID { $$ = new ASTTypeNode("VOID", Void); parserOutput("type_specifier -> VOID"); st.setInsertMode(true); nodeTypeSpecifier = 0; }
+	| CHAR { $$ = new ASTTypeNode("CHAR", Char); parserOutput("type_specifier -> CHAR"); st.setInsertMode(true); nodeTypeSpecifier = 1; }
+	| SHORT { $$ = new ASTTypeNode("SHORT", Short); parserOutput("type_specifier -> SHORT"); st.setInsertMode(true); nodeTypeSpecifier = 2; }
+	| INT { $$ = new ASTTypeNode("INT", Int); parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeTypeSpecifier = 3; }
+	| LONG { $$ = new ASTTypeNode("LONG", Long); parserOutput("type_specifier -> LONG"); st.setInsertMode(true); nodeTypeSpecifier = 4; }
+	| FLOAT { $$ = new ASTTypeNode("FLOAT", Float); parserOutput("type_specifier -> FLOAT"); st.setInsertMode(true); nodeTypeSpecifier = 5; }
+	| DOUBLE { $$ = new ASTTypeNode("DOUBLE", Double); parserOutput("type_specifier -> DOUBLE"); st.setInsertMode(true); nodeTypeSpecifier = 6; }
 	| SIGNED { parserOutput("type_specifier -> SIGNED"); st.setInsertMode(true); nodeIsSigned = true; }
 	| UNSIGNED { parserOutput("type_specifier -> UNSIGNED"); st.setInsertMode(true); nodeIsSigned = false; }
 	| struct_or_union_specifier { $$ = $1; parserOutput("type_specifier -> struct_or_union_specifier"); }
@@ -216,8 +214,7 @@ type_qualifier
 struct_or_union_specifier
 	: struct_or_union identifier OBRACE struct_declaration_list CBRACE {  ASTNode* temp = new ASTNode("struct_or_union_specifier");
                                                                           temp -> addChild($1);
-                                                                          ASTVariableNode* tempIdNode = new ASTVariableNode("IDENTIFIER");
-                                                                          temp -> addChild(tempIdNode);
+                                                                          temp -> addChild($2);
                                                                           temp -> addChild($4);
                                                                           $$ = temp;
                                                                           parserOutput("struct_or_union_specifier -> struct_or_union identifier OBRACE struct_declaration_list CBRACE"); }
@@ -226,11 +223,7 @@ struct_or_union_specifier
                                                                temp -> addChild($3);
                                                                $$ = temp;
                                                                parserOutput("struct_or_union_specifier -> struct_or_union OBRACE struct_declaration_list CBRACE"); }
-	| struct_or_union identifier { ASTNode* temp = new ASTNode("struct_or_union_specifier");
-                                     temp -> addChild($1);
-                                     ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                                     tempId->setType(Struct);
-                                     temp -> addChild(tempId);
+	| struct_or_union identifier { 	 ASTVariableNode* temp = new ASTVariableNode("struct_or_union_specifier", Struct, $2->getId() );
                                      $$ = temp;
                                      parserOutput("struct_or_union_specifier -> struct_or_union identifier"); }
 	;
@@ -260,11 +253,7 @@ init_declarator_list
 
 init_declarator
 	: declarator {$$ = $1; parserOutput("init_declarator -> declarator"); }
-	| declarator ASSIGN initializer { ASTNode* temp = new ASTNode("init_declarator");
-                                      temp->addChild($1);
-                                      temp->addChild(new ASTNode("ASSIGN"));
-                                      temp->addChild($3);
-                                      $$ = temp;
+	| declarator ASSIGN initializer { $$ = new ASTMathNode("init_declarator", $1, new ASTNode("ASSIGN"), $3);
                                       parserOutput("init_declarator -> declarator ASSIGN initializer"); }
 	;
 
@@ -313,13 +302,11 @@ struct_declarator
 enum_specifier
 	: ENUM OBRACE enumerator_list CBRACE { $$ = $3; parserOutput("enum_specifier -> ENUM OBRACE enumerator_list CBRACE"); }
 	| ENUM identifier OBRACE enumerator_list CBRACE {   ASTNode* temp = new ASTNode("enum_specifier");
-	                                                    ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-	                                                    tempId->setType(Enum);
-                                                        temp -> addChild(tempId);
+	                                                    ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER", Enum, $2->getId());
                                                         temp -> addChild($4);
                                                         $$ = temp;
                                                         parserOutput("enum_specifier -> ENUM identifier OBRACE enumerator_list CBRACE"); }
-	| ENUM identifier { ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
+	| ENUM identifier { ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER", Enum, $2->getId());
 	                    tempId->setType(Enum);
 	                    $$ = tempId;
 	                    parserOutput("enum_specifier -> ENUM identifier"); }
@@ -335,12 +322,9 @@ enumerator_list
 	;
 
 enumerator
-	: identifier {  ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                    $$ = tempId; parserOutput("enumerator -> identifier"); }
-	| identifier ASSIGN constant_expression { ASTNode* temp = new ASTNode("enumerator");
-                                              temp -> addChild(new ASTVariableNode("IDENTIFIER"));
-                                              temp -> addChild($3);
-                                              $$ = temp;
+	: identifier {  $$ = $1;
+                    parserOutput("enumerator -> identifier"); }
+	| identifier ASSIGN constant_expression { $$ = new ASTMathNode("enumerator", $1, new ASTNode("ASSIGN"), $3);
                                               parserOutput("enumerator -> identifier ASSIGN constant_expression"); }
 	;
 
@@ -377,11 +361,9 @@ direct_declarator
                         node.setTypeQualifierIndex(nodeTypeQualifier);
                         node.setIsFunction(nodeIsFunction);
                         node.setIsSigned(nodeIsSigned);
-						ASTVariableNode* temp = new ASTVariableNode("IDENTIFIER");
-						temp->setId($1);
-						temp->setColNum(column);
-						temp->setLineNum(line);
-						$$ = temp;
+						$1->setColNum(column);
+						$1->setLineNum(line);
+						$$ = $1;
                         
                         if (!st.insert(node))
                         {
@@ -466,14 +448,11 @@ parameter_declaration
 	;
 
 identifier_list
-	: identifier { ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-					tempId->setId($1);
-				   $$ = tempId; parserOutput("identifier_list -> identifier"); }
+	: identifier { $$ = $1;
+				   parserOutput("identifier_list -> identifier"); }
 	| identifier_list COMMA identifier {   ASTNode* temp = new ASTNode("identifier_list");
                                            temp -> addChild($1);
-											ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-											tempId->setId($3);
-                                           temp -> addChild( tempId );
+                                           temp -> addChild( $3 );
                                            $$ = temp;
                                            parserOutput("identifier_list -> identifier_list COMMA identifier"); }
 	;
@@ -543,9 +522,7 @@ statement
 
 labeled_statement
 	: identifier COLON statement {ASTNode* temp = new ASTNode("labeled_statement");
-								  ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-								  tempId->setId($1);
-                                  temp -> addChild(tempId);
+                                  temp -> addChild($1);
                                   temp -> addChild($3);
                                   $$ = temp;
                                   parserOutput("labeled_statement -> identifier COLON statement"); }
@@ -676,9 +653,7 @@ iteration_statement
 jump_statement
 	: GOTO identifier SEMICOLON { ASTNode* temp = new ASTNode("jump_statement");
                                   temp -> addChild(new ASTNode("GOTO"));
-                                  ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                                  tempId->setId($2);
-                                  temp -> addChild(tempId);
+                                  temp -> addChild($2);
                                   $$ = temp;
                                   parserOutput("jump_statement -> GOTO identifier SEMICOLON"); }
 	| CONTINUE SEMICOLON { $$ = new ASTNode("CONTINUE"); parserOutput("jump_statement -> CONTINUE SEMICOLON"); }
@@ -702,11 +677,7 @@ expression
 
 assignment_expression
 	: conditional_expression { $$ = $1; parserOutput("assignment_expression -> conditional_expression"); }
-	| unary_expression assignment_operator assignment_expression { ASTNode* temp = new ASTNode("assignment_expression");
-                                                                    temp -> addChild($1);
-                                                                    temp -> addChild($2);
-                                                                    temp -> addChild($3);
-                                                                    $$ = temp;
+	| unary_expression assignment_operator assignment_expression { $$ = new ASTMathNode("enumerator", $1, $2, $3);
                                                                     parserOutput("assignment_expression -> unary_expression assignment_operator assignment_expression"); }
 	;
 
@@ -853,39 +824,19 @@ shift_expression
 
 additive_expression
 	: multiplicative_expression { $$ = $1; parserOutput("additive_expression -> multiplicative_expression"); }
-	| additive_expression ADD multiplicative_expression { ASTNode* temp = new ASTMathNode("additive_expression");
-                                                          temp->addChild($1);
-                                                          temp->addChild(new ASTNode("ADD"));
-                                                          temp->addChild($3);
-                                                          $$ = temp;
+	| additive_expression ADD multiplicative_expression { $$ = new ASTMathNode("additive_expression", $1, new ASTNode("ADD"), $3);
 	                                                      parserOutput("additive_expression -> additive_expression ADD multiplicative_expression"); }
-	| additive_expression SUB multiplicative_expression { ASTNode* temp = new ASTMathNode("additive_expression");
-                                                          temp -> addChild($1);
-                                                          temp -> addChild(new ASTNode("SUB"));
-                                                          temp -> addChild($3);
-                                                          $$ = temp;
+	| additive_expression SUB multiplicative_expression { $$ = new ASTMathNode("additive_expression", $1, new ASTNode("SUB"), $3);
                                                           parserOutput("additive_expression -> additive_expression SUB multiplicative_expression"); }
 	;
 
 multiplicative_expression
 	: cast_expression { $$ = $1; parserOutput("multiplicative_expression -> cast_expression"); }
-	| multiplicative_expression STAR cast_expression { ASTNode* temp = new ASTMathNode("multiplicative_expression");
-                                                         temp -> addChild($1);
-                                                         temp -> addChild(new ASTNode("STAR"));
-                                                         temp -> addChild($3);
-                                                         $$ = temp;
-                                                         parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
-	| multiplicative_expression DIV cast_expression { ASTNode* temp = new ASTMathNode("multiplicative_expression");
-                                                           temp -> addChild($1);
-                                                           temp -> addChild(new ASTNode("DIV"));
-                                                           temp -> addChild($3);
-                                                           $$ = temp;
-                                                           parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
-	| multiplicative_expression MOD cast_expression { ASTNode* temp = new ASTMathNode("multiplicative_expression");
-                                                       temp -> addChild($1);
-                                                       temp -> addChild(new ASTNode("MOD"));
-                                                       temp -> addChild($3);
-                                                       $$ = temp;
+	| multiplicative_expression STAR cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("STAR"), $3);
+                                                       parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
+	| multiplicative_expression DIV cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("DIVs"), $3);
+													   parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
+	| multiplicative_expression MOD cast_expression {  $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("MOD"), $3); //TODO check for ints in MOD
                                                        parserOutput("multiplicative_expression -> multiplicative_expression MOD cast_expression"); }
 	;
 
@@ -952,17 +903,13 @@ postfix_expression
 	| postfix_expression PERIOD identifier { ASTNode* temp = new ASTNode("postfix_expression");
                                                temp -> addChild($1);
                                                temp -> addChild(new ASTNode("PERIOD"));
-                                               ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                                               tempId->setId($3);
-                                               temp -> addChild(tempId);
+                                               temp -> addChild($3);
                                                $$ = temp;
                                                parserOutput("postfix_expression -> postfix_expression PERIOD identifier"); }
 	| postfix_expression ARROW identifier { ASTNode* temp = new ASTNode("postfix_expression");
                                               temp -> addChild($1);
                                               temp -> addChild(new ASTNode("ARROW"));
-                                              ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                                              tempId->setId($3);
-                                              temp -> addChild(new ASTVariableNode($3));
+                                              temp -> addChild($3);
                                               $$ = temp;
                                               parserOutput("postfix_expression -> postfix_expression ARROW identifier"); }
 	| postfix_expression INC_OP { ASTNode* temp = new ASTNode("postfix_expression");
@@ -978,9 +925,8 @@ postfix_expression
 	;
 
 primary_expression
-	: identifier { 	ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-					tempId->setId($1);
-					$$ = tempId; parserOutput("primary_expression -> identifier"); }
+	: identifier {  $$ = $1;
+					parserOutput("primary_expression -> identifier"); }
 	| constant { $$ = $1; parserOutput("primary_expression -> constant"); }
 	| string { $$ = $1; parserOutput("primary_expression -> string"); }
 	| OPAREN expression CPAREN { $$ = $2; parserOutput("primary_expression -> OPAREN expression CPAREN"); }
@@ -996,24 +942,47 @@ argument_expression_list
 	;
 
 constant
-	: INTEGER_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("INT_CONST");
-						 temp->setValue(yylval.sval);
-						 temp->setType(Int);
-						 $$ = temp;
-	                     parserOutput("constant -> INTEGER_CONSTANT"); }
-	| CHARACTER_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("CHAR_CONST");
-						   temp->setValue(yylval.sval);
-						   temp->setType(Char);
-						   $$ = temp;
-                           parserOutput("constant -> CHARACTER_CONSTANT"); }
-	| FLOATING_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("FLOAT_CONST");
-						  temp->setValue(yylval.sval);
-						  temp->setType(Float);
-						  $$ = temp;
+	: INTEGER_CONSTANT {    int value;
+                            valueUnion temp;
+                            try{
+                                value = stoi(yylval.sval);
+                                temp.intVal = value;
+                            }
+                            catch(...)
+                            {
+                                cerr << "Error converting string to int in INT_CONSTANT" << endl;
+                                exit(-1);
+                            }
+                            $$ = new ASTConstNode("INT_CONSTANT", Int, temp);
+	                        parserOutput("constant -> INTEGER_CONSTANT"); }
+	| CHARACTER_CONSTANT {  char value;
+                            valueUnion temp;
+                            try{
+                                value = yylval.sval[1]; //Gets the character. Does not work for escape characters
+                                temp.charVal = value;
+                            }
+                            catch(...)
+                            {
+                                cerr << "Error converting string to char in CHAR_CONSTANT" << endl;
+                                exit(-1);
+                            }
+                            $$ = new ASTConstNode("CHAR_CONSTANT", Char, temp);
+                            parserOutput("constant -> CHARACTER_CONSTANT"); }
+	| FLOATING_CONSTANT { float value;
+	                      valueUnion temp;
+                          try{
+                              value = stof(yylval.sval);
+                              temp.fVal = value;
+	                      }
+	                      catch(...)
+                          {
+                              cerr << "Error converting string to float in FLOATING_CONSTANT" << endl;
+                              exit(-1);
+                          }
+                          $$ = new ASTConstNode("FLOAT_CONSTANT", Float, temp);
                           parserOutput("constant -> FLOATING_CONSTANT"); }
 	| ENUMERATION_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("ENUMERATION_CONSTANT");
-                             						  temp->setValue(yylval.sval);
-                             						  temp->setType(Float);
+                             						  temp->setType(Enum);
                              						  $$ = temp;
                              						   parserOutput("constant -> ENUMERATION_CONSTANT"); }
 	;
@@ -1024,7 +993,8 @@ string
 
 identifier
 	: IDENTIFIER {
-                    strcpy($$, yylval.sval);
+					ASTIdNode* temp = new ASTIdNode("IDENTIFIER", yylval.sval);
+                    $$ = temp;
                     parserOutput("identifier -> IDENTIFIER"); 
                     nodeIdentifier = yylval.sval; 
                     nodeLineNumber = line;
@@ -1060,8 +1030,6 @@ int main(int argc, char** argv)
 		cerr << "Output file fail." << endl;
         exit(-1);
     }
-
-    cout << "Is tree valid? " << ( tree.walkTree() ? "Yes" : "Nopers" ) << endl;
     return 0;
 }
 

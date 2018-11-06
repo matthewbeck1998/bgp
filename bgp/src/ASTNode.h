@@ -7,11 +7,22 @@
 
 #include <list>
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <cstring>
 #include "SymbolNode.h"
 
 using namespace std;
+extern stringstream errorStream;
+extern stringstream outputStream;
+
+union valueUnion
+{
+    int intVal;
+    char charVal;
+    float fVal;
+};
+
 
 class ASTNode
 {
@@ -33,6 +44,31 @@ class ASTNode
 
 		int getNodeNum () const;
 
+		virtual void setType(int newType) {
+		    outputStream << "setType, YOU DID SOMETHING BAD" << endl;
+		}
+
+		virtual int getType() const {
+		    outputStream << "getType, YOU DID SOMETHING BAD" << endl;
+		}
+
+		virtual void setId(string newId) {
+		    outputStream << "setId, YOU DID SOMETHING BAD" << endl;
+		}
+
+		virtual  string getId() {
+		    outputStream << "getId, YOU DID SOMETHING BAD" << endl;
+		}
+
+		virtual string getValue() {
+		    outputStream << "getType, YOU DID SOMETHING BAD" << endl;
+		}
+
+		virtual void setValue(string newValue)
+        {
+		    outputStream << "getValue, YOU DID SOMETHING BAD" << endl;
+        }
+
 	virtual void printNode(ASTNode* nodePtr, ofstream& treeOutFile);
 
 protected:
@@ -49,8 +85,16 @@ class ASTMathNode : public ASTNode
 {
     public:
         ASTMathNode(string node_label);
+        ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNode* RHS);
         bool walk() const;
         void printNode(ASTNode* nodePtr, ofstream& treeOutFile) override;
+        void setType(int newType);
+        int getType() const;
+    private:
+        int getHigherType(ASTNode* LHS, ASTNode* RHS) const;
+        string printType() const;
+        int type;
+        string value;
 };
 
 class ASTVariableNode : public ASTNode
@@ -58,19 +102,38 @@ class ASTVariableNode : public ASTNode
     public:
         ASTVariableNode(string node_label);
         ASTVariableNode(ASTNode*& RHS);
+        ASTVariableNode(string node_label, int inputType, string inputId);
         bool walk() const;
         int getType() const;
-        string getValue() const;
         string getId() const;
         void setId(string inputId);
-        void setValue(string inputValue);
         void setType(int inputType);
         void printNode(ASTNode* nodePtr, ofstream& treeOutFile) override;
     private:
-        string value;
         string id;
         int type;
         string printType();
+};
+
+class ASTConstNode : public ASTNode
+{
+    public:
+    ASTConstNode(string node_label);
+    ASTConstNode(string node_label, int inputType, valueUnion value);
+
+    int getType() const;
+    void setType(int inputType);
+
+    valueUnion getValue() const;
+    void setValue(valueUnion inputValue);
+
+
+    void printNode(ASTNode* nodePtr, ofstream& treeOutFile) override;
+
+    private:
+    int type;
+    valueUnion value;
+    string printType();
 };
 
 class ASTSelectionNode : public ASTNode
@@ -87,6 +150,33 @@ class ASTIterationNode : public ASTNode
         ASTIterationNode(string node_label);
         bool walk() const;
         void printNode(ASTNode* nodePtr, ofstream& treeOutFile) override;
+};
+
+class ASTIdNode : public ASTNode
+{
+    public:
+        ASTIdNode(string node_label);
+        ASTIdNode(string node_label, string inputId);
+        bool walk() const{}
+        void printNode(ASTNode* nodePtr, ofstream& treeOutFile);
+        string getId() const;
+        void setId(string inputId);
+
+    private:
+        string id;
+};
+
+class ASTTypeNode : public  ASTNode
+{
+    public:
+        ASTTypeNode(string node_label);
+        ASTTypeNode(string node_label, int inputType);
+        bool walk() const{}
+        void printNode(ASTNode* nodePtr, ofstream& treeOutFile){/*NOTHING HERE YET HELP*/}
+        int getType() const;
+        void setType( int inputType );
+    private:
+        int type;
 };
 
 /*class ASTSwitchNode : public ASTNode
