@@ -87,8 +87,11 @@ ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNo
 	addChild(LHS);
 	addChild(mathOp);
 	addChild(RHS);
-	//cout << "Type " << LHS->getType() << " LHS type:  " << RHS->getType() << endl;
-	setType( LHS->getType() );
+	setType( getHigherType(LHS, RHS) );
+	if( LHS->getType() != RHS->getType() )
+	{
+		errorStream << "WARNING: implicit conversion to " << printType() << endl;
+	}
 }
 
 
@@ -126,19 +129,60 @@ int ASTMathNode::getType() const
 }
 
 
+int ASTMathNode::getHigherType(ASTNode* LHS, ASTNode* RHS) const
+{
+	if(LHS->getType() == Float || RHS->getType() == Float)
+	{
+		return Float;
+	}
+	if(LHS->getType() == Int || RHS->getType() == Int)
+	{
+		return Int;
+	}
+	if(LHS->getType() == Char || RHS->getType() == Char)
+	{
+		return Char;
+	}
+	cerr << "Unsupported types: " << LHS->getType() << ", " << RHS->getType() << endl;
+}
+string ASTMathNode::printType() const
+{
+	switch (type)
+	{
+		case Void:
+			return "void";
+		case Char:
+			return "char";
+		case Short:
+			return "short";
+		case Int:
+			return "int";
+		case Long:
+			return "long";
+		case Float:
+			return "float";
+		case Double:
+			return "double";
+		case Struct:
+			return "struct";
+		case Enum:
+			return "enum";
+		default:
+			return "type not found";
+	}
+}
+
 ASTVariableNode::ASTVariableNode(string node_label) : ASTNode::ASTNode(move(node_label)), type(Int)
 {
-    value = "NO_VALUE";
 }
 
 ASTVariableNode::ASTVariableNode(ASTNode*& RHS) : ASTNode::ASTNode(move( RHS->getLabel() )), type(Int)
 {
-    value = "NO_VALUE";
 }
 
 
-ASTVariableNode::ASTVariableNode(string node_label, int inputType, string inputValue, string inputId)
-: ASTNode::ASTNode(move(node_label)), type(inputType), value(inputValue), id(inputId)
+ASTVariableNode::ASTVariableNode(string node_label, int inputType, string inputId)
+: ASTNode::ASTNode(move(node_label)), type(inputType), id(inputId)
 {
 
 }
@@ -153,11 +197,6 @@ int ASTVariableNode::getType() const
 }
 
 
-string ASTVariableNode::getValue() const
-{
-    return value;
-}
-
 
 string ASTVariableNode::getId() const
 {
@@ -166,11 +205,6 @@ string ASTVariableNode::getId() const
 void ASTVariableNode::setId(string inputId)
 {
     id = inputId;
-}
-
-void ASTVariableNode::setValue(string inputValue)
-{
-    value = inputValue;
 }
 
 void ASTVariableNode::setType(int inputType)
@@ -183,7 +217,7 @@ void ASTVariableNode::printNode (ASTNode* nodePtr, ofstream& treeOutFile)
 	//cout << "VARIABLE NODE" << endl;
 	if(nodePtr)
 	{
-		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl << "Value: " << value << endl;
+		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl;
 		treeOutFile << "ID: " << id << endl << "Type: " << printType() <<"\"];" << endl;
 		for (auto it = children.begin(); it != children.end(); ++it)
 		{
@@ -194,6 +228,105 @@ void ASTVariableNode::printNode (ASTNode* nodePtr, ofstream& treeOutFile)
 }
 
 string ASTVariableNode::printType ()
+{
+	switch (type)
+	{
+		case Void:
+			return "void";
+		case Char:
+			return "char";
+		case Short:
+			return "short";
+		case Int:
+			return "int";
+		case Long:
+			return "long";
+		case Float:
+			return "float";
+		case Double:
+			return "double";
+		case Struct:
+			return "struct";
+		case Enum:
+			return "enum";
+		default:
+			return "type not found";
+	}
+}
+
+
+ASTConstNode::ASTConstNode(string node_label) : ASTNode::ASTNode(move(node_label))
+{}
+ASTConstNode::ASTConstNode(string node_label, int inputType, valueUnion value) : ASTNode::ASTNode(move(node_label)), type(inputType)
+{
+	setValue(value);
+}
+
+int ASTConstNode::getType() const
+{
+	return type;
+}
+void ASTConstNode::setType(int inputType)
+{
+	type = inputType;
+}
+
+valueUnion ASTConstNode::getValue() const
+{
+	return value;
+}
+void ASTConstNode::setValue(valueUnion inputValue)
+{
+	switch(type)
+	{
+		case Int:
+			value.intVal = inputValue.intVal;
+			break;
+		case Char:
+			value.charVal = inputValue.charVal;
+			break;
+		case Float:
+			value.fVal = inputValue.fVal;
+			break;
+		default:
+			cerr << "Unsupported type " << printType() << endl;
+			exit(-1);
+	}
+}
+
+void ASTConstNode::printNode (ASTNode* nodePtr, ofstream& treeOutFile)
+{
+    //cout << "VARIABLE NODE" << endl;
+    if(nodePtr)
+    {
+        treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl;
+		treeOutFile << "Value: ";
+        switch (type)
+		{
+			case Int:
+				treeOutFile << value.intVal;
+				break;
+			case Char:
+				treeOutFile << value.charVal;
+				break;
+			case Float:
+				treeOutFile << value.fVal;
+				break;
+			default:
+				cerr << "Unsupported type for a constant" << endl;
+				exit(-1);
+		}
+		treeOutFile << endl;
+        treeOutFile << "Type: " << printType() <<"\"];" << endl;
+        for (auto it = children.begin(); it != children.end(); ++it)
+        {
+            treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
+            (*it)->printNode(*it, treeOutFile);
+        }
+    }
+}
+
+string ASTConstNode::printType()
 {
 	switch (type)
 	{
@@ -284,4 +417,19 @@ string ASTIdNode::getId() const
 void ASTIdNode::setId(string inputId)
 {
 	id = inputId;
+}
+
+
+void ASTIdNode::printNode(ASTNode* nodePtr, ofstream& treeOutFile)
+{
+	if(nodePtr)
+	{
+		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl;
+		treeOutFile << "id: " << id << endl <<"\"];" << endl;
+		for (auto it = children.begin(); it != children.end(); ++it)
+		{
+			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
+			(*it)->printNode(*it, treeOutFile);
+		}
+	}
 }

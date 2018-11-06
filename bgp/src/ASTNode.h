@@ -7,11 +7,21 @@
 
 #include <list>
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <cstring>
 #include "SymbolNode.h"
 
 using namespace std;
+extern stringstream errorStream;
+
+union valueUnion
+{
+    int intVal;
+    char charVal;
+    float fVal;
+};
+
 
 class ASTNode
 {
@@ -80,6 +90,8 @@ class ASTMathNode : public ASTNode
         void setType(int newType);
         int getType() const;
     private:
+        int getHigherType(ASTNode* LHS, ASTNode* RHS) const;
+        string printType() const;
         int type;
         string value;
 };
@@ -89,20 +101,38 @@ class ASTVariableNode : public ASTNode
     public:
         ASTVariableNode(string node_label);
         ASTVariableNode(ASTNode*& RHS);
-        ASTVariableNode(string node_label, int inputType, string inputValue, string inputId);
+        ASTVariableNode(string node_label, int inputType, string inputId);
         bool walk() const;
         int getType() const;
-        string getValue() const;
         string getId() const;
         void setId(string inputId);
-        void setValue(string inputValue);
         void setType(int inputType);
         void printNode(ASTNode* nodePtr, ofstream& treeOutFile) override;
     private:
-        string value;
         string id;
         int type;
         string printType();
+};
+
+class ASTConstNode : public ASTNode
+{
+    public:
+    ASTConstNode(string node_label);
+    ASTConstNode(string node_label, int inputType, valueUnion value);
+
+    int getType() const;
+    void setType(int inputType);
+
+    valueUnion getValue() const;
+    void setValue(valueUnion inputValue);
+
+
+    void printNode(ASTNode* nodePtr, ofstream& treeOutFile) override;
+
+    private:
+    int type;
+    valueUnion value;
+    string printType();
 };
 
 class ASTSelectionNode : public ASTNode
@@ -127,7 +157,7 @@ class ASTIdNode : public ASTNode
         ASTIdNode(string node_label);
         ASTIdNode(string node_label, string inputId);
         bool walk() const{}
-        void printNode(ASTNode* nodePtr, ofstream& treeOutFile){}
+        void printNode(ASTNode* nodePtr, ofstream& treeOutFile);
         string getId() const;
         void setId(string inputId);
 

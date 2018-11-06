@@ -1,92 +1,189 @@
 digraph G {
 0[label = "input\ast1.c"];
-0 -> 30
-30[label = "function_definition"];
-30 -> 1
+0 -> 67
+67[label = "function_definition"];
+67 -> 1
 1[label = "INT"];
-30 -> 2
-30 -> 29
-29[label = "Declaration"];
-29 -> 3
+67 -> 2
+2[label = "IDENTIFIER
+id: main
+"];
+67 -> 66
+66[label = "declaration_list"];
+66 -> 56
+56[label = "declaration_list"];
+56 -> 43
+43[label = "declaration_list"];
+43 -> 21
+21[label = "declaration_list"];
+21 -> 11
+11[label = "Declaration"];
+11 -> 3
 3[label = "INT"];
-29 -> 27
-27[label = "init_declarator"];
-27 -> 4
-27 -> 28
-28[label = "ASSIGN"];
-27 -> 26
-26[label = "additive_expression
-MATH NODE"];
-26 -> 23
-23[label = "additive_expression
-MATH NODE"];
-23 -> 14
-14[label = "additive_expression
-MATH NODE"];
-14 -> 8
+11 -> 9
+9[label = "init_declarator"];
+9 -> 4
+4[label = "IDENTIFIER
+id: a
+"];
+9 -> 10
+10[label = "ASSIGN"];
+9 -> 8
 8[label = "additive_expression
 MATH NODE"];
 8 -> 5
-5[label = "INT_CONST
-Value: 3
-ID: 
-Type: int"];
+5[label = "FLOAT_CONSTANT
+Value: 2
+Type: float"];
 8 -> 7
 7[label = "ADD"];
 8 -> 6
-6[label = "INT_CONST
+6[label = "INT_CONSTANT
 Value: 2
-ID: 
-Type: int"];
-14 -> 13
-13[label = "ADD"];
-14 -> 12
-12[label = "multiplicative_expression
-MATH NODE"];
-12 -> 9
-9[label = "FLOAT_CONST
-Value: 4.0
-ID: 
-Type: float"];
-12 -> 11
-11[label = "DIVs"];
-12 -> 10
-10[label = "INT_CONST
-Value: 4
-ID: 
-Type: int"];
-23 -> 22
-22[label = "ADD"];
-23 -> 21
-21[label = "multiplicative_expression
-MATH NODE"];
-21 -> 18
-18[label = "multiplicative_expression
-MATH NODE"];
-18 -> 15
-15[label = "INT_CONST
-Value: 3
-ID: 
-Type: int"];
-18 -> 17
-17[label = "STAR"];
-18 -> 16
-16[label = "INT_CONST
-Value: 2
-ID: 
 Type: int"];
 21 -> 20
-20[label = "MOD"];
-21 -> 19
-19[label = "FLOAT_CONST
-Value: 1.0
-ID: 
-Type: float"];
-26 -> 25
-25[label = "ADD"];
-26 -> 24
-24[label = "CHAR_CONST
-Value: 'a'
-ID: 
+20[label = "Declaration"];
+20 -> 12
+12[label = "INT"];
+20 -> 18
+18[label = "init_declarator"];
+18 -> 13
+13[label = "IDENTIFIER
+id: b
+"];
+18 -> 19
+19[label = "ASSIGN"];
+18 -> 17
+17[label = "additive_expression
+MATH NODE"];
+17 -> 14
+14[label = "CHAR_CONSTANT
+Value: a
 Type: char"];
+17 -> 16
+16[label = "ADD"];
+17 -> 15
+15[label = "INT_CONSTANT
+Value: 2
+Type: int"];
+43 -> 42
+42[label = "Declaration"];
+42 -> 22
+22[label = "INT"];
+42 -> 40
+40[label = "init_declarator"];
+40 -> 23
+23[label = "IDENTIFIER
+id: c
+"];
+40 -> 41
+41[label = "ASSIGN"];
+40 -> 39
+39[label = "additive_expression
+MATH NODE"];
+39 -> 36
+36[label = "additive_expression
+MATH NODE"];
+36 -> 33
+33[label = "additive_expression
+MATH NODE"];
+33 -> 30
+30[label = "additive_expression
+MATH NODE"];
+30 -> 27
+27[label = "additive_expression
+MATH NODE"];
+27 -> 24
+24[label = "INT_CONSTANT
+Value: 3
+Type: int"];
+27 -> 26
+26[label = "ADD"];
+27 -> 25
+25[label = "INT_CONSTANT
+Value: 3
+Type: int"];
+30 -> 29
+29[label = "ADD"];
+30 -> 28
+28[label = "INT_CONSTANT
+Value: 2
+Type: int"];
+33 -> 32
+32[label = "ADD"];
+33 -> 31
+31[label = "INT_CONSTANT
+Value: 1
+Type: int"];
+36 -> 35
+35[label = "ADD"];
+36 -> 34
+34[label = "CHAR_CONSTANT
+Value: a
+Type: char"];
+39 -> 38
+38[label = "ADD"];
+39 -> 37
+37[label = "INT_CONSTANT
+Value: 2
+Type: int"];
+56 -> 55
+55[label = "Declaration"];
+55 -> 44
+44[label = "INT"];
+55 -> 53
+53[label = "init_declarator"];
+53 -> 45
+45[label = "IDENTIFIER
+id: d
+"];
+53 -> 54
+54[label = "ASSIGN"];
+53 -> 52
+52[label = "additive_expression
+MATH NODE"];
+52 -> 49
+49[label = "additive_expression
+MATH NODE"];
+49 -> 46
+46[label = "INT_CONSTANT
+Value: 2
+Type: int"];
+49 -> 48
+48[label = "ADD"];
+49 -> 47
+47[label = "FLOAT_CONSTANT
+Value: 2
+Type: float"];
+52 -> 51
+51[label = "ADD"];
+52 -> 50
+50[label = "CHAR_CONSTANT
+Value: a
+Type: char"];
+66 -> 65
+65[label = "Declaration"];
+65 -> 57
+57[label = "FLOAT"];
+65 -> 63
+63[label = "init_declarator"];
+63 -> 58
+58[label = "IDENTIFIER
+id: e
+"];
+63 -> 64
+64[label = "ASSIGN"];
+63 -> 62
+62[label = "additive_expression
+MATH NODE"];
+62 -> 59
+59[label = "INT_CONSTANT
+Value: 2
+Type: int"];
+62 -> 61
+61[label = "ADD"];
+62 -> 60
+60[label = "FLOAT_CONSTANT
+Value: 2
+Type: float"];
 }

@@ -223,7 +223,7 @@ struct_or_union_specifier
                                                                temp -> addChild($3);
                                                                $$ = temp;
                                                                parserOutput("struct_or_union_specifier -> struct_or_union OBRACE struct_declaration_list CBRACE"); }
-	| struct_or_union identifier { 	 ASTVariableNode* temp = new ASTVariableNode("struct_or_union_specifier", Struct, $2->getValue(), $2->getId() );
+	| struct_or_union identifier { 	 ASTVariableNode* temp = new ASTVariableNode("struct_or_union_specifier", Struct, $2->getId() );
                                      $$ = temp;
                                      parserOutput("struct_or_union_specifier -> struct_or_union identifier"); }
 	;
@@ -306,11 +306,11 @@ struct_declarator
 enum_specifier
 	: ENUM OBRACE enumerator_list CBRACE { $$ = $3; parserOutput("enum_specifier -> ENUM OBRACE enumerator_list CBRACE"); }
 	| ENUM identifier OBRACE enumerator_list CBRACE {   ASTNode* temp = new ASTNode("enum_specifier");
-	                                                    ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER", Enum, "ENUM VALUES", $2->getId());
+	                                                    ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER", Enum, $2->getId());
                                                         temp -> addChild($4);
                                                         $$ = temp;
                                                         parserOutput("enum_specifier -> ENUM identifier OBRACE enumerator_list CBRACE"); }
-	| ENUM identifier { ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER", Enum, "NO_VALUE", $2->getId());
+	| ENUM identifier { ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER", Enum, $2->getId());
 	                    tempId->setType(Enum);
 	                    $$ = tempId;
 	                    parserOutput("enum_specifier -> ENUM identifier"); }
@@ -953,24 +953,47 @@ argument_expression_list
 	;
 
 constant
-	: INTEGER_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("INT_CONST");
-						 temp->setValue(yylval.sval);
-						 temp->setType(Int);
-						 $$ = temp;
-	                     parserOutput("constant -> INTEGER_CONSTANT"); }
-	| CHARACTER_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("CHAR_CONST");
-						   temp->setValue(yylval.sval);
-						   temp->setType(Char);
-						   $$ = temp;
-                           parserOutput("constant -> CHARACTER_CONSTANT"); }
-	| FLOATING_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("FLOAT_CONST");
-						  temp->setValue(yylval.sval);
-						  temp->setType(Float);
-						  $$ = temp;
+	: INTEGER_CONSTANT {    int value;
+                            valueUnion temp;
+                            try{
+                                value = stoi(yylval.sval);
+                                temp.intVal = value;
+                            }
+                            catch(...)
+                            {
+                                cerr << "Error converting string to int in INT_CONSTANT" << endl;
+                                exit(-1);
+                            }
+                            $$ = new ASTConstNode("INT_CONSTANT", Int, temp);
+	                        parserOutput("constant -> INTEGER_CONSTANT"); }
+	| CHARACTER_CONSTANT {  char value;
+                            valueUnion temp;
+                            try{
+                                value = yylval.sval[1]; //Gets the character. Does not work for escape characters
+                                temp.charVal = value;
+                            }
+                            catch(...)
+                            {
+                                cerr << "Error converting string to char in CHAR_CONSTANT" << endl;
+                                exit(-1);
+                            }
+                            $$ = new ASTConstNode("CHAR_CONSTANT", Char, temp);
+                            parserOutput("constant -> CHARACTER_CONSTANT"); }
+	| FLOATING_CONSTANT { float value;
+	                      valueUnion temp;
+                          try{
+                              value = stof(yylval.sval);
+                              temp.fVal = value;
+	                      }
+	                      catch(...)
+                          {
+                              cerr << "Error converting string to float in FLOATING_CONSTANT" << endl;
+                              exit(-1);
+                          }
+                          $$ = new ASTConstNode("FLOAT_CONSTANT", Float, temp);
                           parserOutput("constant -> FLOATING_CONSTANT"); }
 	| ENUMERATION_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("ENUMERATION_CONSTANT");
-                             						  temp->setValue(yylval.sval);
-                             						  temp->setType(Float);
+                             						  temp->setType(Enum);
                              						  $$ = temp;
                              						   parserOutput("constant -> ENUMERATION_CONSTANT"); }
 	;
