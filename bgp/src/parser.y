@@ -859,7 +859,7 @@ additive_expression
                                                           temp->addChild($3);
                                                           $$ = temp;
 	                                                      parserOutput("additive_expression -> additive_expression ADD multiplicative_expression"); }
-	| additive_expression SUB multiplicative_expression { ASTNode* temp = new ASTNode("additive_expression");
+	| additive_expression SUB multiplicative_expression { ASTNode* temp = new ASTMathNode("additive_expression");
                                                           temp -> addChild($1);
                                                           temp -> addChild(new ASTNode("SUB"));
                                                           temp -> addChild($3);
@@ -869,19 +869,19 @@ additive_expression
 
 multiplicative_expression
 	: cast_expression { $$ = $1; parserOutput("multiplicative_expression -> cast_expression"); }
-	| multiplicative_expression STAR cast_expression { ASTNode* temp = new ASTNode("multiplicative_expression");
+	| multiplicative_expression STAR cast_expression { ASTNode* temp = new ASTMathNode("multiplicative_expression");
                                                          temp -> addChild($1);
                                                          temp -> addChild(new ASTNode("STAR"));
                                                          temp -> addChild($3);
                                                          $$ = temp;
                                                          parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
-	| multiplicative_expression DIV cast_expression { ASTNode* temp = new ASTNode("multiplicative_expression");
+	| multiplicative_expression DIV cast_expression { ASTNode* temp = new ASTMathNode("multiplicative_expression");
                                                            temp -> addChild($1);
                                                            temp -> addChild(new ASTNode("DIV"));
                                                            temp -> addChild($3);
                                                            $$ = temp;
                                                            parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
-	| multiplicative_expression MOD cast_expression { ASTNode* temp = new ASTNode("multiplicative_expression");
+	| multiplicative_expression MOD cast_expression { ASTNode* temp = new ASTMathNode("multiplicative_expression");
                                                        temp -> addChild($1);
                                                        temp -> addChild(new ASTNode("MOD"));
                                                        temp -> addChild($3);
@@ -1046,7 +1046,6 @@ int main(int argc, char** argv)
     AST tree(root);
 	yyparse();
 	tree.printTree();
-	//cout << "Is tree valid? " << ( tree.walkTree() ? "Yes" : "Nopers" ) << endl;
 
     outputFile.open( outputIndex ? argv[outputIndex] : "output/defaultOutput.txt");
     if (outputFile.good())
@@ -1062,7 +1061,8 @@ int main(int argc, char** argv)
         exit(-1);
     }
 
-	  return 0;
+    cout << "Is tree valid? " << ( tree.walkTree() ? "Yes" : "Nopers" ) << endl;
+    return 0;
 }
 
 /// @name yyerror

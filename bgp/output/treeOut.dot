@@ -31,7 +31,7 @@ Type: int"];
 6 -> 5
 5[label = "INT_CONST
 Value: 3
-ID: 
+ID:
 Type: int"];
 15 -> 14
 14[label = "Declaration"];
@@ -49,7 +49,7 @@ Type: int"];
 12 -> 11
 11[label = "FLOAT_CONST
 Value: 5.5
-ID: 
+ID:
 Type: float"];
 25 -> 24
 24[label = "Declaration"];
@@ -69,17 +69,17 @@ Type: int"];
 19 -> 18
 18[label = "INT_CONST
 Value: 1
-ID: 
+ID:
 Type: int"];
 19 -> 20
 20[label = "INT_CONST
 Value: 2
-ID: 
+ID:
 Type: int"];
 19 -> 21
 21[label = "INT_CONST
 Value: 3
-ID: 
+ID:
 Type: int"];
 32 -> 31
 31[label = "assignment_expression"];
@@ -93,13 +93,13 @@ Type: int"];
 28 -> 27
 27[label = "INT_CONST
 Value: 0
-ID: 
+ID:
 Type: int"];
 31 -> 29
 29[label = "ASSIGN"];
 31 -> 30
 30[label = "INT_CONST
 Value: 5
-ID: 
+ID:
 Type: int"];
 }
