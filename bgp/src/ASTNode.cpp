@@ -18,9 +18,9 @@ void ASTNode::addChild (ASTNode *addNode)
 
 bool ASTNode::walk() const
 {
-    for(auto it = children.begin() ; it != children.end() ; ++it)
-    {
-        if(not (*it)->walk())
+    for(auto it : children)
+	{
+        if(not it->walk())
         {
             return false;
         }
@@ -63,17 +63,15 @@ void ASTNode::setLineNum (int lineNum)
 	ASTNode::lineNum = lineNum;
 }
 
-void ASTNode::printNode (ASTNode* nodePtr, ofstream& treeOutFile)
+void ASTNode::printNode(ostream &treeOutFile)
 {
 	//cout << "BASE NODE" << endl;
-	if(nodePtr)
+
+	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << "\"];" << endl;
+	for(auto &it : children)
 	{
-		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << "\"];" << endl;
-		for (auto it = children.begin(); it != children.end(); ++it)
-		{
-			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
-			(*it)->printNode(*it, treeOutFile);
-		}
+		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+		it->printNode(treeOutFile);
 	}
 }
 
@@ -170,18 +168,15 @@ bool ASTMathNode::walk() const
     return true;
 }
 
-void ASTMathNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
+void ASTMathNode::printNode(ostream &treeOutFile)
 {
-	//cout << "MATH NODE" << endl;
-	if(nodePtr)
+	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl << "MATH NODE" <<"\"];" << endl;
+	for(auto &it : children)
 	{
-		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl << "MATH NODE" <<"\"];" << endl;
-		for (auto it = children.begin(); it != children.end(); ++it)
-		{
-			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
-			(*it)->printNode(*it, treeOutFile);
-		}
+		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+		it->printNode(treeOutFile);
 	}
+
 }
 
 
@@ -302,18 +297,16 @@ bool ASTAssignNode::walk() const
     return true;
 }
 
-void ASTAssignNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
+void ASTAssignNode::printNode(ostream &treeOutFile)
 {
-    //cout << "MATH NODE" << endl;
-    if(nodePtr)
-    {
-        treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl << "MATH NODE" <<"\"];" << endl;
-        for (auto it = children.begin(); it != children.end(); ++it)
-        {
-            treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
-            (*it)->printNode(*it, treeOutFile);
-        }
-    }
+
+	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl << "MATH NODE" <<"\"];" << endl;
+	for(auto &it : children)
+	{
+		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+		it->printNode(treeOutFile);
+	}
+
 }
 
 
@@ -425,18 +418,14 @@ void ASTVariableNode::setType(int inputType)
     type = inputType;
 }
 
-void ASTVariableNode::printNode (ASTNode* nodePtr, ofstream& treeOutFile)
+void ASTVariableNode::printNode(ostream &treeOutFile)
 {
-	//cout << "VARIABLE NODE" << endl;
-	if(nodePtr)
+	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+	treeOutFile << "ID: " << id << endl << "Type: " << printType() <<"\"];" << endl;
+	for(auto &it : children)
 	{
-		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl;
-		treeOutFile << "ID: " << id << endl << "Type: " << printType() <<"\"];" << endl;
-		for (auto it = children.begin(); it != children.end(); ++it)
-		{
-			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
-			(*it)->printNode(*it, treeOutFile);
-		}
+		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+		it->printNode(treeOutFile);
 	}
 }
 
@@ -507,36 +496,32 @@ void ASTConstNode::setValue(valueUnion inputValue)
 	}
 }
 
-void ASTConstNode::printNode (ASTNode* nodePtr, ofstream& treeOutFile)
+void ASTConstNode::printNode(ostream &treeOutFile)
 {
-    //cout << "VARIABLE NODE" << endl;
-    if(nodePtr)
-    {
-        treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl;
-		treeOutFile << "Value: ";
-        switch (type)
-		{
-			case Int:
-				treeOutFile << value.intVal;
-				break;
-			case Char:
-				treeOutFile << value.charVal;
-				break;
-			case Float:
-				treeOutFile << value.fVal;
-				break;
-			default:
-                outputStream << "Unsupported type for a constant" << endl;
-				exit(-1);
-		}
-		treeOutFile << endl;
-        treeOutFile << "Type: " << printType() <<"\"];" << endl;
-        for (auto it = children.begin(); it != children.end(); ++it)
-        {
-            treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
-            (*it)->printNode(*it, treeOutFile);
-        }
-    }
+	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+	treeOutFile << "Value: ";
+	switch (type)
+	{
+		case Int:
+			treeOutFile << value.intVal;
+			break;
+		case Char:
+			treeOutFile << value.charVal;
+			break;
+		case Float:
+			treeOutFile << value.fVal;
+			break;
+		default:
+			outputStream << "Unsupported type for a constant" << endl;
+			exit(-1);
+	}
+	treeOutFile << endl;
+	treeOutFile << "Type: " << printType() <<"\"];" << endl;
+	for(auto &it : children)
+	{
+		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+		it->printNode(treeOutFile);
+	}
 }
 
 string ASTConstNode::printType()
@@ -576,17 +561,13 @@ bool ASTSelectionNode::walk() const
     
 }
 
-void ASTSelectionNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
+void ASTSelectionNode::printNode(ostream &treeOutFile)
 {
-	//cout << "SELECTION NODE" << endl;
-	if(nodePtr)
+	treeOutFile << nodeNum << "[label = \"" << label << endl << "SELECTION NODE" <<"\"];" << endl;
+	for(auto &it : children)
 	{
-		treeOutFile << nodeNum << "[label = \"" << label << endl << "SELECTION NODE" <<"\"];" << endl;
-		for (auto it = children.begin(); it != children.end(); ++it)
-		{
-			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
-			(*it)->printNode(*it, treeOutFile);
-		}
+		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+		it->printNode(treeOutFile);
 	}
 }
 
@@ -600,17 +581,13 @@ bool ASTIterationNode::walk() const
 
 }
 
-void ASTIterationNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
+void ASTIterationNode::printNode(ostream &treeOutFile)
 {
-	//cout << "ITERATION NODE" << endl;
-	if(nodePtr)
+	treeOutFile << nodeNum << "[label = \"" << label << endl << "ITERATION NODE" <<"\"];" << endl;
+	for(auto &it : children)
 	{
-		treeOutFile << nodeNum << "[label = \"" << label << endl << "ITERATION NODE" <<"\"];" << endl;
-		for (auto it = children.begin(); it != children.end(); ++it)
-		{
-			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
-			(*it)->printNode(*it, treeOutFile);
-		}
+		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+		it->printNode(treeOutFile);
 	}
 }
 
@@ -642,19 +619,16 @@ void ASTIdNode::setType( int inputType )
     type = inputType;
 }
 
-void ASTIdNode::printNode(ASTNode* nodePtr, ofstream& treeOutFile)
+void ASTIdNode::printNode(ostream &treeOutFile)
 {
-	if(nodePtr)
-	{
-		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl;
+		treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
 		treeOutFile << "id: " << id << endl;
 		treeOutFile << "type: " << printType() << "\"];" << endl;
-		for (auto it = children.begin(); it != children.end(); ++it)
+		for(auto &it : children)
 		{
-			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
-			(*it)->printNode(*it, treeOutFile);
+			treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+			it->printNode(treeOutFile);
 		}
-	}
 }
 
 string ASTIdNode::printType() const // You meant to write this, right? - Matt
@@ -698,18 +672,15 @@ void ASTTypeNode::setType(int inputType)
 }
 
 
-void ASTTypeNode::printNode(ASTNode* nodePtr, ofstream& treeOutFile)
+void ASTTypeNode::printNode(ostream &treeOutFile)
 {
-	if(nodePtr)
-	{
-		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl;
+		treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
 		treeOutFile << "type: " << printType() << endl <<"\"];" << endl;
-		for (auto it = children.begin(); it != children.end(); ++it)
+		for(auto &it : children)
 		{
-			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
-			(*it)->printNode(*it, treeOutFile);
+			treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+			it->printNode(treeOutFile);
 		}
-	}
 }
 
 string ASTTypeNode::printType() const
@@ -756,17 +727,14 @@ void ASTCastNode::setType(int inputType)
 }
 
 
-void ASTCastNode::printNode(ASTNode* nodePtr, ofstream& treeOutFile)
+void ASTCastNode::printNode(ostream &treeOutFile)
 {
-	if(nodePtr)
+	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+	treeOutFile << "type: " << printType() << endl <<"\"];" << endl;
+	for(auto &it : children)
 	{
-		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl;
-		treeOutFile << "type: " << printType() << endl <<"\"];" << endl;
-		for (auto it = children.begin(); it != children.end(); ++it)
-		{
-			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
-			(*it)->printNode(*it, treeOutFile);
-		}
+		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+		it->printNode(treeOutFile);
 	}
 }
 

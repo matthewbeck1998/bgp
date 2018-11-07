@@ -29,7 +29,7 @@ void AST::printTree ()
 		ofstream treeOutFile;
 		treeOutFile.open("output/treeOut.dot");
 		treeOutFile << "digraph G {" << endl;
-		root->printNode(root, treeOutFile);
+		root->printNode(treeOutFile);
 		treeOutFile << '}';
 		treeOutFile.close();
 	}
