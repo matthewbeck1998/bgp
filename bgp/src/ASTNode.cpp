@@ -106,17 +106,17 @@ ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNo
         else if(LHS->getType() == Int)
         {
             ASTCastNode* temp = new ASTCastNode( "cast_node", RHS, Int );
-            addChild(temp);
+            addChild(LHS);
             addChild(mathOp);
-            addChild(RHS);
+            addChild(temp);
             outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << endl;
         }
         else if(RHS->getType() == Int)
         {
             ASTCastNode* temp = new ASTCastNode( "cast_node", LHS, Int );
-            addChild(LHS);
-            addChild(mathOp);
             addChild(temp);
+            addChild(mathOp);
+            addChild(RHS);
             outputStream << "WARNING: implicit conversion from " << printType(LHS) << " to " << printType(RHS) << endl;
         }
         else if(LHS->getType() == Char)
@@ -257,13 +257,38 @@ ASTAssignNode::ASTAssignNode (string node_label) : ASTNode::ASTNode(move(node_la
 
 ASTAssignNode::ASTAssignNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNode* RHS) : ASTNode::ASTNode(move(node_label))
 {
-    addChild(LHS);
-    addChild(mathOp);
-    addChild(RHS);
     setType( getHigherType(LHS, RHS) );
     if( LHS->getType() != RHS->getType() )
     {
-        outputStream << "WARNING: implicit conversion to " << printType() << endl;
+        if(LHS->getType() == Float)
+        {
+            ASTCastNode* temp = new ASTCastNode( "cast_node", RHS, Float );
+            addChild(LHS);
+            addChild(mathOp);
+            addChild(temp);
+            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << endl;
+        }
+        else if(LHS->getType() == Int)
+        {
+            ASTCastNode* temp = new ASTCastNode( "cast_node", RHS, Int );
+            addChild(LHS);
+            addChild(mathOp);
+            addChild(temp);
+            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << endl;
+        }
+        else if(LHS->getType() == Char)
+        {
+            ASTCastNode* temp = new ASTCastNode( "cast_node", RHS, Char );
+            addChild(LHS);
+            addChild(mathOp);
+            addChild(temp);
+            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << endl;
+        }
+    } else
+    {
+        addChild(LHS);
+        addChild(mathOp);
+        addChild(RHS);
     }
 }
 
@@ -309,6 +334,33 @@ int ASTAssignNode::getHigherType(ASTNode* LHS, ASTNode* RHS) const
 string ASTAssignNode::printType() const
 {
     switch (type)
+    {
+        case Void:
+            return "void";
+        case Char:
+            return "char";
+        case Short:
+            return "short";
+        case Int:
+            return "int";
+        case Long:
+            return "long";
+        case Float:
+            return "float";
+        case Double:
+            return "double";
+        case Struct:
+            return "struct";
+        case Enum:
+            return "enum";
+        default:
+            return "type not found";
+    }
+}
+
+string ASTAssignNode::printType(ASTNode*& node) const
+{
+    switch (node->getType())
     {
         case Void:
             return "void";

@@ -110,6 +110,7 @@ class ASTAssignNode : public ASTNode
     private:
         int getHigherType(ASTNode* LHS, ASTNode* RHS) const;
         string printType() const;
+        string printType(ASTNode*& node) const;
         int type;
         string value;
 };

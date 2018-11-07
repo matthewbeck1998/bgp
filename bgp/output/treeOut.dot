@@ -1,18 +1,18 @@
 digraph G {
 0[label = "input\ast1.c"];
-0 -> 15
-15[label = "function_definition"];
-15 -> 1
+0 -> 22
+22[label = "function_definition"];
+22 -> 1
 1[label = "type_specifier
 type: int
 "];
-15 -> 2
+22 -> 2
 2[label = "IDENTIFIER
 id: main
 "];
-15 -> 14
-14[label = "compound_statement"];
-14 -> 9
+22 -> 21
+21[label = "compound_statement"];
+21 -> 9
 9[label = "declaration_list"];
 9 -> 5
 5[label = "Declaration"];
@@ -32,9 +32,11 @@ type: float
 "];
 8 -> 7
 7[label = "IDENTIFIER
-id: b
+id: x
 "];
-14 -> 13
+21 -> 20
+20[label = "statement_list"];
+20 -> 13
 13[label = "enumerator
 MATH NODE"];
 13 -> 10
@@ -43,8 +45,29 @@ id: a
 "];
 13 -> 11
 11[label = "ASSIGN"];
-13 -> 12
+13 -> 14
+14[label = "cast_node
+type: int
+"];
+14 -> 12
 12[label = "IDENTIFIER
-id: b
+id: x
+"];
+20 -> 18
+18[label = "enumerator
+MATH NODE"];
+18 -> 15
+15[label = "IDENTIFIER
+id: x
+"];
+18 -> 16
+16[label = "ASSIGN"];
+18 -> 19
+19[label = "cast_node
+type: float
+"];
+19 -> 17
+17[label = "IDENTIFIER
+id: a
 "];
 }
