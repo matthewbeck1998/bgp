@@ -1005,12 +1005,10 @@ identifier
                         	yyerror(NULL);
                         	return 1;
 						}
-						//SymbolNode idNode = st.searchAll(yylval.sval).second->second;
-						//cout << "Type: " << idNode.getTypeSpecifierIndex() << endl;
-						//temp->setType( idNode.getTypeSpecifierIndex() );
+						SymbolNode idNode = st.searchAll(yylval.sval).second->second;
+						cout << "Type: " << idNode.getTypeSpecifierIndex() << endl;
+						temp->setType( idNode.getTypeSpecifierIndex() );
                     }
-                    SymbolNode idNode = st.searchAll(yylval.sval).second->second;
-                    temp->setType( idNode.getTypeSpecifierIndex() );
 					$$ = temp;
                  }
 	;
