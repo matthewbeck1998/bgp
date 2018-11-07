@@ -1,31 +1,31 @@
 CXX = g++
 CXXFLAGS = -std=gnu++11
 
-../bin/bgp: parser.o scanner.o SymbolTable.o SymbolNode.o AST.o ASTNode.o
-	$(CXX) $(CXXFLAGS) -o ../bin/bgp parser.o scanner.o SymbolTable.o SymbolNode.o AST.o ASTNode.o
+../bin/bgp: ../obj/parser.o ../obj/scanner.o ../obj/SymbolTable.o ../obj/SymbolNode.o ../obj/AST.o ../obj/ASTNode.o
+	$(CXX) $(CXXFLAGS) -o ../bin/bgp ../obj/parser.o ../obj/scanner.o ../obj/SymbolTable.o ../obj/SymbolNode.o ../obj/AST.o ../obj/ASTNode.o
 
-parser.o: parser.y
+../obj/parser.o: parser.y
 	bison -d -o parser.c parser.y
-	$(CXX) $(CXXFLAGS) -c parser.c
+	$(CXX) $(CXXFLAGS) -o ../obj/parser.o -c parser.c
 
-scanner.o: scanner.l
+../obj/scanner.o: scanner.l
 	flex -o scanner.c scanner.l
-	$(CXX) $(CXXFLAGS) -lfl -c scanner.c
+	$(CXX) $(CXXFLAGS) -o ../obj/scanner.o -lfl -c scanner.c
 
-SymbolTable.o: SymbolTable.cpp SymbolTable.h
-	$(CXX) $(CXXFLAGS) -c SymbolTable.cpp
+../obj/SymbolTable.o: SymbolTable.cpp SymbolTable.h
+	$(CXX) $(CXXFLAGS) -o ../obj/SymbolTable.o -c SymbolTable.cpp
 
-SymbolNode.o: SymbolNode.cpp SymbolNode.h
-	$(CXX) $(CXXFLAGS) -c SymbolNode.cpp
+../obj/SymbolNode.o: SymbolNode.cpp SymbolNode.h
+	$(CXX) $(CXXFLAGS) -o ../obj/SymbolNode.o -c SymbolNode.cpp
 
-AST.o: AST.cpp AST.h
-	$(CXX) $(CXXFLAGS) -c AST.cpp
+../obj/AST.o: AST.cpp AST.h
+	$(CXX) $(CXXFLAGS) -o ../obj/AST.o -c AST.cpp
 
-ASTNode.o: ASTNode.cpp ASTNode.h
-	$(CXX) $(CXXFLAGS) -c ASTNode.cpp
+../obj/ASTNode.o: ASTNode.cpp ASTNode.h
+	$(CXX) $(CXXFLAGS) -o ../obj/ASTNode.o -c ASTNode.cpp
 
 graph:
 	dot -Tpng ..\output\treeOut.dot -o ..\output\ASTree.png
 
 clean:
-	rm parser.c parser.h scanner.c *.o ../bin/bgp
+	rm parser.c parser.h scanner.c ../obj/*.o ../bin/bgp
