@@ -6,3 +6,4 @@ bgp/src/parser.c
 bgp/src/scanner.c
 *.swp
 *.swo
+*.dot
