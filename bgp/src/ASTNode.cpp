@@ -647,7 +647,8 @@ void ASTIdNode::printNode(ASTNode* nodePtr, ofstream& treeOutFile)
 	if(nodePtr)
 	{
 		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl;
-		treeOutFile << "id: " << id << endl <<"\"];" << endl;
+		treeOutFile << "id: " << id << endl;
+		treeOutFile << "type: " << printType(type) << "\"];" << endl;
 		for (auto it = children.begin(); it != children.end(); ++it)
 		{
 			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;

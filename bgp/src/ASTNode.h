@@ -214,6 +214,31 @@ class ASTCastNode : public ASTNode
         int type;
 };
 
+string printType(int type)
+{
+	switch (type)
+	{
+		case Void:
+			return  "void";;
+		case Char:
+			return "char";
+		case Short:
+			return "short";
+		case Int:
+			return "int";
+		case Long:
+			return  "long";
+		case Float:
+			return "float";
+		case Double:
+			return "double";
+		case Struct:
+			return "struct";
+		default:
+			return "No type";
+	}
+}
+
 /*class ASTSwitchNode : public ASTNode
 {
     public:
