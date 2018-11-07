@@ -25,7 +25,7 @@ CXXFLAGS = -std=gnu++11
 	$(CXX) $(CXXFLAGS) -o ../obj/ASTNode.o -c ASTNode.cpp
 
 graph:
-	dot -Tpng ..\output\treeOut.dot -o ..\output\ASTree.png
+	dot -Tpng ../output/treeOut.dot -o ../output/ASTree.png
 
 clean:
 	rm parser.c parser.h scanner.c ../obj/*.o ../bin/bgp
