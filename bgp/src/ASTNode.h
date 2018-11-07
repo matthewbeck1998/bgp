@@ -93,6 +93,23 @@ class ASTMathNode : public ASTNode
     private:
         int getHigherType(ASTNode* LHS, ASTNode* RHS) const;
         string printType() const;
+        string printType(ASTNode*& node) const;
+        int type;
+        string value;
+};
+
+class ASTAssignNode : public ASTNode
+{
+    public:
+        ASTAssignNode(string node_label);
+        ASTAssignNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNode* RHS);
+        bool walk() const;
+        void printNode(ASTNode* nodePtr, ofstream& treeOutFile) override;
+        void setType(int newType);
+        int getType() const;
+    private:
+        int getHigherType(ASTNode* LHS, ASTNode* RHS) const;
+        string printType() const;
         int type;
         string value;
 };
@@ -175,6 +192,19 @@ class ASTTypeNode : public  ASTNode
         ASTTypeNode(string node_label);
         ASTTypeNode(string node_label, int inputType);
         bool walk() const{}
+        void printNode(ASTNode* nodePtr, ofstream& treeOutFile);
+        int getType() const;
+        void setType( int inputType );
+    private:
+        string printType() const;
+        int type;
+};
+
+class ASTCastNode : public ASTNode
+{
+    public:
+        ASTCastNode(string node_label);
+        ASTCastNode(string node_label, ASTNode* childNode, int castType);
         void printNode(ASTNode* nodePtr, ofstream& treeOutFile);
         int getType() const;
         void setType( int inputType );

@@ -84,16 +84,82 @@ ASTMathNode::ASTMathNode (string node_label) : ASTNode::ASTNode(move(node_label)
 
 ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNode* RHS) : ASTNode::ASTNode(move(node_label))
 {
-	addChild(LHS);
-	addChild(mathOp);
-	addChild(RHS);
 	setType( getHigherType(LHS, RHS) );
 	if( LHS->getType() != RHS->getType() )
-	{
-        outputStream << "WARNING: implicit conversion to " << printType() << endl;
-	}
+    {
+        if(LHS->getType() == Float)
+        {
+            ASTCastNode* temp = new ASTCastNode( "cast_node", RHS, Float );
+            addChild(LHS);
+            addChild(mathOp);
+            addChild(temp);
+            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << endl;
+        }
+        else if(RHS->getType() == Float)
+        {
+            ASTCastNode* temp = new ASTCastNode( "cast_node", LHS, Float );
+            addChild(temp);
+            addChild(mathOp);
+            addChild(RHS);
+            outputStream << "WARNING: implicit conversion from " << printType(LHS) << " to " << printType(RHS) << endl;
+        }
+        else if(LHS->getType() == Int)
+        {
+            ASTCastNode* temp = new ASTCastNode( "cast_node", RHS, Int );
+            addChild(temp);
+            addChild(mathOp);
+            addChild(RHS);
+            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << endl;
+        }
+        else if(RHS->getType() == Int)
+        {
+            ASTCastNode* temp = new ASTCastNode( "cast_node", LHS, Int );
+            addChild(LHS);
+            addChild(mathOp);
+            addChild(temp);
+            outputStream << "WARNING: implicit conversion from " << printType(LHS) << " to " << printType(RHS) << endl;
+        }
+        else if(LHS->getType() == Char)
+        {
+            ASTCastNode* temp = new ASTCastNode( "cast_node", RHS, Char );
+            addChild(LHS);
+            addChild(mathOp);
+            addChild(temp);
+            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << endl;
+        }
+        else if(RHS->getType() == Char)
+        {
+            ASTCastNode* temp = new ASTCastNode( "cast_node", LHS, Char );
+            addChild(temp);
+            addChild(mathOp);
+            addChild(RHS);
+            outputStream << "WARNING: implicit conversion from " << printType(LHS) << " to " << printType(RHS) << endl;
+        }
+        //outputStream << "Unsupported types: " << printType( LHS ) << ", " << printType( RHS ) << endl;
+    } else
+    {
+	    addChild(LHS);
+	    addChild(mathOp);
+	    addChild(RHS);
+    }
 }
 
+int ASTMathNode::getHigherType(ASTNode* LHS, ASTNode* RHS) const
+{
+	if(LHS->getType() == Float || RHS->getType() == Float)
+	{
+		return Float;
+	}
+	if(LHS->getType() == Int || RHS->getType() == Int)
+	{
+		return Int;
+	}
+	if(LHS->getType() == Char || RHS->getType() == Char)
+	{
+		return Char;
+	}
+	outputStream << "Unsupported types: " << LHS->getType() << ", " << RHS->getType() << endl;
+}
 
 bool ASTMathNode::walk() const
 {
@@ -119,6 +185,34 @@ void ASTMathNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
 }
 
 
+string ASTMathNode::printType(ASTNode*& node) const
+{
+    switch (node->getType())
+    {
+        case Void:
+            return "void";
+        case Char:
+            return "char";
+        case Short:
+            return "short";
+        case Int:
+            return "int";
+        case Long:
+            return "long";
+        case Float:
+            return "float";
+        case Double:
+            return "double";
+        case Struct:
+            return "struct";
+        case Enum:
+            return "enum";
+        default:
+            return "type not found";
+    }
+}
+
+
 void ASTMathNode::setType(int newType)
 {
     type = newType;
@@ -128,23 +222,6 @@ int ASTMathNode::getType() const
     return type;
 }
 
-
-int ASTMathNode::getHigherType(ASTNode* LHS, ASTNode* RHS) const
-{
-	if(LHS->getType() == Float || RHS->getType() == Float)
-	{
-		return Float;
-	}
-	if(LHS->getType() == Int || RHS->getType() == Int)
-	{
-		return Int;
-	}
-	if(LHS->getType() == Char || RHS->getType() == Char)
-	{
-		return Char;
-	}
-    outputStream << "Unsupported types: " << LHS->getType() << ", " << RHS->getType() << endl;
-}
 string ASTMathNode::printType() const
 {
 	switch (type)
@@ -170,6 +247,90 @@ string ASTMathNode::printType() const
 		default:
 			return "type not found";
 	}
+}
+
+
+
+ASTAssignNode::ASTAssignNode (string node_label) : ASTNode::ASTNode(move(node_label))
+{
+}
+
+ASTAssignNode::ASTAssignNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNode* RHS) : ASTNode::ASTNode(move(node_label))
+{
+    addChild(LHS);
+    addChild(mathOp);
+    addChild(RHS);
+    setType( getHigherType(LHS, RHS) );
+    if( LHS->getType() != RHS->getType() )
+    {
+        outputStream << "WARNING: implicit conversion to " << printType() << endl;
+    }
+}
+
+
+bool ASTAssignNode::walk() const
+{
+    if( ( (ASTVariableNode*) children.front() )->getType() != ( (ASTVariableNode*) children.back() )->getType())
+    {
+        return false;
+    }
+    return true;
+}
+
+void ASTAssignNode::printNode (ASTNode *nodePtr, ofstream &treeOutFile)
+{
+    //cout << "MATH NODE" << endl;
+    if(nodePtr)
+    {
+        treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl << "MATH NODE" <<"\"];" << endl;
+        for (auto it = children.begin(); it != children.end(); ++it)
+        {
+            treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
+            (*it)->printNode(*it, treeOutFile);
+        }
+    }
+}
+
+
+void ASTAssignNode::setType(int newType)
+{
+    type = newType;
+}
+int ASTAssignNode::getType() const
+{
+    return type;
+}
+
+
+int ASTAssignNode::getHigherType(ASTNode* LHS, ASTNode* RHS) const
+{
+    return LHS->getType();
+}
+string ASTAssignNode::printType() const
+{
+    switch (type)
+    {
+        case Void:
+            return "void";
+        case Char:
+            return "char";
+        case Short:
+            return "short";
+        case Int:
+            return "int";
+        case Long:
+            return "long";
+        case Float:
+            return "float";
+        case Double:
+            return "double";
+        case Struct:
+            return "struct";
+        case Enum:
+            return "enum";
+        default:
+            return "type not found";
+    }
 }
 
 ASTVariableNode::ASTVariableNode(string node_label) : ASTNode::ASTNode(move(node_label)), type(Int)
@@ -473,6 +634,64 @@ void ASTTypeNode::printNode(ASTNode* nodePtr, ofstream& treeOutFile)
 }
 
 string ASTTypeNode::printType() const
+{
+	switch (type)
+	{
+		case Void:
+			return "void";
+		case Char:
+			return "char";
+		case Short:
+			return "short";
+		case Int:
+			return "int";
+		case Long:
+			return "long";
+		case Float:
+			return "float";
+		case Double:
+			return "double";
+		case Struct:
+			return "struct";
+		case Enum:
+			return "enum";
+		default:
+			return "type not found";
+	}
+}
+
+
+ASTCastNode::ASTCastNode(string node_label) : ASTNode::ASTNode(move(node_label))
+{}
+ASTCastNode::ASTCastNode(string node_label, ASTNode* childNode, int castType) : ASTNode::ASTNode(move(node_label)), type( castType )
+{
+	addChild( childNode );
+}
+int ASTCastNode::getType() const
+{
+	return type;
+}
+void ASTCastNode::setType(int inputType)
+{
+	type = inputType;
+}
+
+
+void ASTCastNode::printNode(ASTNode* nodePtr, ofstream& treeOutFile)
+{
+	if(nodePtr)
+	{
+		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl;
+		treeOutFile << "type: " << printType() << endl <<"\"];" << endl;
+		for (auto it = children.begin(); it != children.end(); ++it)
+		{
+			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
+			(*it)->printNode(*it, treeOutFile);
+		}
+	}
+}
+
+string ASTCastNode::printType() const
 {
 	switch (type)
 	{

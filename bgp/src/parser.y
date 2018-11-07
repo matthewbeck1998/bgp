@@ -31,6 +31,7 @@ void parserOutput(string s);
 int parseCommandLine(int argc, char** argv);
 bool command_l = false;
 bool command_s = false;
+//
 
 SymbolTable st;
 string nodeIdentifier = "";
@@ -250,7 +251,7 @@ init_declarator_list
 
 init_declarator
 	: declarator {$$ = $1; parserOutput("init_declarator -> declarator"); }
-	| declarator ASSIGN initializer { $$ = new ASTMathNode("init_declarator", $1, new ASTNode("ASSIGN"), $3);
+	| declarator ASSIGN initializer { $$ = new ASTAssignNode("init_declarator", $1, new ASTNode("ASSIGN"), $3);
                                       parserOutput("init_declarator -> declarator ASSIGN initializer"); }
 	;
 
@@ -321,7 +322,7 @@ enumerator_list
 enumerator
 	: identifier {  $$ = $1;
                     parserOutput("enumerator -> identifier"); }
-	| identifier ASSIGN constant_expression { $$ = new ASTMathNode("enumerator", $1, new ASTNode("ASSIGN"), $3);
+	| identifier ASSIGN constant_expression { $$ = new ASTAssignNode("enumerator", $1, new ASTNode("ASSIGN"), $3);
                                               parserOutput("enumerator -> identifier ASSIGN constant_expression"); }
 	;
 
@@ -672,7 +673,7 @@ expression
 
 assignment_expression
 	: conditional_expression { $$ = $1; parserOutput("assignment_expression -> conditional_expression"); }
-	| unary_expression assignment_operator assignment_expression { $$ = new ASTMathNode("enumerator", $1, $2, $3);
+	| unary_expression assignment_operator assignment_expression { $$ = new ASTAssignNode("enumerator", $1, $2, $3);
                                                                     parserOutput("assignment_expression -> unary_expression assignment_operator assignment_expression"); }
 	;
 
@@ -1137,4 +1138,9 @@ int parseCommandLine(int argc, char** argv)
 	}
 
 	return outputIndex; 
+}
+
+
+int higherMathType( int LHS, int RHS )
+{
 }
