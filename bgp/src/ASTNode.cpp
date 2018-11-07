@@ -648,7 +648,7 @@ void ASTIdNode::printNode(ASTNode* nodePtr, ofstream& treeOutFile)
 	{
 		treeOutFile << nodePtr->getNodeNum() << "[label = \"" << nodePtr->getLabel() << endl;
 		treeOutFile << "id: " << id << endl;
-		treeOutFile << "type: " << printType(type) << "\"];" << endl;
+		treeOutFile << "type: " << printType() << "\"];" << endl;
 		for (auto it = children.begin(); it != children.end(); ++it)
 		{
 			treeOutFile << nodeNum << " -> " << (*it)->getNodeNum() << endl;
@@ -657,6 +657,32 @@ void ASTIdNode::printNode(ASTNode* nodePtr, ofstream& treeOutFile)
 	}
 }
 
+string ASTIdNode::printType() const // You meant to write this, right? - Matt
+{
+	switch (type)
+	{
+		case Void:
+			return "void";
+		case Char:
+			return "char";
+		case Short:
+			return "short";
+		case Int:
+			return "int";
+		case Long:
+			return "long";
+		case Float:
+			return "float";
+		case Double:
+			return "double";
+		case Struct:
+			return "struct";
+		case Enum:
+			return "enum";
+		default:
+			return "type not found";
+	}
+}
 
 ASTTypeNode::ASTTypeNode(string node_label) : ASTNode::ASTNode(move(node_label))
 {}

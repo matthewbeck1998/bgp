@@ -183,6 +183,7 @@ class ASTIdNode : public ASTNode
         void setType( int inputType );
 
     private:
+        string printType() const; // I can only imagine you meant to do this. - Matt
         string id;
         int type;
 };
@@ -213,13 +214,16 @@ class ASTCastNode : public ASTNode
         string printType() const;
         int type;
 };
-
+/* Will, what the hell are you doing? - Matt
+ * If you write function definitions in header files,
+ * the program won't compile because of multiple definitions
+ * caused by including this header file in multiple other files.
 string printType(int type)
 {
 	switch (type)
 	{
 		case Void:
-			return  "void";;
+			return "void";
 		case Char:
 			return "char";
 		case Short:
@@ -227,7 +231,7 @@ string printType(int type)
 		case Int:
 			return "int";
 		case Long:
-			return  "long";
+			return "long";
 		case Float:
 			return "float";
 		case Double:
@@ -238,7 +242,7 @@ string printType(int type)
 			return "No type";
 	}
 }
-
+*/
 /*class ASTSwitchNode : public ASTNode
 {
     public:
