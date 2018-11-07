@@ -1139,8 +1139,3 @@ int parseCommandLine(int argc, char** argv)
 
 	return outputIndex; 
 }
-
-
-int higherMathType( int LHS, int RHS )
-{
-}
