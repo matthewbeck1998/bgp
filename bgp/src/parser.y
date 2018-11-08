@@ -479,12 +479,15 @@ initializer_list
 	;
 
 type_name
-	: specifier_qualifier_list { $$ = $1; parserOutput("type_name -> specifier_qualifier_list"); }
-	| specifier_qualifier_list abstract_declarator { ASTNode* temp = new ASTNode("type_name");
-                                                      temp -> addChild($1);
-                                                      temp -> addChild($2);
-                                                      $$ = temp;
-                                                      parserOutput("type_name -> specifier_qualifier_list abstract_declarator"); }
+	: specifier_qualifier_list { $$ = $1; parserOutput("type_name -> specifier_qualifier_list"); st.setInsertMode(false); }
+	| specifier_qualifier_list abstract_declarator  { 
+                                                        ASTNode* temp = new ASTNode("type_name");
+                                                        temp -> addChild($1);
+                                                        temp -> addChild($2);
+                                                        $$ = temp;
+                                                        parserOutput("type_name -> specifier_qualifier_list abstract_declarator");
+                                                        st.setInsertMode(false);
+                                                    }
 	;
 
 abstract_declarator
