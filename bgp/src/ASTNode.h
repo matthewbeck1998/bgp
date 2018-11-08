@@ -214,6 +214,23 @@ class ASTCastNode : public ASTNode
         string printType() const;
         int type;
 };
+
+class ASTArrayNode : public ASTNode
+{
+public:
+	ASTArrayNode(string node_label, string id, int typeSet);
+	void printNode(ostream &treeOutFile = cout) override;
+	void setType( int inputType );
+	int getType() const;
+	void addDimension(int inputDim);
+
+private:
+	list<int> dimensions;
+	string identifier;
+	int type;
+};
+
+
 /* Will, what the hell are you doing? - Matt
  * If you write function definitions in header files,
  * the program won't compile because of multiple definitions

@@ -45,6 +45,8 @@ string lastNodeInserted = "";
 bool inFunctionParameters = false;
 string currentFunctionNode = "";
 
+bool sameArray = false;
+
 
 
 ASTNode* root;
@@ -147,7 +149,8 @@ declaration
 	: declaration_specifiers SEMICOLON { $$ = $1; parserOutput("declaration -> declaration_specifiers SEMICOLON"); }
 	| declaration_specifiers init_declarator_list SEMICOLON {
 	                                                            ASTNode* temp = new ASTNode("Declaration");
-	                                                            $2->setType( $1->getType() );
+	                                                            ((ASTIdNode*) $2)->printNode();
+	                                                            ((ASTIdNode*) $2)-> setType(((ASTTypeNode*) $1)->getType() );
 	                                                            //temp->addChild($1);
 	                                                            temp->addChild($2);
 	                                                            $$ = temp;
@@ -390,11 +393,23 @@ direct_declarator
 
                                                                 arrayPair.second->second.setIsArray(true);
                                                                 int dimension = ((ASTConstNode*)$3)->getValue().intVal;
+                                                                //cout << dimension << endl;
                                                                 arrayPair.second->second.addArrayDimension(dimension);
-                                                                ASTNode* temp = new ASTNode("direct_declarator");
-                                                                temp -> addChild($1);
-                                                                temp -> addChild($3);
-                                                                $$ = temp;
+                                                                if(sameArray)
+                                                                {
+                                                                    (( ASTArrayNode*) $$) -> addDimension(dimension);
+                                                                    sameArray = false;
+                                                                }
+                                                                else
+                                                                {
+                                                                    ASTArrayNode* temp = new ASTArrayNode("array_node", ((ASTIdNode*) $1) -> getId(), ((ASTArrayNode*) $1) -> getType());
+                                                                    temp -> addDimension(dimension);
+                                                                    $$ = temp;
+                                                                    sameArray = true;
+                                                                }
+                                                                //temp -> printNode();
+                                                                //temp -> addChild($1);
+                                                                //temp -> addChild($3);
                                                                 parserOutput("direct_declarator -> direct_declarator OBRACKET constant_expression CBRACKET"); }
 	| direct_declarator OPAREN CPAREN { $$ = $1; parserOutput("direct_declarator -> direct_declarator OPAREN CPAREN"); }
 	| direct_declarator OPAREN parameter_type_list CPAREN {ASTNode* temp = new ASTNode("direct_declarator");
@@ -1009,12 +1024,12 @@ string
 
 identifier
 	: IDENTIFIER {
-	                cout << "Identifier: " << yylval.sval << endl;
+	                //cout << "Identifier: " << yylval.sval << endl;
 					ASTIdNode* temp = new ASTIdNode("IDENTIFIER", yylval.sval);
                     parserOutput("identifier -> IDENTIFIER"); 
                     nodeIdentifier = yylval.sval; 
                     nodeLineNumber = line;
-                    cout << "\tInsert mode: " << (st.getInsertMode() == 1 ? "True" : "False") << endl;
+                    //cout << "\tInsert mode: " << (st.getInsertMode() == 1 ? "True" : "False") << endl;
                     if (!st.getInsertMode())
                     {
                     	if(st.searchAll(nodeIdentifier).first == -1)
