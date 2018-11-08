@@ -44,9 +44,13 @@ bool nodeIsSigned = true;
 string lastNodeInserted = "";
 bool inFunctionParameters = false;
 string currentFunctionNode = "";
+<<<<<<< HEAD
+bool inFunctionPrototype = false;
+=======
 
 bool sameArray = false;
 
+>>>>>>> 6a6bcd334cdee2729ffa935e9ae5c8c1446e7f96
 
 
 ASTNode* root;
@@ -146,13 +150,12 @@ function_definition
 	;
 
 declaration
-	: declaration_specifiers SEMICOLON { $$ = $1; parserOutput("declaration -> declaration_specifiers SEMICOLON"); }
+	: declaration_specifiers SEMICOLON { $$ = new ASTDeclarationNode( "declaration", $1->getType(), $1) ; parserOutput("declaration -> declaration_specifiers SEMICOLON"); }
 	| declaration_specifiers init_declarator_list SEMICOLON {
-	                                                            ASTNode* temp = new ASTNode("Declaration");
-	                                                            ((ASTIdNode*) $2)->printNode();
-	                                                            ((ASTIdNode*) $2)-> setType(((ASTTypeNode*) $1)->getType() );
+                                                                sameArray = false;
+	                                                            ASTNode* temp = new ASTDeclarationNode("Declaration", $1->getType(), $2);
+	                                                            //$2->printNode();
 	                                                            //temp->addChild($1);
-	                                                            temp->addChild($2);
 	                                                            $$ = temp;
 	                                                            parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON");
                                                             }
@@ -346,7 +349,6 @@ declarator
 direct_declarator
 	: identifier    {
                         parserOutput("direct_declarator -> identifier");
-
                         if (inFunctionParameters)
                         {
                             auto functionPair = st.searchAll(currentFunctionNode);
@@ -395,28 +397,36 @@ direct_declarator
                                                                 int dimension = ((ASTConstNode*)$3)->getValue().intVal;
                                                                 //cout << dimension << endl;
                                                                 arrayPair.second->second.addArrayDimension(dimension);
-                                                                if(sameArray)
+                                                                /*if(sameArray)
                                                                 {
                                                                     (( ASTArrayNode*) $$) -> addDimension(dimension);
                                                                     sameArray = false;
                                                                 }
                                                                 else
-                                                                {
-                                                                    ASTArrayNode* temp = new ASTArrayNode("array_node", ((ASTIdNode*) $1) -> getId(), ((ASTArrayNode*) $1) -> getType());
+                                                                {*/
+                                                                    ASTArrayNode* temp = new ASTArrayNode("array_node", arrayPair.second->second.getIdentifier(), $1 -> getType());
                                                                     temp -> addDimension(dimension);
+                                                                    if(sameArray)
+                                                                        temp -> addDimensions ( ( (ASTArrayNode*) $1 )->getDimensions() );
+                                                                    temp->setType( $1->getType() );
                                                                     $$ = temp;
+                                                                    //$$->printNode();
                                                                     sameArray = true;
-                                                                }
+                                                                    //$1->printNode();
+                                                                //}
                                                                 //temp -> printNode();
                                                                 //temp -> addChild($1);
                                                                 //temp -> addChild($3);
                                                                 parserOutput("direct_declarator -> direct_declarator OBRACKET constant_expression CBRACKET"); }
 	| direct_declarator OPAREN CPAREN { $$ = $1; parserOutput("direct_declarator -> direct_declarator OPAREN CPAREN"); }
-	| direct_declarator OPAREN parameter_type_list CPAREN {ASTNode* temp = new ASTNode("direct_declarator");
-                                                           temp -> addChild($1);
-                                                           temp -> addChild($3);
-                                                           $$ = temp;
-                                                           parserOutput("direct_declarator -> direct_declarator OPAREN parameter_type_list CPAREN"); }
+	| direct_declarator OPAREN parameter_type_list CPAREN   {
+                                                                inFunctionPrototype = true;
+                                                                ASTNode* temp = new ASTNode("direct_declarator");
+                                                                temp -> addChild($1);
+                                                                temp -> addChild($3);
+                                                                $$ = temp;
+                                                                parserOutput("direct_declarator -> direct_declarator OPAREN parameter_type_list CPAREN");
+                                                            }
 	| direct_declarator OPAREN identifier_list CPAREN {ASTNode* temp = new ASTNode("direct_declarator");
                                                        temp -> addChild($1);
                                                        temp -> addChild($3);
@@ -873,7 +883,7 @@ cast_expression
 
 	                     parserOutput("cast_expression -> unary_expression"); }
 	| OPAREN type_name CPAREN cast_expression { ASTCastNode* temp = new ASTCastNode("cast_node");
-                                                   temp -> setType(((ASTTypeNode*) $2) -> getType());
+                                                   temp -> setType($2 -> getType());
                                                    //temp -> addChild($2);
                                                    temp -> addChild($4);
                                                    $$ = temp;

@@ -32,6 +32,10 @@ extern SymbolTable st;
 extern string lastNodeInserted;
 extern bool inFunctionParameters;
 extern string currentFunctionNode;
+extern bool inFunctionPrototype;
+
+
+extern bool sameArray;
 
 //Functions to handle incrementing of globals.
 /*
@@ -326,12 +330,17 @@ productions_off         [@][p][-]
                         }
 
 ","                     {
+                            sameArray = false;
                             scannerOutput(yytext, "COMMA");
 							incrementColumn(yyleng);
                             return COMMA;
                         }
 
 ";"                     {
+                            if (inFunctionPrototype)
+                            {
+                                st.popLevel();
+                            }
                             scannerOutput(yytext, "SEMICOLON");
 							incrementColumn(yyleng);
                             return SEMICOLON;
@@ -356,7 +365,11 @@ productions_off         [@][p][-]
                         }
 
 "{"                     {
-							
+							if (inFunctionPrototype)
+                            {
+                                inFunctionPrototype = false;
+                            }
+
 							if( command_s )
 							{
 								outputStream << st;
