@@ -441,3 +441,8 @@ void SymbolNode::setIsFunctionDefined(bool isFunctionDefined)
 {
 	SymbolNode::isFunctionDefined = isFunctionDefined;
 }
+
+const list<array<int, 3>> &SymbolNode::getFunctionParameters() const
+{
+	return functionParameters;
+}
