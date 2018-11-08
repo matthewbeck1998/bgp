@@ -44,9 +44,13 @@ bool nodeIsSigned = true;
 string lastNodeInserted = "";
 bool inFunctionParameters = false;
 string currentFunctionNode = "";
+<<<<<<< HEAD
+bool inFunctionPrototype = false;
+=======
 
 bool sameArray = false;
 
+>>>>>>> 6a6bcd334cdee2729ffa935e9ae5c8c1446e7f96
 
 
 ASTNode* root;
@@ -415,11 +419,14 @@ direct_declarator
                                                                 //temp -> addChild($3);
                                                                 parserOutput("direct_declarator -> direct_declarator OBRACKET constant_expression CBRACKET"); }
 	| direct_declarator OPAREN CPAREN { $$ = $1; parserOutput("direct_declarator -> direct_declarator OPAREN CPAREN"); }
-	| direct_declarator OPAREN parameter_type_list CPAREN {ASTNode* temp = new ASTNode("direct_declarator");
-                                                           temp -> addChild($1);
-                                                           temp -> addChild($3);
-                                                           $$ = temp;
-                                                           parserOutput("direct_declarator -> direct_declarator OPAREN parameter_type_list CPAREN"); }
+	| direct_declarator OPAREN parameter_type_list CPAREN   {
+                                                                inFunctionPrototype = true;
+                                                                ASTNode* temp = new ASTNode("direct_declarator");
+                                                                temp -> addChild($1);
+                                                                temp -> addChild($3);
+                                                                $$ = temp;
+                                                                parserOutput("direct_declarator -> direct_declarator OPAREN parameter_type_list CPAREN");
+                                                            }
 	| direct_declarator OPAREN identifier_list CPAREN {ASTNode* temp = new ASTNode("direct_declarator");
                                                        temp -> addChild($1);
                                                        temp -> addChild($3);

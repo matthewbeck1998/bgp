@@ -79,6 +79,10 @@ public:
 
 	bool addArrayDimension(int dimension);
 
+	bool isIsFunctionDefined() const;
+
+	void setIsFunctionDefined(bool isFunctionDefined);
+
 private:
 	string identifier;
 	int typeStorageClassIndex;
@@ -90,6 +94,7 @@ private:
 	bool isFunction;
 	bool isSigned;
 	bool isArray;
+	bool isFunctionDefined;
 	list<array<int, 3>> functionParameters;
 	vector<int> arrayDimensions;
 };

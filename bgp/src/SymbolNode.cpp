@@ -265,6 +265,7 @@ SymbolNode::SymbolNode (const string &identifier, int lineNum, int colNum, int t
 	typeQualifierIndex = -1;
 	typeStorageClassIndex = -1;
 	isArray = false;
+	isFunctionDefined = false;
 }
 
 bool SymbolNode::getIsArray() const
@@ -429,4 +430,14 @@ bool SymbolNode::addArrayDimension (int dimension)
 		errorStream << "ERROR: Node: \"" << identifier << "\" is not an array. Cannot add array dimension" << endl;
 		return false;
 	}
+}
+
+bool SymbolNode::isIsFunctionDefined() const
+{
+	return isFunctionDefined;
+}
+
+void SymbolNode::setIsFunctionDefined(bool isFunctionDefined)
+{
+	SymbolNode::isFunctionDefined = isFunctionDefined;
 }
