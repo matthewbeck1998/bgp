@@ -847,9 +847,12 @@ multiplicative_expression
 	;
 
 cast_expression
-	: unary_expression { $$ = $1; parserOutput("cast_expression -> unary_expression"); }
-	| OPAREN type_name CPAREN cast_expression { ASTNode* temp = new ASTNode("cast_expression");
-                                                   temp -> addChild($2);
+	: unary_expression { $$ = $1;
+
+	                     parserOutput("cast_expression -> unary_expression"); }
+	| OPAREN type_name CPAREN cast_expression { ASTCastNode* temp = new ASTCastNode("cast_node");
+                                                   temp -> setType(((ASTTypeNode*) $2) -> getType());
+                                                   //temp -> addChild($2);
                                                    temp -> addChild($4);
                                                    $$ = temp;
                                                    parserOutput("cast_expression -> OPAREN type_name CPAREN cast_expression"); }
@@ -999,10 +1002,12 @@ string
 
 identifier
 	: IDENTIFIER {
+	                cout << "Identifier: " << yylval.sval << endl;
 					ASTIdNode* temp = new ASTIdNode("IDENTIFIER", yylval.sval);
                     parserOutput("identifier -> IDENTIFIER"); 
                     nodeIdentifier = yylval.sval; 
                     nodeLineNumber = line;
+                    cout << "\tInsert mode: " << (st.getInsertMode() == 1 ? "True" : "False") << endl;
                     if (!st.getInsertMode())
                     {
                     	if(st.searchAll(nodeIdentifier).first == -1)
@@ -1011,6 +1016,7 @@ identifier
                         	return 1;
 						}
 						SymbolNode idNode = st.searchAll(yylval.sval).second->second;
+						cout << "Type: " << idNode.getTypeSpecifierIndex() << endl;
 						temp->setType( idNode.getTypeSpecifierIndex() );
                     }
 					$$ = temp;
