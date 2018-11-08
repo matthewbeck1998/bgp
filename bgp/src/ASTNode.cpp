@@ -3,6 +3,35 @@
 
 int ASTNode::totalNodeCount = 0;
 
+string printType(int type)
+{
+	switch (type)
+	{
+		case Void:
+			return "void";
+		case Char:
+			return "char";
+		case Short:
+			return "short";
+		case Int:
+			return "int";
+		case Long:
+			return "long";
+		case Float:
+			return "float";
+		case Double:
+			return "double";
+		case Struct:
+			return "struct";
+		case Enum:
+			return "enum";
+		default:
+			return "type not found";
+	}
+}
+
+
+
 ASTNode::ASTNode (string node_label) : label(move(node_label))
 {
 	nodeNum = totalNodeCount++;
@@ -67,7 +96,7 @@ void ASTNode::printNode(ostream &treeOutFile)
 {
 	//cout << "BASE NODE" << endl;
 
-	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << "\"];" << endl;
+	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl << "BASE NODE" << "\"];" << endl;
 	for(auto &it : children)
 	{
 		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
@@ -300,7 +329,7 @@ bool ASTAssignNode::walk() const
 void ASTAssignNode::printNode(ostream &treeOutFile)
 {
 
-	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl << "MATH NODE" <<"\"];" << endl;
+	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl << "ASSIGN NODE" <<"\"];" << endl;
 	for(auto &it : children)
 	{
 		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
@@ -421,6 +450,7 @@ void ASTVariableNode::setType(int inputType)
 void ASTVariableNode::printNode(ostream &treeOutFile)
 {
 	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+	treeOutFile << "VARIABLE NODE" << endl;
 	treeOutFile << "ID: " << id << endl << "Type: " << printType() <<"\"];" << endl;
 	for(auto &it : children)
 	{
@@ -499,6 +529,7 @@ void ASTConstNode::setValue(valueUnion inputValue)
 void ASTConstNode::printNode(ostream &treeOutFile)
 {
 	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+	treeOutFile << "CONST NODE" << endl;
 	treeOutFile << "Value: ";
 	switch (type)
 	{
@@ -622,6 +653,7 @@ void ASTIdNode::setType( int inputType )
 void ASTIdNode::printNode(ostream &treeOutFile)
 {
 		treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+	treeOutFile << "ID NODE" << endl;
 		treeOutFile << "id: " << id << endl;
 		treeOutFile << "type: " << printType() << "\"];" << endl;
 		for(auto &it : children)
@@ -675,6 +707,7 @@ void ASTTypeNode::setType(int inputType)
 void ASTTypeNode::printNode(ostream &treeOutFile)
 {
 		treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+	treeOutFile << "TYPE NODE" << endl;
 		treeOutFile << "type: " << printType() << endl <<"\"];" << endl;
 		for(auto &it : children)
 		{
@@ -730,6 +763,7 @@ void ASTCastNode::setType(int inputType)
 void ASTCastNode::printNode(ostream &treeOutFile)
 {
 	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+	treeOutFile << "CAST NODE" << endl;
 	treeOutFile << "type: " << printType() << endl <<"\"];" << endl;
 	for(auto &it : children)
 	{
@@ -763,4 +797,42 @@ string ASTCastNode::printType() const
 		default:
 			return "type not found";
 	}
+}
+
+ASTArrayNode::ASTArrayNode(string node_label, string id, int typeSet): ASTNode::ASTNode(move(node_label)),
+identifier(move(id)), type(typeSet)
+{
+
+}
+
+void ASTArrayNode::printNode(ostream &treeOutFile)
+{
+	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+	treeOutFile << "ARRAY NODE" << endl;
+	treeOutFile << "id: " << this ->identifier << endl;
+	treeOutFile << "dimensions: ";
+	for(int dim : dimensions)
+	  treeOutFile << '[' <<dim << ']';
+	treeOutFile << endl;
+	treeOutFile << "type: " << printType(type) << endl <<"\"];" << endl;
+	for(auto &it : children)
+	{
+		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+		it->printNode(treeOutFile);
+	}
+}
+
+void ASTArrayNode::setType(int inputType)
+{
+	type = inputType;
+}
+
+void ASTArrayNode::addDimension(int inputDim)
+{
+	dimensions.push_back(inputDim);
+}
+
+int ASTArrayNode::getType() const
+{
+	return type;
 }

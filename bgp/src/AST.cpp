@@ -31,6 +31,7 @@ void AST::printTree ()
 		treeOutFile << "digraph G {" << endl;
 		root->printNode(treeOutFile);
 		treeOutFile << '}';
+		treeOutFile.flush();
 		treeOutFile.close();
 	}
 }
