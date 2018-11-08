@@ -115,7 +115,8 @@ function_definition
                                       parserOutput("function_definition -> declarator compound_statement");
                                       st.popLevel(); }
 	| declarator declaration_list compound_statement { ASTNode* temp = new ASTNode("function_definition");
-                                                         temp -> addChild($1);
+	                                                     $2->setType( $1->getType() );
+                                                         //temp -> addChild($1);
                                                          temp -> addChild($2);
                                                          temp -> addChild($3);
                                                          $$ = temp;
@@ -123,15 +124,17 @@ function_definition
                                                          st.popLevel(); }
 	| declaration_specifiers declarator compound_statement {
 	                                                        ASTNode* temp = new ASTNode("function_definition");
-	                                                        temp->addChild($1);
-	                                                        temp->addChild($2);
+                                                            $2->setType( $1->getType() );
+                                                            //temp -> addChild($1);
+                                                            temp -> addChild($2);
 	                                                        temp->addChild($3);
 	                                                        $$ = temp;
 	                                                        parserOutput("function_definition -> declaration_specifiers declarator compound_statement");
 	                                                        st.popLevel(); }
 	| declaration_specifiers declarator declaration_list compound_statement {
                                                                              ASTNode* temp = new ASTNode("function_definition");
-                                                                               temp -> addChild($1);
+                                                                             $2->setType( $1->getType() );
+                                                                               //temp -> addChild($1);
                                                                                temp -> addChild($2);
                                                                                temp -> addChild($3);
                                                                                temp -> addChild($4);
@@ -144,7 +147,8 @@ declaration
 	: declaration_specifiers SEMICOLON { $$ = $1; parserOutput("declaration -> declaration_specifiers SEMICOLON"); }
 	| declaration_specifiers init_declarator_list SEMICOLON {
 	                                                            ASTNode* temp = new ASTNode("Declaration");
-	                                                            temp->addChild($1);
+	                                                            $2->setType( $1->getType() );
+	                                                            //temp->addChild($1);
 	                                                            temp->addChild($2);
 	                                                            $$ = temp;
 	                                                            parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON"); }
@@ -860,7 +864,7 @@ unary_expression
                                    temp -> addChild($2);
                                    $$ = temp;
                                    parserOutput("unary_expression -> DEC_OP unary_expression"); }
-| unary_operator cast_expression { ASTNode* temp = new ASTNode("unary_expression");
+    | unary_operator cast_expression { ASTNode* temp = new ASTNode("unary_expression");
                                       temp -> addChild($1);
                                       temp -> addChild($2);
                                       $$ = temp;
