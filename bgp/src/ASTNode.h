@@ -56,17 +56,20 @@ class ASTNode
 		    outputStream << "setId, YOU DID SOMETHING BAD" << endl;
 		}
 
+		virtual list<int> getDimensions();
+
 		virtual  string getId() {
 		    outputStream << "getId, YOU DID SOMETHING BAD" << endl;
+		    return "no Id. Base Node.";
 		}
 
 		virtual string getValue() {
-		    outputStream << "getType, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getValue, YOU DID SOMETHING BAD" << endl;
 		}
 
 		virtual void setValue(string newValue)
         {
-		    outputStream << "getValue, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "setValue, YOU DID SOMETHING BAD" << endl;
         }
 
 	virtual void printNode(ostream &treeOutFile = cout);
@@ -222,12 +225,27 @@ public:
 	void printNode(ostream &treeOutFile = cout) override;
 	void setType( int inputType );
 	int getType() const;
+	string getId() const;
+	list<int> getDimensions() const;
 	void addDimension(int inputDim);
+	void addDimensions(list<int> inputDimensions);
 
 private:
 	list<int> dimensions;
 	string identifier;
 	int type;
+};
+
+class ASTDeclarationNode : public ASTNode
+{
+	public:
+		ASTDeclarationNode(string node_label, int inputType, ASTNode* childNode);
+		void printNode(ostream &treeOutFile = cout) override;
+		void setType( int inputType );
+		int getType() const;
+	private:
+		int type;
+		void constructorTypeSet( ASTNode* node, int inputType );
 };
 
 

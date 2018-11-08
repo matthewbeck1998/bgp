@@ -105,6 +105,14 @@ void ASTNode::printNode(ostream &treeOutFile)
 }
 
 
+list<int> ASTNode::getDimensions()
+{
+    cout << "base dim" << endl;
+    list<int> temp;
+    temp.clear();
+    return temp;
+}
+
 ASTMathNode::ASTMathNode (string node_label) : ASTNode::ASTNode(move(node_label))
 {
 }
@@ -811,8 +819,8 @@ void ASTArrayNode::printNode(ostream &treeOutFile)
 	treeOutFile << "ARRAY NODE" << endl;
 	treeOutFile << "id: " << this ->identifier << endl;
 	treeOutFile << "dimensions: ";
-	for(int dim : dimensions)
-	  treeOutFile << '[' <<dim << ']';
+	for(auto dim = dimensions.rbegin() ; dim != dimensions.rend() ; dim++ )
+	  treeOutFile << '[' << *dim << ']';
 	treeOutFile << endl;
 	treeOutFile << "type: " << printType(type) << endl <<"\"];" << endl;
 	for(auto &it : children)
@@ -827,12 +835,84 @@ void ASTArrayNode::setType(int inputType)
 	type = inputType;
 }
 
+
+list<int> ASTArrayNode::getDimensions() const
+{
+    return dimensions;
+}
+
 void ASTArrayNode::addDimension(int inputDim)
 {
-	dimensions.push_back(inputDim);
+    dimensions.push_back(inputDim);
+}
+
+void ASTArrayNode::addDimensions(list<int> inputDimensions)
+{
+    while( !inputDimensions.empty() )
+    {
+        int temp = inputDimensions.front();
+        addDimension(temp);
+        inputDimensions.pop_front();
+    }
 }
 
 int ASTArrayNode::getType() const
 {
 	return type;
+}
+
+
+string ASTArrayNode::getId() const
+{
+    return identifier;
+}
+
+
+ASTDeclarationNode::ASTDeclarationNode(string node_label, int inputType, ASTNode* childNode)
+: ASTNode::ASTNode(move(node_label)),type(inputType)
+{
+    if(childNode->getLabel() == "init_declarator_list")
+    {
+        for(auto it = childNode->getChildren().begin() ; it != childNode->getChildren().end() ; ++it)
+        {
+            addChild(*it);
+            constructorTypeSet(*it, inputType);
+        }
+    }
+    else
+    {
+        addChild(childNode);
+        constructorTypeSet(childNode, inputType);
+    }
+}
+
+void ASTDeclarationNode::printNode(ostream &treeOutFile)
+{
+
+treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+treeOutFile << "DECLARATION NODE" << endl;
+treeOutFile << "type: " << printType(type) << endl <<"\"];" << endl;
+for(auto &it : children)
+{
+treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+it->printNode(treeOutFile);
+}
+}
+void ASTDeclarationNode::setType( int inputType )
+{
+    type = inputType;
+}
+int ASTDeclarationNode::getType() const
+{
+    return type;
+}
+
+
+void ASTDeclarationNode::constructorTypeSet( ASTNode* node, int inputType )
+{
+    node->setType( inputType );
+    for(auto it = node->getChildren().begin() ; it != node->getChildren().end() ; ++it)
+    {
+        constructorTypeSet(*it, inputType);
+    }
 }
