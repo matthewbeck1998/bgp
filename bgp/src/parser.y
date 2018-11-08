@@ -151,7 +151,8 @@ declaration
 	                                                            //temp->addChild($1);
 	                                                            temp->addChild($2);
 	                                                            $$ = temp;
-	                                                            parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON"); }
+	                                                            parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON");
+                                                            }
 	;
 
 declaration_list
@@ -381,7 +382,16 @@ direct_declarator
                     }
 	| OPAREN declarator CPAREN { $$ = $2; parserOutput("direct_declarator -> OPAREN declarator CPAREN"); }
 	| direct_declarator OBRACKET CBRACKET { $$ = $1; parserOutput("direct_declarator -> direct_declarator OBRACKET CBRACKET"); }
-	| direct_declarator OBRACKET constant_expression CBRACKET { ASTNode* temp = new ASTNode("direct_declarator");
+	| direct_declarator OBRACKET constant_expression CBRACKET { auto arrayPair = st.searchTop(lastNodeInserted);
+                                                                if (arrayPair.first == -1)
+                                                                {
+                                                                    return -1;
+                                                                }
+
+                                                                arrayPair.second->second.setIsArray(true);
+                                                                int dimension = ((ASTConstNode*)$3)->getValue().intVal;
+                                                                arrayPair.second->second.addArrayDimension(dimension);
+                                                                ASTNode* temp = new ASTNode("direct_declarator");
                                                                 temp -> addChild($1);
                                                                 temp -> addChild($3);
                                                                 $$ = temp;
