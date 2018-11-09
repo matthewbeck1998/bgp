@@ -963,14 +963,16 @@ postfix_expression
                                                         int tempType;
                                                         if(firstArrayIndex)
                                                         {
-                                                             tempId = ( (ASTIdNode*) $1)->getId();
-                                                            int tempType = ( (ASTIdNode*) $1)->getType();
+                                                           tempId = ( (ASTIdNode*) $1)->getId();
+                                                            int tempType = ((ASTIdNode*) $1)->getType();
                                                             firstArrayIndex = false;
                                                         } else
                                                         {
                                                             tempId = ( (ASTArrayNode*) $1)->getId();
                                                             tempType = ( (ASTArrayNode*) $1)->getType();
                                                         }
+                                                        if( tempType == 6 ) //?
+                                                             tempType = 3;
                                                         temp->setId( tempId );
                                                         temp->setType( tempType );
                                                         SymbolNode arrayNode = st.searchAll( tempId ).second->second;
