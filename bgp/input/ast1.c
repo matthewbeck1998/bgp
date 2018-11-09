@@ -1,5 +1,4 @@
-int main()
+float main()
 {
-	int array[] = {1,2,3,4,56,7,7,8,9};
-
+    short char float int double help, a;
 }

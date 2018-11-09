@@ -1,0 +1,9 @@
+bgp/bin/bgp
+bgp/obj/*.o
+bgp/output/*.dat
+bgp/src/parser.h
+bgp/src/parser.c
+bgp/src/scanner.c
+*.swp
+*.swo
+*.dot

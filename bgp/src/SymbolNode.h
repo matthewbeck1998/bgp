@@ -10,6 +10,7 @@
 #include <map>
 #include <list>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -25,6 +26,8 @@ public:
 	SymbolNode (const string &identifier, int lineNum, int colNum, int typeSpecifier = 3);
 
 	const string &getIdentifier () const;
+
+	vector<int> getDimensions () const;
 
 	void setIdentifier (const string &identifier);
 
@@ -56,7 +59,7 @@ public:
 
 	void setIsSigned (bool isSigned);
 
-	bool isIsArray () const;
+	bool getIsArray() const;
 
 	void setIsArray (bool isArray);
 
@@ -76,6 +79,14 @@ public:
 
 	friend ostream &operator<< (ostream &os, const SymbolNode &node);
 
+	bool addArrayDimension(int dimension);
+
+	bool isIsFunctionDefined() const;
+
+	void setIsFunctionDefined(bool isFunctionDefined);
+
+	const list<array<int, 3>> &getFunctionParameters() const;
+
 private:
 	string identifier;
 	int typeStorageClassIndex;
@@ -87,10 +98,9 @@ private:
 	bool isFunction;
 	bool isSigned;
 	bool isArray;
+	bool isFunctionDefined;
 	list<array<int, 3>> functionParameters;
-
-	///Not implemented yet
-	map<string, SymbolNode> structVariables;
+	vector<int> arrayDimensions;
 };
 
 

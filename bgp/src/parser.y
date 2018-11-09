@@ -31,6 +31,7 @@ void parserOutput(string s);
 int parseCommandLine(int argc, char** argv);
 bool command_l = false;
 bool command_s = false;
+//
 
 SymbolTable st;
 string nodeIdentifier = "";
@@ -43,11 +44,12 @@ bool nodeIsSigned = true;
 string lastNodeInserted = "";
 bool inFunctionParameters = false;
 string currentFunctionNode = "";
+bool inFunctionPrototype = false;
+bool sameArray = false;
+list<array<int, 3>> matchedParameters;
+bool firstArrayIndex = true;
 
-
-
-ASTNode* root = new ASTNode("Translation Unit");
-AST tree(root);
+ASTNode* root;
 %}
 
 %union
@@ -90,9 +92,7 @@ AST tree(root);
 %type <nodePtr> iteration_statement selection_statement labeled_statement direct_abstract_declarator
 %type <nodePtr> abstract_declarator type_name initializer_list identifier_list parameter_declaration
 %type <nodePtr> parameter_list parameter_type_list type_qualifier_list pointer enumerator enumerator_list
-%type <nodePtr> struct_declarator struct_declarator_list struct_or_union
-
-%type <sval> identifier
+%type <nodePtr> struct_declarator struct_declarator_list struct_or_union identifier
 //%type <nodePtr>
 
 %%
@@ -100,12 +100,13 @@ AST tree(root);
 translation_unit
 	: external_declaration {root->addChild($1);  parserOutput("translation_unit -> external_declaration"); }
 	| translation_unit external_declaration { root->addChild($2);
-	                                          parserOutput("translation_unit -> translation_unit external_declaration"); }
+	                                          parserOutput("translation_unit -> translation_unit external_declaration");
+                                            }
 	;
 
 external_declaration
 	: function_definition { $$ = $1; parserOutput("external_declaration -> function_definition"); }
-	| declaration { $$ = $1; parserOutput("external_declaration -> declaration"); }
+	| declaration { $$ = $1; parserOutput("external_declaration -> declaration");}
 	;
 
 function_definition
@@ -116,7 +117,8 @@ function_definition
                                       parserOutput("function_definition -> declarator compound_statement");
                                       st.popLevel(); }
 	| declarator declaration_list compound_statement { ASTNode* temp = new ASTNode("function_definition");
-                                                         temp -> addChild($1);
+	                                                     $2->setType( $1->getType() );
+                                                         //temp -> addChild($1);
                                                          temp -> addChild($2);
                                                          temp -> addChild($3);
                                                          $$ = temp;
@@ -124,18 +126,17 @@ function_definition
                                                          st.popLevel(); }
 	| declaration_specifiers declarator compound_statement {
 	                                                        ASTNode* temp = new ASTNode("function_definition");
-	                                                        //cout << $1 -> getLabel() << endl;
-	                                                        //cout << $2 -> getLabel() << endl;
-	                                                        //cout << $3 -> getLabel() << endl;
-	                                                        temp->addChild($1);
-	                                                        temp->addChild($2);
+                                                            $2->setType( $1->getType() );
+                                                            //temp -> addChild($1);
+                                                            temp -> addChild($2);
 	                                                        temp->addChild($3);
 	                                                        $$ = temp;
 	                                                        parserOutput("function_definition -> declaration_specifiers declarator compound_statement");
 	                                                        st.popLevel(); }
 	| declaration_specifiers declarator declaration_list compound_statement {
                                                                              ASTNode* temp = new ASTNode("function_definition");
-                                                                               temp -> addChild($1);
+                                                                             $2->setType( $1->getType() );
+                                                                               //temp -> addChild($1);
                                                                                temp -> addChild($2);
                                                                                temp -> addChild($3);
                                                                                temp -> addChild($4);
@@ -145,13 +146,17 @@ function_definition
 	;
 
 declaration
-	: declaration_specifiers SEMICOLON { $$ = $1; parserOutput("declaration -> declaration_specifiers SEMICOLON"); }
+	: declaration_specifiers SEMICOLON { $$ = new ASTDeclarationNode( "declaration", $1->getType(), $1) ; parserOutput("declaration -> declaration_specifiers SEMICOLON"); }
 	| declaration_specifiers init_declarator_list SEMICOLON {
-	                                                            ASTNode* temp = new ASTNode("Declaration");
-	                                                            temp->addChild($1);
-	                                                            temp->addChild($2);
+                                                                // there is a seg fault in between here and
+                                                                sameArray = false;
+	                                                            ASTNode* temp = new ASTDeclarationNode("Declaration", $1->getType(), $2);
+
+                                                                 // damn you Will for ditching this project for a girl
 	                                                            $$ = temp;
-	                                                            parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON"); }
+	                                                            parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON");
+                                                                // here
+                                                            }
 	;
 
 declaration_list
@@ -172,10 +177,12 @@ declaration_specifiers
 	                                                    parserOutput("declaration_specifiers -> storage_class_specifier declaration_specifiers"); }
 
 	| type_specifier { $$ = $1; parserOutput("declaration_specifiers -> type_specifier"); }
-	| type_specifier declaration_specifiers { ASTNode* temp = new ASTNode("declaration_specifiers");
+	| type_specifier declaration_specifiers {   errorStream << "ERROR: multiple type specifiers on line " << line << ". " <<  printType( $1->getType() ) << " and " << printType( $2->getType() ) << endl;
+	                                            return -1;
+                                                /*ASTNode* temp = new ASTNode("declaration_specifiers");
                                                 temp -> addChild($1);
                                                 temp -> addChild($2);
-                                                $$ = temp;
+                                                $$ = temp;*/
                                                 parserOutput("declaration_specifiers -> type_specifier declaration_specifiers"); }
 	| type_qualifier { $$ = $1; parserOutput("declaration_specifiers -> type_qualifier"); }
 	| type_qualifier declaration_specifiers { ASTNode* temp = new ASTNode("declaration_specifiers");
@@ -194,13 +201,13 @@ storage_class_specifier
 	;
 
 type_specifier
-	: VOID { $$ = new ASTNode("VOID"); parserOutput("type_specifier -> VOID"); st.setInsertMode(true); nodeTypeSpecifier = 0; }
-	| CHAR { $$ = new ASTNode("CHAR"); parserOutput("type_specifier -> CHAR"); st.setInsertMode(true); nodeTypeSpecifier = 1; }
-	| SHORT { $$ = new ASTNode("SHORT"); parserOutput("type_specifier -> SHORT"); st.setInsertMode(true); nodeTypeSpecifier = 2; }
-	| INT { $$ = new ASTNode("INT"); parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeTypeSpecifier = 3; }
-	| LONG { $$ = new ASTNode("LONG"); parserOutput("type_specifier -> LONG"); st.setInsertMode(true); nodeTypeSpecifier = 4; }
-	| FLOAT { $$ = new ASTNode("FLOAT"); parserOutput("type_specifier -> FLOAT"); st.setInsertMode(true); nodeTypeSpecifier = 5; }
-	| DOUBLE { $$ = new ASTNode("DOUBLE"); parserOutput("type_specifier -> DOUBLE"); st.setInsertMode(true); nodeTypeSpecifier = 6; }
+	: VOID { $$ = new ASTTypeNode("type_specifier", Void); parserOutput("type_specifier -> VOID"); st.setInsertMode(true); nodeTypeSpecifier = 0; }
+	| CHAR { $$ = new ASTTypeNode("type_specifier", Char); parserOutput("type_specifier -> CHAR"); st.setInsertMode(true); nodeTypeSpecifier = 1; }
+	| SHORT { $$ = new ASTTypeNode("type_specifier", Short); parserOutput("type_specifier -> SHORT"); st.setInsertMode(true); nodeTypeSpecifier = 2; }
+	| INT { $$ = new ASTTypeNode("type_specifier", Int); parserOutput("type_specifier -> INT"); st.setInsertMode(true); nodeTypeSpecifier = 3; }
+	| LONG { $$ = new ASTTypeNode("type_specifier", Long); parserOutput("type_specifier -> LONG"); st.setInsertMode(true); nodeTypeSpecifier = 4; }
+	| FLOAT { $$ = new ASTTypeNode("type_specifier", Float); parserOutput("type_specifier -> FLOAT"); st.setInsertMode(true); nodeTypeSpecifier = 5; }
+	| DOUBLE { $$ = new ASTTypeNode("type_specifier", Double); parserOutput("type_specifier -> DOUBLE"); st.setInsertMode(true); nodeTypeSpecifier = 6; }
 	| SIGNED { parserOutput("type_specifier -> SIGNED"); st.setInsertMode(true); nodeIsSigned = true; }
 	| UNSIGNED { parserOutput("type_specifier -> UNSIGNED"); st.setInsertMode(true); nodeIsSigned = false; }
 	| struct_or_union_specifier { $$ = $1; parserOutput("type_specifier -> struct_or_union_specifier"); }
@@ -216,8 +223,7 @@ type_qualifier
 struct_or_union_specifier
 	: struct_or_union identifier OBRACE struct_declaration_list CBRACE {  ASTNode* temp = new ASTNode("struct_or_union_specifier");
                                                                           temp -> addChild($1);
-                                                                          ASTVariableNode* tempIdNode = new ASTVariableNode("IDENTIFIER");
-                                                                          temp -> addChild(tempIdNode);
+                                                                          temp -> addChild($2);
                                                                           temp -> addChild($4);
                                                                           $$ = temp;
                                                                           parserOutput("struct_or_union_specifier -> struct_or_union identifier OBRACE struct_declaration_list CBRACE"); }
@@ -226,11 +232,7 @@ struct_or_union_specifier
                                                                temp -> addChild($3);
                                                                $$ = temp;
                                                                parserOutput("struct_or_union_specifier -> struct_or_union OBRACE struct_declaration_list CBRACE"); }
-	| struct_or_union identifier { ASTNode* temp = new ASTNode("struct_or_union_specifier");
-                                     temp -> addChild($1);
-                                     ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                                     tempId->setType(Struct);
-                                     temp -> addChild(tempId);
+	| struct_or_union identifier { 	 ASTVariableNode* temp = new ASTVariableNode("struct_or_union_specifier", Struct, $2->getId() );
                                      $$ = temp;
                                      parserOutput("struct_or_union_specifier -> struct_or_union identifier"); }
 	;
@@ -260,11 +262,7 @@ init_declarator_list
 
 init_declarator
 	: declarator {$$ = $1; parserOutput("init_declarator -> declarator"); }
-	| declarator ASSIGN initializer { ASTNode* temp = new ASTNode("init_declarator");
-                                      temp->addChild($1);
-                                      temp->addChild(new ASTNode("ASSIGN"));
-                                      temp->addChild($3);
-                                      $$ = temp;
+	| declarator ASSIGN initializer { $$ = new ASTAssignNode("init_declarator", $1, new ASTNode("ASSIGN"), $3);
                                       parserOutput("init_declarator -> declarator ASSIGN initializer"); }
 	;
 
@@ -313,13 +311,11 @@ struct_declarator
 enum_specifier
 	: ENUM OBRACE enumerator_list CBRACE { $$ = $3; parserOutput("enum_specifier -> ENUM OBRACE enumerator_list CBRACE"); }
 	| ENUM identifier OBRACE enumerator_list CBRACE {   ASTNode* temp = new ASTNode("enum_specifier");
-	                                                    ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-	                                                    tempId->setType(Enum);
-                                                        temp -> addChild(tempId);
+	                                                    ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER", Enum, $2->getId());
                                                         temp -> addChild($4);
                                                         $$ = temp;
                                                         parserOutput("enum_specifier -> ENUM identifier OBRACE enumerator_list CBRACE"); }
-	| ENUM identifier { ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
+	| ENUM identifier { ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER", Enum, $2->getId());
 	                    tempId->setType(Enum);
 	                    $$ = tempId;
 	                    parserOutput("enum_specifier -> ENUM identifier"); }
@@ -335,12 +331,9 @@ enumerator_list
 	;
 
 enumerator
-	: identifier {  ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                    $$ = tempId; parserOutput("enumerator -> identifier"); }
-	| identifier ASSIGN constant_expression { ASTNode* temp = new ASTNode("enumerator");
-                                              temp -> addChild(new ASTVariableNode("IDENTIFIER"));
-                                              temp -> addChild($3);
-                                              $$ = temp;
+	: identifier {  $$ = $1;
+                    parserOutput("enumerator -> identifier"); }
+	| identifier ASSIGN constant_expression { $$ = new ASTAssignNode("enumerator", $1, new ASTNode("ASSIGN"), $3);
                                               parserOutput("enumerator -> identifier ASSIGN constant_expression"); }
 	;
 
@@ -356,60 +349,112 @@ declarator
 direct_declarator
 	: identifier    {
                         parserOutput("direct_declarator -> identifier");
-
                         if (inFunctionParameters)
                         {
                             auto functionPair = st.searchAll(currentFunctionNode);
-
                             if (!st.isLastSearchValid())
                             {
                                 return 1;
                             }
-
-                            functionPair.second->second.pushFunctionParameter();
-                            functionPair.second->second.setCurrentFunctionParameterTypeSpecifier(nodeTypeSpecifier);
-                            functionPair.second->second.setCurrentFunctionParameterTypeQualifier(nodeTypeQualifier);
-                            functionPair.second->second.setCurrentFunctionParameterSign(nodeIsSigned);
+                            
+                            if (!functionPair.second->second.isIsFunctionDefined())
+                            {
+                                functionPair.second->second.pushFunctionParameter();
+                                functionPair.second->second.setCurrentFunctionParameterTypeSpecifier(nodeTypeSpecifier);
+                                functionPair.second->second.setCurrentFunctionParameterTypeQualifier(nodeTypeQualifier);
+                                functionPair.second->second.setCurrentFunctionParameterSign(nodeIsSigned);
+                            }
+                            else
+                            {
+                                array<int, 3> currentParameter = {nodeTypeQualifier, nodeIsSigned, nodeTypeSpecifier};
+                                if (currentParameter == matchedParameters.front())
+                                {
+                                    matchedParameters.pop_front();
+                                }
+                                else
+                                {
+                                    return 1;
+                                }
+                            }
                         }
 
-                        SymbolNode node(nodeIdentifier, line, column, nodeTypeSpecifier);
-                        node.setTypeStorageClassIndex(nodeStorageClassSpecifier);
-                        node.setTypeQualifierIndex(nodeTypeQualifier);
-                        node.setIsFunction(nodeIsFunction);
-                        node.setIsSigned(nodeIsSigned);
-						ASTVariableNode* temp = new ASTVariableNode("IDENTIFIER");
-						temp->setId($1);
-						temp->setColNum(column);
-						temp->setLineNum(line);
-						$$ = temp;
-                        
-                        if (!st.insert(node))
+                        auto functionPair = st.searchTop(nodeIdentifier);
+                        if (st.isLastSearchValid() && functionPair.second->second.getIsFunction())
                         {
-                            return 1;
+                            if (!functionPair.second->second.isIsFunctionDefined())
+                            {
+                                functionPair.second->second.setIsFunctionDefined(true);
+                                matchedParameters = functionPair.second->second.getFunctionParameters();
+                                lastNodeInserted = nodeIdentifier;
+                            }
+                            else
+                            {
+                                cerr << "ERROR: REDEFINING FUNCTION" << endl;
+                                return 1;
+                            }
                         }
+                        else
+                        {   
+                            SymbolNode node(nodeIdentifier, line, column, nodeTypeSpecifier);
+                            node.setTypeStorageClassIndex(nodeStorageClassSpecifier);
+                            node.setTypeQualifierIndex(nodeTypeQualifier);
+                            node.setIsFunction(nodeIsFunction);
+                            node.setIsSigned(nodeIsSigned);
+                            $$ = $1;
+                            if (!st.insert(node))
+                            {
+                                return 1;
+                            }
 
-                        lastNodeInserted = nodeIdentifier;
-                        nodeIdentifier = "";
-                        nodeLineNumber = -1;
-                        nodeStorageClassSpecifier = -1;
-                        nodeTypeSpecifier = 3;
-                        nodeTypeQualifier = -1;
-                        nodeIsFunction = false;
-                        nodeIsSigned = true;
+                            lastNodeInserted = nodeIdentifier;
+                            nodeIdentifier = "";
+                            nodeLineNumber = -1;
+                            nodeStorageClassSpecifier = -1;
+                            nodeTypeSpecifier = 3;
+                            nodeTypeQualifier = -1;
+                            nodeIsFunction = false;
+                            nodeIsSigned = true;
+                        }
                     }
 	| OPAREN declarator CPAREN { $$ = $2; parserOutput("direct_declarator -> OPAREN declarator CPAREN"); }
 	| direct_declarator OBRACKET CBRACKET { $$ = $1; parserOutput("direct_declarator -> direct_declarator OBRACKET CBRACKET"); }
-	| direct_declarator OBRACKET constant_expression CBRACKET { ASTNode* temp = new ASTNode("direct_declarator");
+	| direct_declarator OBRACKET constant_expression CBRACKET { auto arrayPair = st.searchTop(lastNodeInserted);
+                                                                if (arrayPair.first == -1)
+                                                                {
+                                                                    return -1;
+                                                                }
+
+                                                                arrayPair.second->second.setIsArray(true);
+                                                                int dimension = ((ASTConstNode*)$3)->getValue().intVal;
+                                                                //cout << dimension << endl;
+                                                                arrayPair.second->second.addArrayDimension(dimension);
+                                                                /*if(sameArray)
+                                                                {
+                                                                    (( ASTArrayNode*) $$) -> addDimension(dimension);
+                                                                    sameArray = false;
+                                                                }
+                                                                else
+                                                                {*/
+                                                                    ASTArrayNode* temp = new ASTArrayNode("array_node", arrayPair.second->second.getIdentifier(), $1 -> getType());
+                                                                    temp -> addDimension(dimension);
+                                                                    if(sameArray)
+                                                                        temp -> addDimensions ( ( (ASTArrayNode*) $1 )->getDimensions() );
+                                                                    temp->setType( $1->getType() );
+                                                                    $$ = temp;
+                                                                    sameArray = true;
+                                                                //}
+                                                                //temp -> addChild($1);
+                                                                //temp -> addChild($3);
+                                                                parserOutput("direct_declarator -> direct_declarator OBRACKET constant_expression CBRACKET"); }
+	| direct_declarator OPAREN CPAREN { $$ = $1; parserOutput("direct_declarator -> direct_declarator OPAREN CPAREN"); }
+	| direct_declarator OPAREN parameter_type_list CPAREN   {
+                                                                inFunctionPrototype = true;
+                                                                ASTNode* temp = new ASTNode("direct_declarator");
                                                                 temp -> addChild($1);
                                                                 temp -> addChild($3);
                                                                 $$ = temp;
-                                                                parserOutput("direct_declarator -> direct_declarator OBRACKET constant_expression CBRACKET"); }
-	| direct_declarator OPAREN CPAREN { $$ = $1; parserOutput("direct_declarator -> direct_declarator OPAREN CPAREN"); }
-	| direct_declarator OPAREN parameter_type_list CPAREN {ASTNode* temp = new ASTNode("direct_declarator");
-                                                           temp -> addChild($1);
-                                                           temp -> addChild($3);
-                                                           $$ = temp;
-                                                           parserOutput("direct_declarator -> direct_declarator OPAREN parameter_type_list CPAREN"); }
+                                                                parserOutput("direct_declarator -> direct_declarator OPAREN parameter_type_list CPAREN");
+                                                            }
 	| direct_declarator OPAREN identifier_list CPAREN {ASTNode* temp = new ASTNode("direct_declarator");
                                                        temp -> addChild($1);
                                                        temp -> addChild($3);
@@ -466,14 +511,11 @@ parameter_declaration
 	;
 
 identifier_list
-	: identifier { ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-					tempId->setId($1);
-				   $$ = tempId; parserOutput("identifier_list -> identifier"); }
+	: identifier { $$ = $1;
+				   parserOutput("identifier_list -> identifier"); }
 	| identifier_list COMMA identifier {   ASTNode* temp = new ASTNode("identifier_list");
                                            temp -> addChild($1);
-											ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-											tempId->setId($3);
-                                           temp -> addChild( tempId );
+                                           temp -> addChild( $3 );
                                            $$ = temp;
                                            parserOutput("identifier_list -> identifier_list COMMA identifier"); }
 	;
@@ -494,12 +536,15 @@ initializer_list
 	;
 
 type_name
-	: specifier_qualifier_list { $$ = $1; parserOutput("type_name -> specifier_qualifier_list"); }
-	| specifier_qualifier_list abstract_declarator { ASTNode* temp = new ASTNode("type_name");
-                                                      temp -> addChild($1);
-                                                      temp -> addChild($2);
-                                                      $$ = temp;
-                                                      parserOutput("type_name -> specifier_qualifier_list abstract_declarator"); }
+	: specifier_qualifier_list { $$ = $1; parserOutput("type_name -> specifier_qualifier_list"); st.setInsertMode(false); }
+	| specifier_qualifier_list abstract_declarator  { 
+                                                        ASTNode* temp = new ASTNode("type_name");
+                                                        temp -> addChild($1);
+                                                        temp -> addChild($2);
+                                                        $$ = temp;
+                                                        parserOutput("type_name -> specifier_qualifier_list abstract_declarator");
+                                                        st.setInsertMode(false);
+                                                    }
 	;
 
 abstract_declarator
@@ -543,9 +588,7 @@ statement
 
 labeled_statement
 	: identifier COLON statement {ASTNode* temp = new ASTNode("labeled_statement");
-								  ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-								  tempId->setId($1);
-                                  temp -> addChild(tempId);
+                                  temp -> addChild($1);
                                   temp -> addChild($3);
                                   $$ = temp;
                                   parserOutput("labeled_statement -> identifier COLON statement"); }
@@ -583,13 +626,13 @@ statement_list
 	;
 
 selection_statement
-	: IF OPAREN expression CPAREN statement { ASTNode* temp = new ASTNode("selection_statement");
+	: IF OPAREN expression CPAREN statement { ASTNode* temp = new ASTSelectionNode("selection_statement");
 	                                            temp -> addChild(new ASTNode("IF"));
                                                 temp -> addChild($3);
                                                 temp -> addChild($5);
                                                 $$ = temp;
                                                 parserOutput("selection_statement -> IF OPAREN expression CPAREN statement"); }
-	| IF OPAREN expression CPAREN statement ELSE statement {ASTNode* temp = new ASTNode("selection_statement");
+	| IF OPAREN expression CPAREN statement ELSE statement {ASTNode* temp = new ASTSelectionNode("selection_statement");
                                                             temp -> addChild(new ASTNode("IF"));
                                                             temp -> addChild($3);
                                                             temp -> addChild($5);
@@ -597,7 +640,7 @@ selection_statement
                                                             temp -> addChild($7);
                                                             $$ = temp;
                                                             parserOutput("selection_statement -> IF OPAREN expression CPAREN statement ELSE statement"); }
-	| SWITCH OPAREN expression CPAREN statement {ASTNode* temp = new ASTNode("selection_statement");
+	| SWITCH OPAREN expression CPAREN statement {ASTNode* temp = new ASTNode("selection_statement"); // TODO: Switch statements? Unlikely but we will see.
                                                      temp -> addChild(new ASTNode("SWITCH"));
                                                      temp -> addChild($3);
                                                      temp -> addChild($5);
@@ -606,20 +649,20 @@ selection_statement
 	;
 
 iteration_statement
-	: WHILE OPAREN expression CPAREN statement {ASTNode* temp = new ASTNode("iteration_statement");
+	: WHILE OPAREN expression CPAREN statement {ASTNode* temp = new ASTIterationNode("iteration_statement");
                                                     temp -> addChild(new ASTNode("WHILE"));
                                                     temp -> addChild($3);
                                                     temp -> addChild($5);
                                                     $$ = temp;
                                                     parserOutput("iteration_statement -> WHILE OPAREN expression CPAREN statement"); }
-	| DO statement WHILE OPAREN expression CPAREN SEMICOLON { ASTNode* temp = new ASTNode("iteration_statement");
+	| DO statement WHILE OPAREN expression CPAREN SEMICOLON { ASTNode* temp = new ASTNode("iteration_statement"); // TODO: Don't need to do but maybe possible
                                                               temp -> addChild(new ASTNode("DO"));
                                                               temp -> addChild($2);
                                                               temp -> addChild(new ASTNode("WHILE"));
                                                               temp -> addChild($5);
                                                               $$ = temp;
                                                               parserOutput("iteration_statement -> DO statement WHILE OPAREN expression CPAREN SEMICOLON"); }
-	| FOR OPAREN SEMICOLON SEMICOLON CPAREN statement { ASTNode* temp = new ASTNode("iteration_statement");
+	| FOR OPAREN SEMICOLON SEMICOLON CPAREN statement { ASTNode* temp = new ASTNode("iteration_statement"); // TODO: Same as do while
                                                           temp -> addChild(new ASTNode("FOR"));
                                                           temp -> addChild($6);
                                                           $$ = temp;
@@ -676,9 +719,7 @@ iteration_statement
 jump_statement
 	: GOTO identifier SEMICOLON { ASTNode* temp = new ASTNode("jump_statement");
                                   temp -> addChild(new ASTNode("GOTO"));
-                                  ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                                  tempId->setId($2);
-                                  temp -> addChild(tempId);
+                                  temp -> addChild($2);
                                   $$ = temp;
                                   parserOutput("jump_statement -> GOTO identifier SEMICOLON"); }
 	| CONTINUE SEMICOLON { $$ = new ASTNode("CONTINUE"); parserOutput("jump_statement -> CONTINUE SEMICOLON"); }
@@ -702,11 +743,7 @@ expression
 
 assignment_expression
 	: conditional_expression { $$ = $1; parserOutput("assignment_expression -> conditional_expression"); }
-	| unary_expression assignment_operator assignment_expression { ASTNode* temp = new ASTNode("assignment_expression");
-                                                                    temp -> addChild($1);
-                                                                    temp -> addChild($2);
-                                                                    temp -> addChild($3);
-                                                                    $$ = temp;
+	| unary_expression assignment_operator assignment_expression { $$ = new ASTAssignNode("enumerator", $1, $2, $3);
                                                                     parserOutput("assignment_expression -> unary_expression assignment_operator assignment_expression"); }
 	;
 
@@ -853,46 +890,29 @@ shift_expression
 
 additive_expression
 	: multiplicative_expression { $$ = $1; parserOutput("additive_expression -> multiplicative_expression"); }
-	| additive_expression ADD multiplicative_expression { ASTNode* temp = new ASTMathNode("additive_expression");
-                                                          temp->addChild($1);
-                                                          temp->addChild(new ASTNode("ADD"));
-                                                          temp->addChild($3);
-                                                          $$ = temp;
+	| additive_expression ADD multiplicative_expression { $$ = new ASTMathNode("additive_expression", $1, new ASTNode("ADD"), $3);
 	                                                      parserOutput("additive_expression -> additive_expression ADD multiplicative_expression"); }
-	| additive_expression SUB multiplicative_expression { ASTNode* temp = new ASTNode("additive_expression");
-                                                          temp -> addChild($1);
-                                                          temp -> addChild(new ASTNode("SUB"));
-                                                          temp -> addChild($3);
-                                                          $$ = temp;
+	| additive_expression SUB multiplicative_expression { $$ = new ASTMathNode("additive_expression", $1, new ASTNode("SUB"), $3);
                                                           parserOutput("additive_expression -> additive_expression SUB multiplicative_expression"); }
 	;
 
 multiplicative_expression
 	: cast_expression { $$ = $1; parserOutput("multiplicative_expression -> cast_expression"); }
-	| multiplicative_expression STAR cast_expression { ASTNode* temp = new ASTNode("multiplicative_expression");
-                                                         temp -> addChild($1);
-                                                         temp -> addChild(new ASTNode("STAR"));
-                                                         temp -> addChild($3);
-                                                         $$ = temp;
-                                                         parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
-	| multiplicative_expression DIV cast_expression { ASTNode* temp = new ASTNode("multiplicative_expression");
-                                                           temp -> addChild($1);
-                                                           temp -> addChild(new ASTNode("DIV"));
-                                                           temp -> addChild($3);
-                                                           $$ = temp;
-                                                           parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
-	| multiplicative_expression MOD cast_expression { ASTNode* temp = new ASTNode("multiplicative_expression");
-                                                       temp -> addChild($1);
-                                                       temp -> addChild(new ASTNode("MOD"));
-                                                       temp -> addChild($3);
-                                                       $$ = temp;
+	| multiplicative_expression STAR cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("STAR"), $3);
+                                                       parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
+	| multiplicative_expression DIV cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("DIVs"), $3);
+													   parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
+	| multiplicative_expression MOD cast_expression {  $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("MOD"), $3); //TODO check for ints in MOD
                                                        parserOutput("multiplicative_expression -> multiplicative_expression MOD cast_expression"); }
 	;
 
 cast_expression
-	: unary_expression { $$ = $1; parserOutput("cast_expression -> unary_expression"); }
-	| OPAREN type_name CPAREN cast_expression { ASTNode* temp = new ASTNode("cast_expression");
-                                                   temp -> addChild($2);
+	: unary_expression { $$ = $1;
+
+	                     parserOutput("cast_expression -> unary_expression"); }
+	| OPAREN type_name CPAREN cast_expression { ASTCastNode* temp = new ASTCastNode("cast_node");
+                                                   temp -> setType($2 -> getType());
+                                                   //temp -> addChild($2);
                                                    temp -> addChild($4);
                                                    $$ = temp;
                                                    parserOutput("cast_expression -> OPAREN type_name CPAREN cast_expression"); }
@@ -910,7 +930,7 @@ unary_expression
                                    temp -> addChild($2);
                                    $$ = temp;
                                    parserOutput("unary_expression -> DEC_OP unary_expression"); }
-| unary_operator cast_expression { ASTNode* temp = new ASTNode("unary_expression");
+    | unary_operator cast_expression { ASTNode* temp = new ASTNode("unary_expression");
                                       temp -> addChild($1);
                                       temp -> addChild($2);
                                       $$ = temp;
@@ -938,11 +958,31 @@ unary_operator
 
 postfix_expression
 	: primary_expression { $$ = $1; parserOutput("postfix_expression -> primary_expression"); }
-	| postfix_expression OBRACKET expression CBRACKET {  ASTNode* temp = new ASTNode("postfix_expression");
-                                                          temp -> addChild($1);
-                                                          temp -> addChild($3);
-                                                          $$ = temp;
-                                                          parserOutput("postfix_expression -> postfix_expression OBRACKET expression CBRACKET"); }
+    | postfix_expression OBRACKET expression CBRACKET { ASTArrayNode* temp = new ASTArrayNode("array_node", $1);
+                                                        string tempId;
+                                                        int tempType;
+                                                        if(firstArrayIndex)
+                                                        {
+                                                             tempId = ( (ASTIdNode*) $1)->getId();
+                                                            int tempType = ( (ASTIdNode*) $1)->getType();
+                                                            firstArrayIndex = false;
+                                                        } else
+                                                        {
+                                                            tempId = ( (ASTArrayNode*) $1)->getId();
+                                                            tempType = ( (ASTArrayNode*) $1)->getType();
+                                                        }
+                                                        temp->setId( tempId );
+                                                        temp->setType( tempType );
+                                                        SymbolNode arrayNode = st.searchAll( tempId ).second->second;
+                                                        if( arrayNode.getDimensions().size() < temp->getChildren().size() )
+                                                        {
+                                                            cerr << "Too many indexes on array " << tempId << endl;
+                                                            exit(-1);
+                                                        }
+                                                        //cout << $1->getLabel() <<", " << ((ASTIdNode*)$1)->getId() << endl;
+    												 	 temp->addChild( $3 );
+                                                        $$ = temp;
+                                                        parserOutput("postfix_expression -> postfix_expression OBRACKET expression CBRACKET"); }
 	| postfix_expression OPAREN CPAREN { $$ = $1; parserOutput("postfix_expression -> postfix_expression OPAREN CPAREN"); }
 	| postfix_expression OPAREN argument_expression_list CPAREN {ASTNode* temp = new ASTNode("postfix_expression");
                                                                    temp -> addChild($1);
@@ -952,17 +992,13 @@ postfix_expression
 	| postfix_expression PERIOD identifier { ASTNode* temp = new ASTNode("postfix_expression");
                                                temp -> addChild($1);
                                                temp -> addChild(new ASTNode("PERIOD"));
-                                               ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                                               tempId->setId($3);
-                                               temp -> addChild(tempId);
+                                               temp -> addChild($3);
                                                $$ = temp;
                                                parserOutput("postfix_expression -> postfix_expression PERIOD identifier"); }
 	| postfix_expression ARROW identifier { ASTNode* temp = new ASTNode("postfix_expression");
                                               temp -> addChild($1);
                                               temp -> addChild(new ASTNode("ARROW"));
-                                              ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-                                              tempId->setId($3);
-                                              temp -> addChild(new ASTVariableNode($3));
+                                              temp -> addChild($3);
                                               $$ = temp;
                                               parserOutput("postfix_expression -> postfix_expression ARROW identifier"); }
 	| postfix_expression INC_OP { ASTNode* temp = new ASTNode("postfix_expression");
@@ -978,9 +1014,8 @@ postfix_expression
 	;
 
 primary_expression
-	: identifier { 	ASTVariableNode* tempId = new ASTVariableNode("IDENTIFIER");
-					tempId->setId($1);
-					$$ = tempId; parserOutput("primary_expression -> identifier"); }
+	: identifier {  $$ = $1;
+					parserOutput("primary_expression -> identifier"); }
 	| constant { $$ = $1; parserOutput("primary_expression -> constant"); }
 	| string { $$ = $1; parserOutput("primary_expression -> string"); }
 	| OPAREN expression CPAREN { $$ = $2; parserOutput("primary_expression -> OPAREN expression CPAREN"); }
@@ -996,24 +1031,47 @@ argument_expression_list
 	;
 
 constant
-	: INTEGER_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("INT_CONST");
-						 temp->setValue(yylval.sval);
-						 temp->setType(Int);
-						 $$ = temp;
-	                     parserOutput("constant -> INTEGER_CONSTANT"); }
-	| CHARACTER_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("CHAR_CONST");
-						   temp->setValue(yylval.sval);
-						   temp->setType(Char);
-						   $$ = temp;
-                           parserOutput("constant -> CHARACTER_CONSTANT"); }
-	| FLOATING_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("FLOAT_CONST");
-						  temp->setValue(yylval.sval);
-						  temp->setType(Float);
-						  $$ = temp;
+	: INTEGER_CONSTANT {    int value;
+                            valueUnion temp;
+                            try{
+                                value = stoi(yylval.sval);
+                                temp.intVal = value;
+                            }
+                            catch(...)
+                            {
+                                errorStream << "Error converting string to int in INT_CONSTANT" << endl;
+                                return 1;
+                            }
+                            $$ = new ASTConstNode("INT_CONSTANT", Int, temp);
+	                        parserOutput("constant -> INTEGER_CONSTANT"); }
+	| CHARACTER_CONSTANT {  char value;
+                            valueUnion temp;
+                            try{
+                                value = yylval.sval[1]; //Gets the character. Does not work for escape characters
+                                temp.charVal = value;
+                            }
+                            catch(...)
+                            {
+                                errorStream << "Error converting string to char in CHAR_CONSTANT" << endl;
+                                return 1;
+                            }
+                            $$ = new ASTConstNode("CHAR_CONSTANT", Char, temp);
+                            parserOutput("constant -> CHARACTER_CONSTANT"); }
+	| FLOATING_CONSTANT { float value;
+	                      valueUnion temp;
+                          try{
+                              value = stof(yylval.sval);
+                              temp.fVal = value;
+	                      }
+	                      catch(...)
+                          {
+                              errorStream << "Error converting string to float in FLOATING_CONSTANT" << endl;
+                              return 1;
+                          }
+                          $$ = new ASTConstNode("FLOAT_CONSTANT", Float, temp);
                           parserOutput("constant -> FLOATING_CONSTANT"); }
 	| ENUMERATION_CONSTANT { ASTVariableNode* temp = new ASTVariableNode("ENUMERATION_CONSTANT");
-                             						  temp->setValue(yylval.sval);
-                             						  temp->setType(Float);
+                             						  temp->setType(Enum);
                              						  $$ = temp;
                              						   parserOutput("constant -> ENUMERATION_CONSTANT"); }
 	;
@@ -1024,15 +1082,24 @@ string
 
 identifier
 	: IDENTIFIER {
-                    strcpy($$, yylval.sval);
+	                //cout << "Identifier: " << yylval.sval << endl;
+					ASTIdNode* temp = new ASTIdNode("IDENTIFIER", yylval.sval);
                     parserOutput("identifier -> IDENTIFIER"); 
                     nodeIdentifier = yylval.sval; 
                     nodeLineNumber = line;
-                    if (!st.getInsertMode() && st.searchAll(nodeIdentifier).first == -1)
+                    //cout << "\tInsert mode: " << (st.getInsertMode() == 1 ? "True" : "False") << endl;
+                    if (!st.getInsertMode())
                     {
-                        yyerror(NULL);
-                        return 1;
+                    	if(st.searchAll(nodeIdentifier).first == -1)
+						{
+                        	yyerror(NULL);
+                        	return 1;
+						}
+						SymbolNode idNode = st.searchAll(yylval.sval).second->second;
+						temp->setType( idNode.getTypeSpecifierIndex() );
                     }
+                    firstArrayIndex = true;//For array indexing
+					$$ = temp;
                  }
 	;
 
@@ -1042,9 +1109,10 @@ int main(int argc, char** argv)
 {
 	int outputIndex = parseCommandLine(argc, argv); //Returns the index of the output file in argv or 0 if there is no -o
 
+    root = new ASTNode(argv[1]);
+    AST tree(root);
 	yyparse();
 	tree.printTree();
-	//cout << "Is tree valid? " << ( tree.walkTree() ? "Yes" : "Nopers" ) << endl;
 
     outputFile.open( outputIndex ? argv[outputIndex] : "output/defaultOutput.txt");
     if (outputFile.good())
@@ -1059,8 +1127,7 @@ int main(int argc, char** argv)
 		cerr << "Output file fail." << endl;
         exit(-1);
     }
-
-	  return 0;
+    return 0;
 }
 
 /// @name yyerror
