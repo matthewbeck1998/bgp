@@ -446,3 +446,10 @@ const list<array<int, 3>> &SymbolNode::getFunctionParameters() const
 {
 	return functionParameters;
 }
+
+
+
+vector<int> SymbolNode::getDimensions () const
+{
+	return arrayDimensions;
+}

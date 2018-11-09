@@ -107,7 +107,6 @@ void ASTNode::printNode(ostream &treeOutFile)
 
 list<int> ASTNode::getDimensions()
 {
-    cout << "base dim" << endl;
     list<int> temp;
     temp.clear();
     return temp;
@@ -315,6 +314,12 @@ ASTAssignNode::ASTAssignNode(string node_label, ASTNode* LHS, ASTNode* mathOp, A
             addChild(mathOp);
             addChild(temp);
             outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << endl;
+        } else
+        {
+            addChild(LHS);
+            addChild(mathOp);
+            addChild(RHS);
+            outputStream << "WARNING: unsupported types: " << printType(LHS) << ", " << printType(RHS) << endl;
         }
     } else
     {
@@ -808,9 +813,16 @@ string ASTCastNode::printType() const
 }
 
 ASTArrayNode::ASTArrayNode(string node_label, string id, int typeSet): ASTNode::ASTNode(move(node_label)),
-identifier(move(id)), type(typeSet)
+                                                                       identifier(move(id)), type(typeSet)
 {
+}
 
+ASTArrayNode::ASTArrayNode(string node_label, ASTNode* inputNode): ASTNode::ASTNode(move(node_label)), type(Int)
+{
+    for( auto it = inputNode->getChildren().begin() ; it != inputNode->getChildren().end() ; ++it )
+    {
+        addChild( *it );
+    }
 }
 
 void ASTArrayNode::printNode(ostream &treeOutFile)
@@ -868,6 +880,12 @@ string ASTArrayNode::getId() const
 }
 
 
+void ASTArrayNode::setId(string inputId)
+{
+    identifier = inputId;
+}
+
+
 ASTDeclarationNode::ASTDeclarationNode(string node_label, int inputType, ASTNode* childNode)
 : ASTNode::ASTNode(move(node_label)),type(inputType)
 {
@@ -916,3 +934,4 @@ void ASTDeclarationNode::constructorTypeSet( ASTNode* node, int inputType )
         constructorTypeSet(*it, inputType);
     }
 }
+
