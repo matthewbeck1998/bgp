@@ -222,10 +222,12 @@ class ASTArrayNode : public ASTNode
 {
 public:
 	ASTArrayNode(string node_label, string id, int typeSet);
+    ASTArrayNode(string node_label, ASTNode* inputNode);
 	void printNode(ostream &treeOutFile = cout) override;
 	void setType( int inputType );
 	int getType() const;
 	string getId() const;
+	void setId(string inputId);
 	list<int> getDimensions() const;
 	void addDimension(int inputDim);
 	void addDimensions(list<int> inputDimensions);
@@ -247,6 +249,7 @@ class ASTDeclarationNode : public ASTNode
 		int type;
 		void constructorTypeSet( ASTNode* node, int inputType );
 };
+
 
 
 /* Will, what the hell are you doing? - Matt

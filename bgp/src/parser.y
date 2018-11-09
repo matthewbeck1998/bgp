@@ -47,11 +47,11 @@ string currentFunctionNode = "";
 bool inFunctionPrototype = false;
 
 bool sameArray = false;
+bool firstArrayIndex = true;
 
 
 
 ASTNode* root;
-//AST tree(root);
 %}
 
 %union
@@ -151,8 +151,6 @@ declaration
 	| declaration_specifiers init_declarator_list SEMICOLON {
                                                                 sameArray = false;
 	                                                            ASTNode* temp = new ASTDeclarationNode("Declaration", $1->getType(), $2);
-	                                                            //$2->printNode();
-	                                                            //temp->addChild($1);
 	                                                            $$ = temp;
 	                                                            parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON");
                                                             }
@@ -407,11 +405,8 @@ direct_declarator
                                                                         temp -> addDimensions ( ( (ASTArrayNode*) $1 )->getDimensions() );
                                                                     temp->setType( $1->getType() );
                                                                     $$ = temp;
-                                                                    //$$->printNode();
                                                                     sameArray = true;
-                                                                    //$1->printNode();
                                                                 //}
-                                                                //temp -> printNode();
                                                                 //temp -> addChild($1);
                                                                 //temp -> addChild($3);
                                                                 parserOutput("direct_declarator -> direct_declarator OBRACKET constant_expression CBRACKET"); }
@@ -927,11 +922,31 @@ unary_operator
 
 postfix_expression
 	: primary_expression { $$ = $1; parserOutput("postfix_expression -> primary_expression"); }
-	| postfix_expression OBRACKET expression CBRACKET {  ASTNode* temp = new ASTNode("postfix_expression");
-                                                          temp -> addChild($1);
-                                                          temp -> addChild($3);
-                                                          $$ = temp;
-                                                          parserOutput("postfix_expression -> postfix_expression OBRACKET expression CBRACKET"); }
+    | postfix_expression OBRACKET expression CBRACKET { ASTArrayNode* temp = new ASTArrayNode("array_node", $1);
+                                                        string tempId;
+                                                        int tempType;
+                                                        if(firstArrayIndex)
+                                                        {
+                                                             tempId = ( (ASTIdNode*) $1)->getId();
+                                                            int tempType = ( (ASTIdNode*) $1)->getType();
+                                                            firstArrayIndex = false;
+                                                        } else
+                                                        {
+                                                            tempId = ( (ASTArrayNode*) $1)->getId();
+                                                            tempType = ( (ASTArrayNode*) $1)->getType();
+                                                        }
+                                                        temp->setId( tempId );
+                                                        temp->setType( tempType );
+                                                        SymbolNode arrayNode = st.searchAll( tempId ).second->second;
+                                                        if( arrayNode.getDimensions().size() < temp->getChildren().size() )
+                                                        {
+                                                            cerr << "Too many indexes on array " << tempId << endl;
+                                                            exit(-1);
+                                                        }
+                                                        //cout << $1->getLabel() <<", " << ((ASTIdNode*)$1)->getId() << endl;
+    												 	 temp->addChild( $3 );
+                                                        $$ = temp;
+                                                        parserOutput("postfix_expression -> postfix_expression OBRACKET expression CBRACKET"); }
 	| postfix_expression OPAREN CPAREN { $$ = $1; parserOutput("postfix_expression -> postfix_expression OPAREN CPAREN"); }
 	| postfix_expression OPAREN argument_expression_list CPAREN {ASTNode* temp = new ASTNode("postfix_expression");
                                                                    temp -> addChild($1);
@@ -1045,9 +1060,9 @@ identifier
                         	return 1;
 						}
 						SymbolNode idNode = st.searchAll(yylval.sval).second->second;
-						cout << "Type: " << idNode.getTypeSpecifierIndex() << endl;
 						temp->setType( idNode.getTypeSpecifierIndex() );
                     }
+                    firstArrayIndex = true;//For array indexing
 					$$ = temp;
                  }
 	;

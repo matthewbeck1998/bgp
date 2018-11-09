@@ -27,6 +27,8 @@ public:
 
 	const string &getIdentifier () const;
 
+	vector<int> getDimensions () const;
+
 	void setIdentifier (const string &identifier);
 
 	int getTypeStorageClassIndex () const;
