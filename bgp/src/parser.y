@@ -44,13 +44,10 @@ bool nodeIsSigned = true;
 string lastNodeInserted = "";
 bool inFunctionParameters = false;
 string currentFunctionNode = "";
-<<<<<<< HEAD
 bool inFunctionPrototype = false;
-=======
 
 bool sameArray = false;
 
->>>>>>> 6a6bcd334cdee2729ffa935e9ae5c8c1446e7f96
 
 
 ASTNode* root;
