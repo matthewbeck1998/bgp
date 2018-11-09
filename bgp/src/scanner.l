@@ -420,12 +420,14 @@ productions_off         [@][p][-]
 
                                 functionPair.second->second.setIsFunction(true);
                                 currentFunctionNode = lastNodeInserted;
+                                cerr << currentFunctionNode << endl;
                                 st.pushLevel();
                             }
                             return OPAREN;
                         }
 
 ")"                     {
+                            cerr << "CPAREN" << endl;
                             if (inFunctionParameters)
                             {
                                 inFunctionParameters = false;

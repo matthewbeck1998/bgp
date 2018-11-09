@@ -100,12 +100,14 @@ ASTNode* root;
 translation_unit
 	: external_declaration {root->addChild($1);  parserOutput("translation_unit -> external_declaration"); }
 	| translation_unit external_declaration { root->addChild($2);
-	                                          parserOutput("translation_unit -> translation_unit external_declaration"); }
+	                                          parserOutput("translation_unit -> translation_unit external_declaration");
+                                              cerr << "TRANSLATION_UNIT RULE" << endl;
+                                            }
 	;
 
 external_declaration
 	: function_definition { $$ = $1; parserOutput("external_declaration -> function_definition"); }
-	| declaration { $$ = $1; parserOutput("external_declaration -> declaration"); }
+	| declaration { $$ = $1; parserOutput("external_declaration -> declaration"); cerr << "EXTERNAL_DECL RULE" << endl; }
 	;
 
 function_definition
@@ -147,12 +149,16 @@ function_definition
 declaration
 	: declaration_specifiers SEMICOLON { $$ = new ASTDeclarationNode( "declaration", $1->getType(), $1) ; parserOutput("declaration -> declaration_specifiers SEMICOLON"); }
 	| declaration_specifiers init_declarator_list SEMICOLON {
+                                                                cerr << "DECL RULE" << endl;
+                                                                // there is a seg fault in between here and
                                                                 sameArray = false;
 	                                                            ASTNode* temp = new ASTDeclarationNode("Declaration", $1->getType(), $2);
 	                                                            //$2->printNode();
 	                                                            //temp->addChild($1);
 	                                                            $$ = temp;
 	                                                            parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON");
+                                                                // here
+                                                                cerr << "DECL RULE END" << endl; // damn you will for ditching this project for a girl
                                                             }
 	;
 
@@ -344,8 +350,11 @@ declarator
 direct_declarator
 	: identifier    {
                         parserOutput("direct_declarator -> identifier");
+                        cerr << "NODE IDENTIFIER: " << nodeIdentifier << endl;
                         if (inFunctionParameters)
                         {
+                            cerr << "IN FUNCTION PARAMETERS" << endl;
+                            cerr << "CURRENT FUNCTION NODE: " << currentFunctionNode << endl;
                             auto functionPair = st.searchAll(currentFunctionNode);
                             if (!st.isLastSearchValid())
                             {
@@ -361,7 +370,17 @@ direct_declarator
                             }
                             else
                             {
-                                
+                                cerr << "SIGN: " << nodeIsSigned << endl;
+                                array<int, 3> currentParameter = {nodeTypeQualifier, nodeIsSigned, nodeTypeSpecifier};
+                                if (currentParameter == matchedParameters.front())
+                                {
+                                    matchedParameters.pop_front();
+                                    cerr << "POP PARAMETER" << endl;
+                                }
+                                else
+                                {
+                                    return 1;
+                                }
                             }
                         }
 
@@ -372,6 +391,7 @@ direct_declarator
                             {
                                 functionPair.second->second.setIsFunctionDefined(true);
                                 matchedParameters = functionPair.second->second.getFunctionParameters();
+                                lastNodeInserted = nodeIdentifier;
                             }
                             else
                             {
@@ -387,7 +407,7 @@ direct_declarator
                             node.setIsFunction(nodeIsFunction);
                             node.setIsSigned(nodeIsSigned);
                             $$ = $1; 
-
+                            cerr << "SIGN: " << nodeIsSigned << endl;
                             if (!st.insert(node))
                             {
                                 return 1;
@@ -438,6 +458,7 @@ direct_declarator
                                                                 parserOutput("direct_declarator -> direct_declarator OBRACKET constant_expression CBRACKET"); }
 	| direct_declarator OPAREN CPAREN { $$ = $1; parserOutput("direct_declarator -> direct_declarator OPAREN CPAREN"); }
 	| direct_declarator OPAREN parameter_type_list CPAREN   {
+                                                                cerr << "THIS RULE" << endl;
                                                                 inFunctionPrototype = true;
                                                                 ASTNode* temp = new ASTNode("direct_declarator");
                                                                 temp -> addChild($1);
