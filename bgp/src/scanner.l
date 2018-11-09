@@ -34,6 +34,9 @@ extern bool inFunctionParameters;
 extern string currentFunctionNode;
 extern bool inFunctionPrototype;
 
+
+extern bool sameArray;
+
 //Functions to handle incrementing of globals.
 /*
  *@name handleNewLine
@@ -327,6 +330,7 @@ productions_off         [@][p][-]
                         }
 
 ","                     {
+                            sameArray = false;
                             scannerOutput(yytext, "COMMA");
 							incrementColumn(yyleng);
                             return COMMA;

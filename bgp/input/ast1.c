@@ -1,6 +1,7 @@
-int main()
+float main()
 {
-	int b;
-    int a[10][6], f[7];
+    float x;
+	float b[1][2];
+	b[1] = 1;
 
 }
