@@ -1,4 +1,4 @@
-float main()
+int main()
 {
-    short char float int double help, a;
+   1 + 'c';
 }
