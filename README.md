@@ -19,6 +19,7 @@ You can find the AST visualization in ```output/ASTree.png```.
 1. Make sure you are in the bgp directory.
 2. Compile the code with ```make -C src```.
 3. Run the program using ```bin\bgp.exe input/inputFileName``` where inputFileName is the name of the input file. There are optional command line arguments "-o", "-d", "-s", "-l", and "-p". "-o" must be followed by an output filename.
+4. Get the image of the Abstract Syntax Tree by using ```make graph -C src```.
 
 Example:\
 Your desired input file: ```input/ASTArray1d.c```\
