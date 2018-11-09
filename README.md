@@ -1,4 +1,4 @@
-# CS460-Beck-Garner-Poston
+# BGP Compiler
 
 ## Running the compiler
 1. Make sure you are in the bgp directory.
