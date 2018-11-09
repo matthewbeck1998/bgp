@@ -101,13 +101,12 @@ translation_unit
 	: external_declaration {root->addChild($1);  parserOutput("translation_unit -> external_declaration"); }
 	| translation_unit external_declaration { root->addChild($2);
 	                                          parserOutput("translation_unit -> translation_unit external_declaration");
-                                              cerr << "TRANSLATION_UNIT RULE" << endl;
                                             }
 	;
 
 external_declaration
 	: function_definition { $$ = $1; parserOutput("external_declaration -> function_definition"); }
-	| declaration { $$ = $1; parserOutput("external_declaration -> declaration"); cerr << "EXTERNAL_DECL RULE" << endl; }
+	| declaration { $$ = $1; parserOutput("external_declaration -> declaration");}
 	;
 
 function_definition
@@ -149,12 +148,11 @@ function_definition
 declaration
 	: declaration_specifiers SEMICOLON { $$ = new ASTDeclarationNode( "declaration", $1->getType(), $1) ; parserOutput("declaration -> declaration_specifiers SEMICOLON"); }
 	| declaration_specifiers init_declarator_list SEMICOLON {
-                                                                cerr << "DECL RULE" << endl;
                                                                 // there is a seg fault in between here and
                                                                 sameArray = false;
 	                                                            ASTNode* temp = new ASTDeclarationNode("Declaration", $1->getType(), $2);
 
-                                                                cerr << "DECL RULE END" << endl; // damn you Will for ditching this project for a girl
+                                                                 // damn you Will for ditching this project for a girl
 	                                                            $$ = temp;
 	                                                            parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON");
                                                                 // here
@@ -349,11 +347,8 @@ declarator
 direct_declarator
 	: identifier    {
                         parserOutput("direct_declarator -> identifier");
-                        cerr << "NODE IDENTIFIER: " << nodeIdentifier << endl;
                         if (inFunctionParameters)
                         {
-                            cerr << "IN FUNCTION PARAMETERS" << endl;
-                            cerr << "CURRENT FUNCTION NODE: " << currentFunctionNode << endl;
                             auto functionPair = st.searchAll(currentFunctionNode);
                             if (!st.isLastSearchValid())
                             {
@@ -369,12 +364,10 @@ direct_declarator
                             }
                             else
                             {
-                                cerr << "SIGN: " << nodeIsSigned << endl;
                                 array<int, 3> currentParameter = {nodeTypeQualifier, nodeIsSigned, nodeTypeSpecifier};
                                 if (currentParameter == matchedParameters.front())
                                 {
                                     matchedParameters.pop_front();
-                                    cerr << "POP PARAMETER" << endl;
                                 }
                                 else
                                 {
@@ -405,8 +398,7 @@ direct_declarator
                             node.setTypeQualifierIndex(nodeTypeQualifier);
                             node.setIsFunction(nodeIsFunction);
                             node.setIsSigned(nodeIsSigned);
-                            $$ = $1; 
-                            cerr << "SIGN: " << nodeIsSigned << endl;
+                            $$ = $1;
                             if (!st.insert(node))
                             {
                                 return 1;
@@ -454,7 +446,6 @@ direct_declarator
                                                                 parserOutput("direct_declarator -> direct_declarator OBRACKET constant_expression CBRACKET"); }
 	| direct_declarator OPAREN CPAREN { $$ = $1; parserOutput("direct_declarator -> direct_declarator OPAREN CPAREN"); }
 	| direct_declarator OPAREN parameter_type_list CPAREN   {
-                                                                cerr << "THIS RULE" << endl;
                                                                 inFunctionPrototype = true;
                                                                 ASTNode* temp = new ASTNode("direct_declarator");
                                                                 temp -> addChild($1);
@@ -1046,8 +1037,8 @@ constant
                             }
                             catch(...)
                             {
-                                cerr << "Error converting string to int in INT_CONSTANT" << endl;
-                                exit(-1);
+                                errorStream << "Error converting string to int in INT_CONSTANT" << endl;
+                                return 1;
                             }
                             $$ = new ASTConstNode("INT_CONSTANT", Int, temp);
 	                        parserOutput("constant -> INTEGER_CONSTANT"); }
@@ -1059,8 +1050,8 @@ constant
                             }
                             catch(...)
                             {
-                                cerr << "Error converting string to char in CHAR_CONSTANT" << endl;
-                                exit(-1);
+                                errorStream << "Error converting string to char in CHAR_CONSTANT" << endl;
+                                return 1;
                             }
                             $$ = new ASTConstNode("CHAR_CONSTANT", Char, temp);
                             parserOutput("constant -> CHARACTER_CONSTANT"); }
@@ -1072,8 +1063,8 @@ constant
 	                      }
 	                      catch(...)
                           {
-                              cerr << "Error converting string to float in FLOATING_CONSTANT" << endl;
-                              exit(-1);
+                              errorStream << "Error converting string to float in FLOATING_CONSTANT" << endl;
+                              return 1;
                           }
                           $$ = new ASTConstNode("FLOAT_CONSTANT", Float, temp);
                           parserOutput("constant -> FLOATING_CONSTANT"); }

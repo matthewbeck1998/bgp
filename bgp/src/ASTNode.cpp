@@ -127,7 +127,7 @@ ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNo
             addChild(LHS);
             addChild(mathOp);
             addChild(temp);
-            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << endl;
+            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << " on line: " << line << endl;
         }
         else if(RHS->getType() == Float)
         {
@@ -135,7 +135,7 @@ ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNo
             addChild(temp);
             addChild(mathOp);
             addChild(RHS);
-            outputStream << "WARNING: implicit conversion from " << printType(LHS) << " to " << printType(RHS) << endl;
+            outputStream << "WARNING: implicit conversion from " << printType(LHS) << " to " << printType(RHS) << " on line: " << line << endl;
         }
         else if(LHS->getType() == Int)
         {
@@ -143,7 +143,7 @@ ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNo
             addChild(LHS);
             addChild(mathOp);
             addChild(temp);
-            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << endl;
+            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << " on line: " << line << endl;
         }
         else if(RHS->getType() == Int)
         {
@@ -151,7 +151,7 @@ ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNo
             addChild(temp);
             addChild(mathOp);
             addChild(RHS);
-            outputStream << "WARNING: implicit conversion from " << printType(LHS) << " to " << printType(RHS) << endl;
+            outputStream << "WARNING: implicit conversion from " << printType(LHS) << " to " << printType(RHS) << " on line: " << line << endl;
         }
         else if(LHS->getType() == Char)
         {
@@ -159,7 +159,7 @@ ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNo
             addChild(LHS);
             addChild(mathOp);
             addChild(temp);
-            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << endl;
+            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << " on line: " << line << endl;
         }
         else if(RHS->getType() == Char)
         {
@@ -167,7 +167,7 @@ ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNo
             addChild(temp);
             addChild(mathOp);
             addChild(RHS);
-            outputStream << "WARNING: implicit conversion from " << printType(LHS) << " to " << printType(RHS) << endl;
+            outputStream << "WARNING: implicit conversion from " << printType(LHS) << " to " << printType(RHS) << " on line: " << line << endl;
         }
         //outputStream << "Unsupported types: " << printType( LHS ) << ", " << printType( RHS ) << endl;
     } else
@@ -319,7 +319,7 @@ ASTAssignNode::ASTAssignNode(string node_label, ASTNode* LHS, ASTNode* mathOp, A
             addChild(LHS);
             addChild(mathOp);
             addChild(RHS);
-            outputStream << "WARNING: unsupported types: " << printType(LHS) << ", " << printType(RHS) << endl;
+            outputStream << "WARNING: unsupported types: " << printType(LHS) << ", " << printType(RHS) << " on line: " << line << endl;
         }
     } else
     {

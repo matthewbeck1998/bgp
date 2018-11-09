@@ -21,6 +21,8 @@ using namespace std;
 extern stringstream errorStream;
 extern stringstream outputStream;
 
+extern int line;
+
 
 /*!
  * @name valueUnion

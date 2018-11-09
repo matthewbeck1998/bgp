@@ -1,4 +1,5 @@
 float main()
 {
-    int a;
+    char a;
+    ((int)a) = 68;
 }
