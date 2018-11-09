@@ -1,7 +1,5 @@
-@p+
 int main()
 {
     int a;
-    int b;
+    char c;
 }
-
