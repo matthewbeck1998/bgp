@@ -373,6 +373,8 @@ direct_declarator
                                 }
                                 else
                                 {
+                                    cerr << "ERROR: REDEFINITION OF FUNCTION" << endl;
+                                    yyerror(NULL);
                                     return 1;
                                 }
                             }
@@ -389,7 +391,8 @@ direct_declarator
                             }
                             else
                             {
-                                cerr << "ERROR: REDEFINING FUNCTION" << endl;
+                                cerr << "ERROR: REDEFINITION OF FUNCTION" << endl;
+                                yyerror(NULL);
                                 return 1;
                             }
                         }
