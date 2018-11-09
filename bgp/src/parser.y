@@ -45,11 +45,9 @@ string lastNodeInserted = "";
 bool inFunctionParameters = false;
 string currentFunctionNode = "";
 bool inFunctionPrototype = false;
-
 bool sameArray = false;
+list<array<int, 3>> matchedParameters;
 bool firstArrayIndex = true;
-
-
 
 ASTNode* root;
 %}
@@ -102,12 +100,14 @@ ASTNode* root;
 translation_unit
 	: external_declaration {root->addChild($1);  parserOutput("translation_unit -> external_declaration"); }
 	| translation_unit external_declaration { root->addChild($2);
-	                                          parserOutput("translation_unit -> translation_unit external_declaration"); }
+	                                          parserOutput("translation_unit -> translation_unit external_declaration");
+                                              cerr << "TRANSLATION_UNIT RULE" << endl;
+                                            }
 	;
 
 external_declaration
 	: function_definition { $$ = $1; parserOutput("external_declaration -> function_definition"); }
-	| declaration { $$ = $1; parserOutput("external_declaration -> declaration"); }
+	| declaration { $$ = $1; parserOutput("external_declaration -> declaration"); cerr << "EXTERNAL_DECL RULE" << endl; }
 	;
 
 function_definition
@@ -149,10 +149,15 @@ function_definition
 declaration
 	: declaration_specifiers SEMICOLON { $$ = new ASTDeclarationNode( "declaration", $1->getType(), $1) ; parserOutput("declaration -> declaration_specifiers SEMICOLON"); }
 	| declaration_specifiers init_declarator_list SEMICOLON {
+                                                                cerr << "DECL RULE" << endl;
+                                                                // there is a seg fault in between here and
                                                                 sameArray = false;
 	                                                            ASTNode* temp = new ASTDeclarationNode("Declaration", $1->getType(), $2);
+
+                                                                cerr << "DECL RULE END" << endl; // damn you Will for ditching this project for a girl
 	                                                            $$ = temp;
 	                                                            parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON");
+                                                                // here
                                                             }
 	;
 
@@ -344,41 +349,78 @@ declarator
 direct_declarator
 	: identifier    {
                         parserOutput("direct_declarator -> identifier");
+                        cerr << "NODE IDENTIFIER: " << nodeIdentifier << endl;
                         if (inFunctionParameters)
                         {
+                            cerr << "IN FUNCTION PARAMETERS" << endl;
+                            cerr << "CURRENT FUNCTION NODE: " << currentFunctionNode << endl;
                             auto functionPair = st.searchAll(currentFunctionNode);
-
                             if (!st.isLastSearchValid())
                             {
                                 return 1;
                             }
-
-                            functionPair.second->second.pushFunctionParameter();
-                            functionPair.second->second.setCurrentFunctionParameterTypeSpecifier(nodeTypeSpecifier);
-                            functionPair.second->second.setCurrentFunctionParameterTypeQualifier(nodeTypeQualifier);
-                            functionPair.second->second.setCurrentFunctionParameterSign(nodeIsSigned);
+                            
+                            if (!functionPair.second->second.isIsFunctionDefined())
+                            {
+                                functionPair.second->second.pushFunctionParameter();
+                                functionPair.second->second.setCurrentFunctionParameterTypeSpecifier(nodeTypeSpecifier);
+                                functionPair.second->second.setCurrentFunctionParameterTypeQualifier(nodeTypeQualifier);
+                                functionPair.second->second.setCurrentFunctionParameterSign(nodeIsSigned);
+                            }
+                            else
+                            {
+                                cerr << "SIGN: " << nodeIsSigned << endl;
+                                array<int, 3> currentParameter = {nodeTypeQualifier, nodeIsSigned, nodeTypeSpecifier};
+                                if (currentParameter == matchedParameters.front())
+                                {
+                                    matchedParameters.pop_front();
+                                    cerr << "POP PARAMETER" << endl;
+                                }
+                                else
+                                {
+                                    return 1;
+                                }
+                            }
                         }
 
-                        SymbolNode node(nodeIdentifier, line, column, nodeTypeSpecifier);
-                        node.setTypeStorageClassIndex(nodeStorageClassSpecifier);
-                        node.setTypeQualifierIndex(nodeTypeQualifier);
-                        node.setIsFunction(nodeIsFunction);
-                        node.setIsSigned(nodeIsSigned);
-						$$ = $1;
-                        
-                        if (!st.insert(node))
+                        auto functionPair = st.searchTop(nodeIdentifier);
+                        if (st.isLastSearchValid() && functionPair.second->second.getIsFunction())
                         {
-                            return 1;
+                            if (!functionPair.second->second.isIsFunctionDefined())
+                            {
+                                functionPair.second->second.setIsFunctionDefined(true);
+                                matchedParameters = functionPair.second->second.getFunctionParameters();
+                                lastNodeInserted = nodeIdentifier;
+                            }
+                            else
+                            {
+                                cerr << "ERROR: REDEFINING FUNCTION" << endl;
+                                return 1;
+                            }
                         }
+                        else
+                        {   
+                            SymbolNode node(nodeIdentifier, line, column, nodeTypeSpecifier);
+                            node.setTypeStorageClassIndex(nodeStorageClassSpecifier);
+                            node.setTypeQualifierIndex(nodeTypeQualifier);
+                            node.setIsFunction(nodeIsFunction);
+                            node.setIsSigned(nodeIsSigned);
+                            $$ = $1; 
+                            cerr << "SIGN: " << nodeIsSigned << endl;
+                            if (!st.insert(node))
+                            {
+                                return 1;
+                            }
 
-                        lastNodeInserted = nodeIdentifier;
-                        nodeIdentifier = "";
-                        nodeLineNumber = -1;
-                        nodeStorageClassSpecifier = -1;
-                        nodeTypeSpecifier = 3;
-                        nodeTypeQualifier = -1;
-                        nodeIsFunction = false;
-                        nodeIsSigned = true;
+                            lastNodeInserted = nodeIdentifier;
+                            nodeIdentifier = "";
+                            nodeLineNumber = -1;
+                            nodeStorageClassSpecifier = -1;
+                            nodeTypeSpecifier = 3;
+                            nodeTypeQualifier = -1;
+                            nodeIsFunction = false;
+                            nodeIsSigned = true;
+                        }
                     }
 	| OPAREN declarator CPAREN { $$ = $2; parserOutput("direct_declarator -> OPAREN declarator CPAREN"); }
 	| direct_declarator OBRACKET CBRACKET { $$ = $1; parserOutput("direct_declarator -> direct_declarator OBRACKET CBRACKET"); }
@@ -412,6 +454,7 @@ direct_declarator
                                                                 parserOutput("direct_declarator -> direct_declarator OBRACKET constant_expression CBRACKET"); }
 	| direct_declarator OPAREN CPAREN { $$ = $1; parserOutput("direct_declarator -> direct_declarator OPAREN CPAREN"); }
 	| direct_declarator OPAREN parameter_type_list CPAREN   {
+                                                                cerr << "THIS RULE" << endl;
                                                                 inFunctionPrototype = true;
                                                                 ASTNode* temp = new ASTNode("direct_declarator");
                                                                 temp -> addChild($1);
