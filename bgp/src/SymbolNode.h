@@ -83,6 +83,8 @@ public:
 
 	void setIsFunctionDefined(bool isFunctionDefined);
 
+	const list<array<int, 3>> &getFunctionParameters() const;
+
 private:
 	string identifier;
 	int typeStorageClassIndex;
