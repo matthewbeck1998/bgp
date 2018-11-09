@@ -1,1 +1,0 @@
-ERROR: multiple type specifiers on line 3. int and short
