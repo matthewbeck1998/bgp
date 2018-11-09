@@ -1,8 +1,8 @@
 # CS460-Beck-Garner-Poston
 
-## Running the compiler.
-1. Make sure you are in the bgp directory.\
-2. Compile the code with make -C src.\
+## Running the compiler
+1. Make sure you are in the bgp directory.
+2. Compile the code with make -C src.
 3. Run the program using "./bin/bgp inputFileName" where inputFileName is the name of the input file. There are optional command line arguments "-o", "-d", "-s", "-l", and "-p". "-o" must be followed by an output filename.
 
 Example:\
