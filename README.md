@@ -11,7 +11,7 @@ Example:\
 Your desired input file: ```input/ASTArray1d.c```\
 Your desired output file: ```output/ASTArray1d.dat```\
 Your desired flags: ```-d -p -o```\
-Command: ```./bin/bgp input/ASTArray1d.c -d -p -o output/Array1d.dat```\
+Command: ```./bin/bgp input/ASTArray1d.c -d -p -o output/ASTArray1d.dat```\
 Graph: ```make graph -C src```\
 You can find the AST visualization in ```output/ASTree.png```.
 
