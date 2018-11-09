@@ -44,14 +44,9 @@ bool nodeIsSigned = true;
 string lastNodeInserted = "";
 bool inFunctionParameters = false;
 string currentFunctionNode = "";
-<<<<<<< HEAD
 bool inFunctionPrototype = false;
-=======
-
 bool sameArray = false;
-
->>>>>>> 6a6bcd334cdee2729ffa935e9ae5c8c1446e7f96
-
+list<array<int, 3>> matchedParameters;
 
 ASTNode* root;
 //AST tree(root);
@@ -350,42 +345,64 @@ declarator
 direct_declarator
 	: identifier    {
                         parserOutput("direct_declarator -> identifier");
-
                         if (inFunctionParameters)
                         {
                             auto functionPair = st.searchAll(currentFunctionNode);
-
                             if (!st.isLastSearchValid())
                             {
                                 return 1;
                             }
-
-                            functionPair.second->second.pushFunctionParameter();
-                            functionPair.second->second.setCurrentFunctionParameterTypeSpecifier(nodeTypeSpecifier);
-                            functionPair.second->second.setCurrentFunctionParameterTypeQualifier(nodeTypeQualifier);
-                            functionPair.second->second.setCurrentFunctionParameterSign(nodeIsSigned);
+                            
+                            if (!functionPair.second->second.isIsFunctionDefined())
+                            {
+                                functionPair.second->second.pushFunctionParameter();
+                                functionPair.second->second.setCurrentFunctionParameterTypeSpecifier(nodeTypeSpecifier);
+                                functionPair.second->second.setCurrentFunctionParameterTypeQualifier(nodeTypeQualifier);
+                                functionPair.second->second.setCurrentFunctionParameterSign(nodeIsSigned);
+                            }
+                            else
+                            {
+                                
+                            }
                         }
 
-                        SymbolNode node(nodeIdentifier, line, column, nodeTypeSpecifier);
-                        node.setTypeStorageClassIndex(nodeStorageClassSpecifier);
-                        node.setTypeQualifierIndex(nodeTypeQualifier);
-                        node.setIsFunction(nodeIsFunction);
-                        node.setIsSigned(nodeIsSigned);
-						$$ = $1;
-                        
-                        if (!st.insert(node))
+                        auto functionPair = st.searchTop(nodeIdentifier);
+                        if (st.isLastSearchValid() && functionPair.second->second.getIsFunction())
                         {
-                            return 1;
+                            if (!functionPair.second->second.isIsFunctionDefined())
+                            {
+                                functionPair.second->second.setIsFunctionDefined(true);
+                                matchedParameters = functionPair.second->second.getFunctionParameters();
+                            }
+                            else
+                            {
+                                cerr << "ERROR: REDEFINING FUNCTION" << endl;
+                                return 1;
+                            }
                         }
+                        else
+                        {   
+                            SymbolNode node(nodeIdentifier, line, column, nodeTypeSpecifier);
+                            node.setTypeStorageClassIndex(nodeStorageClassSpecifier);
+                            node.setTypeQualifierIndex(nodeTypeQualifier);
+                            node.setIsFunction(nodeIsFunction);
+                            node.setIsSigned(nodeIsSigned);
+                            $$ = $1; 
 
-                        lastNodeInserted = nodeIdentifier;
-                        nodeIdentifier = "";
-                        nodeLineNumber = -1;
-                        nodeStorageClassSpecifier = -1;
-                        nodeTypeSpecifier = 3;
-                        nodeTypeQualifier = -1;
-                        nodeIsFunction = false;
-                        nodeIsSigned = true;
+                            if (!st.insert(node))
+                            {
+                                return 1;
+                            }
+
+                            lastNodeInserted = nodeIdentifier;
+                            nodeIdentifier = "";
+                            nodeLineNumber = -1;
+                            nodeStorageClassSpecifier = -1;
+                            nodeTypeSpecifier = 3;
+                            nodeTypeQualifier = -1;
+                            nodeIsFunction = false;
+                            nodeIsSigned = true;
+                        }
                     }
 	| OPAREN declarator CPAREN { $$ = $2; parserOutput("direct_declarator -> OPAREN declarator CPAREN"); }
 	| direct_declarator OBRACKET CBRACKET { $$ = $1; parserOutput("direct_declarator -> direct_declarator OBRACKET CBRACKET"); }
