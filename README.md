@@ -1,7 +1,7 @@
 # BGP Compiler
 
 ## Running PA8
-Linux
+**Linux**
 1. Make sure you are in the bgp directory.
 2. Compile the code with ```make -C src```.
 3. Run the program using ```./bin/bgp inputFileName``` where inputFileName is the name of the input file. There are optional command line arguments "-o", "-d", "-s", "-l", and "-p". "-o" must be followed by an output filename.
@@ -15,7 +15,7 @@ Command: ```./bin/bgp input/ASTArray1d.c -d -p -o output/Array1d.dat```\
 Graph: ```make graph -C src```\
 You can find the AST visualization in ```output/ASTree.png```.
 
-Windows
+**Windows**
 1. Make sure you are in the bgp directory.
 2. Compile the code with ```make -C src```.
 3. Run the program using ```bin\bgp.exe input/inputFileName``` where inputFileName is the name of the input file. There are optional command line arguments "-o", "-d", "-s", "-l", and "-p". "-o" must be followed by an output filename.
