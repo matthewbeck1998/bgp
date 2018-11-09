@@ -177,10 +177,12 @@ declaration_specifiers
 	                                                    parserOutput("declaration_specifiers -> storage_class_specifier declaration_specifiers"); }
 
 	| type_specifier { $$ = $1; parserOutput("declaration_specifiers -> type_specifier"); }
-	| type_specifier declaration_specifiers { ASTNode* temp = new ASTNode("declaration_specifiers");
+	| type_specifier declaration_specifiers {   errorStream << "ERROR: multiple type specifiers on line " << line << ". " <<  printType( $1->getType() ) << " and " << printType( $2->getType() ) << endl;
+	                                            return -1;
+                                                /*ASTNode* temp = new ASTNode("declaration_specifiers");
                                                 temp -> addChild($1);
                                                 temp -> addChild($2);
-                                                $$ = temp;
+                                                $$ = temp;*/
                                                 parserOutput("declaration_specifiers -> type_specifier declaration_specifiers"); }
 	| type_qualifier { $$ = $1; parserOutput("declaration_specifiers -> type_qualifier"); }
 	| type_qualifier declaration_specifiers { ASTNode* temp = new ASTNode("declaration_specifiers");

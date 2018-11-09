@@ -1,5 +1,4 @@
 float main()
 {
-    char a;
-    ((int)a) = 68;
+    short char float int double help, a;
 }

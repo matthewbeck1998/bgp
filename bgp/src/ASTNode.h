@@ -15,6 +15,8 @@
 
 using namespace std;
 
+string printType(int type);
+
 /*!
  * Externs for the output/error streams.
  */
@@ -642,15 +644,16 @@ class ASTIdNode : public ASTNode
          */
         void setType( int inputType );
 
+    /*!
+     * @name printType
+     * @return returns a string the corresponds to the type of the node
+     */
+    string printType() const; // I can only imagine you meant to do this. - Matt
+
     private:
-        /*!
-         * @name printType
-         * @return returns a string the corresponds to the type of the node
-         */
-        string printType() const; // I can only imagine you meant to do this. - Matt
 
         /*!
-         * a sting the holds the id of the ndoe
+         * a sting the holds the id of the node
          */
         string id;
 
