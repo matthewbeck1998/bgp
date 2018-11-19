@@ -32,6 +32,7 @@ extern int line;
  */
 union valueUnion
 {
+    double dVal;
     int intVal;
     char charVal;
     float fVal;

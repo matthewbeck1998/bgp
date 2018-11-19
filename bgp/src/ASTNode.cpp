@@ -124,7 +124,23 @@ ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNo
 	setType( getHigherType(LHS, RHS) );
 	if( LHS->getType() != RHS->getType() )
     {
-        if(LHS->getType() == Float)
+	    if(LHS->getType() == Double)
+        {
+            ASTCastNode* temp = new ASTCastNode( "cast_node", RHS, Double );
+            addChild(LHS);
+            addChild(mathOp);
+            addChild(temp);
+            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << " on line: " << line << endl;
+        }
+        else if(RHS->getType() == Double)
+        {
+            ASTCastNode* temp = new ASTCastNode( "cast_node", LHS, Double );
+            addChild(temp);
+            addChild(mathOp);
+            addChild(RHS);
+            outputStream << "WARNING: implicit conversion from " << printType(LHS) << " to " << printType(RHS) << " on line: " << line << endl;
+        }
+	    if(LHS->getType() == Float)
         {
             ASTCastNode* temp = new ASTCastNode( "cast_node", RHS, Float );
             addChild(LHS);
@@ -183,6 +199,10 @@ ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNo
 
 int ASTMathNode::getHigherType(ASTNode* LHS, ASTNode* RHS) const
 {
+    if(LHS->getType() == Double || RHS->getType() == Double)
+    {
+        return Double;
+    }
 	if(LHS->getType() == Float || RHS->getType() == Float)
 	{
 		return Float;
@@ -295,7 +315,15 @@ ASTAssignNode::ASTAssignNode(string node_label, ASTNode* LHS, ASTNode* mathOp, A
     setType( getHigherType(LHS, RHS) );
     if( LHS->getType() != RHS->getType() )
     {
-        if(LHS->getType() == Float)
+        if(LHS->getType() == Double)
+        {
+            ASTCastNode* temp = new ASTCastNode( "cast_node", RHS, Double );
+            addChild(LHS);
+            addChild(mathOp);
+            addChild(temp);
+            outputStream << "WARNING: implicit conversion from " << printType(RHS) << " to " << printType(LHS) << " on line: " << line << endl;
+        }
+        else if(LHS->getType() == Float)
         {
             ASTCastNode* temp = new ASTCastNode( "cast_node", RHS, Float );
             addChild(LHS);
@@ -530,6 +558,8 @@ void ASTConstNode::setValue(valueUnion inputValue)
 {
 	switch(type)
 	{
+        case Double:
+            value.dVal = inputValue.dVal;
 		case Int:
 			value.intVal = inputValue.intVal;
 			break;
@@ -553,6 +583,9 @@ void ASTConstNode::printNode(ostream &treeOutFile)
 	treeOutFile << "Value: ";
 	switch (type)
 	{
+        case Double:
+            treeOutFile <<value.dVal;
+            break;
 		case Int:
 			treeOutFile << value.intVal;
 			break;
