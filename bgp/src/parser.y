@@ -442,7 +442,6 @@ direct_declarator
                                                                     temp -> addDimension(dimension);
                                                                     if(sameArray)
                                                                         temp -> addDimensions ( ( (ASTArrayNode*) $1 )->getDimensions() );
-                                                                    temp->setType( $1->getType() );
                                                                     $$ = temp;
                                                                     sameArray = true;
                                                                 //}
@@ -966,16 +965,14 @@ postfix_expression
                                                         int tempType;
                                                         if(firstArrayIndex)
                                                         {
-                                                           tempId = ( (ASTIdNode*) $1)->getId();
-                                                            int tempType = ((ASTIdNode*) $1)->getType();
+                                                            tempId = ( (ASTIdNode*) $1)->getId();
+                                                            tempType = ( (ASTIdNode*) $1)->getType();
                                                             firstArrayIndex = false;
                                                         } else
                                                         {
                                                             tempId = ( (ASTArrayNode*) $1)->getId();
                                                             tempType = ( (ASTArrayNode*) $1)->getType();
                                                         }
-                                                        if( tempType == 6 ) //?
-                                                             tempType = 3;
                                                         temp->setId( tempId );
                                                         temp->setType( tempType );
                                                         SymbolNode arrayNode = st.searchAll( tempId ).second->second;
