@@ -993,7 +993,7 @@ void ASTDeclarationNode::printNode(ostream &treeOutFile)
 treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
 treeOutFile << "Line: " << lineNum << endl;
 treeOutFile << "DECLARATION NODE" << endl;
-treeOutFile << "type: " << printType(type) << ", " << activationFrameSize<< "\"];" << endl;
+treeOutFile << "type: " << printType(type) << "\"];" << endl;
 for(auto &it : children)
 {
 treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
