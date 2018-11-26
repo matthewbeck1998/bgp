@@ -110,13 +110,13 @@ external_declaration
 	;
 
 function_definition
-	: declarator compound_statement { ASTNode* temp = new ASTNode("function_definition");
+	: declarator compound_statement { ASTNode* temp = new ASTFunctionNode("function_definition", $1 -> getType() );
                                       temp -> addChild($1);
                                       temp -> addChild($2);
                                       $$ = temp;
                                       parserOutput("function_definition -> declarator compound_statement");
                                       st.popLevel(); }
-	| declarator declaration_list compound_statement { ASTNode* temp = new ASTNode("function_definition");
+	| declarator declaration_list compound_statement { ASTNode* temp = new ASTFunctionNode("function_definition", $1 -> getType() );
 	                                                     $2->setType( $1->getType() );
                                                          //temp -> addChild($1);
                                                          temp -> addChild($2);
@@ -125,7 +125,7 @@ function_definition
                                                          parserOutput("function_definition -> declarator declaration_list compound_statement");
                                                          st.popLevel(); }
 	| declaration_specifiers declarator compound_statement {
-	                                                        ASTNode* temp = new ASTNode("function_definition");
+	                                                        ASTNode* temp = new ASTFunctionNode("function_definition", $1 -> getType());
                                                             $2->setType( $1->getType() );
                                                             //temp -> addChild($1);
                                                             temp -> addChild($2);
@@ -134,7 +134,7 @@ function_definition
 	                                                        parserOutput("function_definition -> declaration_specifiers declarator compound_statement");
 	                                                        st.popLevel(); }
 	| declaration_specifiers declarator declaration_list compound_statement {
-                                                                             ASTNode* temp = new ASTNode("function_definition");
+                                                                             ASTNode* temp = new ASTFunctionNode("function_definition", $1 -> getType());
                                                                              $2->setType( $1->getType() );
                                                                                //temp -> addChild($1);
                                                                                temp -> addChild($2);

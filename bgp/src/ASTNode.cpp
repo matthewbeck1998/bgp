@@ -36,14 +36,22 @@ ASTNode::ASTNode (string node_label) : label(move(node_label))
 {
     lineNum = line;
 	nodeNum = totalNodeCount++;
+	activationFrameSize = 0;
 }
 
 void ASTNode::addChild (ASTNode *addNode)
 {
+    activationFrameSize += addNode -> getActivationFrameSize();
     if(addNode)
     {
         children.push_back(addNode);
     }
+}
+
+
+int ASTNode::getActivationFrameSize() const
+{
+    return activationFrameSize;
 }
 
 bool ASTNode::walk() const
@@ -121,6 +129,7 @@ ASTMathNode::ASTMathNode (string node_label) : ASTNode::ASTNode(move(node_label)
 
 ASTMathNode::ASTMathNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNode* RHS) : ASTNode::ASTNode(move(node_label))
 {
+    activationFrameSize = LHS->getActivationFrameSize() + mathOp -> getActivationFrameSize() + RHS->getActivationFrameSize();
 	setType( getHigherType(LHS, RHS) );
 	if( LHS->getType() != RHS->getType() )
     {
@@ -312,6 +321,7 @@ ASTAssignNode::ASTAssignNode (string node_label) : ASTNode::ASTNode(move(node_la
 
 ASTAssignNode::ASTAssignNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNode* RHS) : ASTNode::ASTNode(move(node_label))
 {
+    activationFrameSize = LHS->getActivationFrameSize() + mathOp -> getActivationFrameSize() + RHS->getActivationFrameSize();
     setType( getHigherType(LHS, RHS) );
     if( LHS->getType() != RHS->getType() )
     {
@@ -933,8 +943,35 @@ void ASTArrayNode::setId(string inputId)
 
 
 ASTDeclarationNode::ASTDeclarationNode(string node_label, int inputType, ASTNode* childNode)
-: ASTNode::ASTNode(move(node_label)),type(inputType)
+: type(inputType)
 {
+    label = node_label;
+    lineNum = line;
+    nodeNum = totalNodeCount++;
+    int bytesRequired;
+    switch( inputType )
+    {
+        case Char:
+            bytesRequired = 1;
+            break;
+        case Short:
+            bytesRequired = 2;
+            break;
+        case Int:
+            bytesRequired = 4;
+            break;
+        case Long:
+            bytesRequired = 4;
+            break;
+        case Float:
+            bytesRequired = 4;
+            break;
+        case Double:
+            bytesRequired = 8;
+            break;
+
+    }
+    activationFrameSize = bytesRequired;
     if(childNode->getLabel() == "init_declarator_list")
     {
         for(auto it = childNode->getChildren().begin() ; it != childNode->getChildren().end() ; ++it)
@@ -956,7 +993,7 @@ void ASTDeclarationNode::printNode(ostream &treeOutFile)
 treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
 treeOutFile << "Line: " << lineNum << endl;
 treeOutFile << "DECLARATION NODE" << endl;
-treeOutFile << "type: " << printType(type) << endl <<"\"];" << endl;
+treeOutFile << "type: " << printType(type) << ", " << activationFrameSize<< "\"];" << endl;
 for(auto &it : children)
 {
 treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
@@ -980,5 +1017,31 @@ void ASTDeclarationNode::constructorTypeSet( ASTNode* node, int inputType )
     {
         constructorTypeSet(*it, inputType);
     }
+}
+
+
+ASTFunctionNode::ASTFunctionNode(string node_label, int inputType) : ASTNode(move(node_label)), type(inputType)
+{
+}
+void ASTFunctionNode::printNode(ostream &treeOutFile)
+{
+    treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+    treeOutFile << "Line: " << lineNum << endl;
+    treeOutFile << "DECLARATION NODE" << endl;
+    treeOutFile << "type: " << printType(type) << endl;
+    treeOutFile << "Activation frame size: " << activationFrameSize <<"\"];" << endl;
+    for(auto &it : children)
+    {
+        treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+        it->printNode(treeOutFile);
+    }
+}
+void ASTFunctionNode::setType( int inputType )
+{
+    type = inputType;
+}
+int ASTFunctionNode::getType() const
+{
+    return type;
 }
 

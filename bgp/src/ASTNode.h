@@ -46,6 +46,8 @@ union valueUnion
 class ASTNode
 {
     public:
+
+        ASTNode() {}
         /*!
          * @name ASTNode
          * @param node_label
@@ -59,6 +61,8 @@ class ASTNode
          * @brief adds a ASTNode to the children of the current node
          */
         void addChild(ASTNode* addNode);
+
+        int getActivationFrameSize() const;
 
         /*!
          * @name getLabel
@@ -120,7 +124,7 @@ class ASTNode
 		 * @brief virtual setType function, it should not ever be called.
 		 */
 		virtual void setType(int newType) {
-		    //outputStream << "setType, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "setType, YOU DID SOMETHING BAD" << endl;
 		}
 
 		/*!
@@ -128,7 +132,7 @@ class ASTNode
 		 * @return does not return anything. It should never be called
 		 */
 		virtual int getType() const {
-		    //outputStream << "getType, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getType, YOU DID SOMETHING BAD" << endl;
 		}
 
 		/*!
@@ -137,7 +141,7 @@ class ASTNode
 		 * @brief does not do anything, should never be called
 		 */
 		virtual void setId(string newId) {
-		    //outputStream << "setId, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "setId, YOU DID SOMETHING BAD" << endl;
 		}
 
 		/*!
@@ -151,7 +155,7 @@ class ASTNode
 		 * @return returns "no Id. Base Node.". Should never be called.
 		 */
 		virtual  string getId() {
-		    //outputStream << "getId, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getId, YOU DID SOMETHING BAD" << endl;
 		    return "no Id. Base Node.";
 		}
 
@@ -160,7 +164,7 @@ class ASTNode
 		 * @return returns nothing, should never be called.
 		 */
 		virtual string getValue() {
-		    //outputStream << "getValue, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getValue, YOU DID SOMETHING BAD" << endl;
 		}
 
 		/*!
@@ -170,7 +174,7 @@ class ASTNode
 		 */
 		virtual void setValue(string newValue)
         {
-		    //outputStream << "setValue, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "setValue, YOU DID SOMETHING BAD" << endl;
         }
 
         /*!
@@ -185,13 +189,18 @@ protected:
      * String to hold the label
      */
 	string label;
-    int colNum; //Not implemented yet
-    int lineNum; //Not implemented yet
+    int colNum; // Not implemented yet.
+    int lineNum;
 
     /*!
      * Holds the unique node number
      */
 	int nodeNum;
+
+	/*!
+	 * Holds the size required for the activation frame.
+	 */
+	int activationFrameSize;
 
 	/*!
 	 * //Holds the children nodes
@@ -920,6 +929,18 @@ class ASTDeclarationNode : public ASTNode
 		 * @brief recursively sets node and all node's children's type to inputType.
 		 */
 		void constructorTypeSet( ASTNode* node, int inputType );
+};
+
+class ASTFunctionNode : public  ASTNode
+{
+    public:
+    ASTFunctionNode(string node_label, int inputType);
+    void printNode(ostream &treeOutFile = cout) override;
+    void setType( int inputType );
+    int getType() const;
+private:
+    int type;
+
 };
 
 #endif //PROJECT_ASTNODE_H
