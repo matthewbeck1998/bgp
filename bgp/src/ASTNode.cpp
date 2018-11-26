@@ -238,8 +238,8 @@ bool ASTMathNode::walk() const
 
 void ASTMathNode::printNode(ostream &treeOutFile)
 {
-	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl << "MATH NODE" <<"\"];" << endl;
-	treeOutFile << "Line: " << lineNum << endl;
+	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl << "MATH NODE" << endl;
+	treeOutFile << "Line: " << lineNum << "\"];" << endl;
 	for(auto &it : children)
 	{
 		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
@@ -384,8 +384,8 @@ bool ASTAssignNode::walk() const
 void ASTAssignNode::printNode(ostream &treeOutFile)
 {
 
-	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl << "ASSIGN NODE" <<"\"];" << endl
-	            << "Line: " << lineNum << endl;
+	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl << "ASSIGN NODE" << endl
+	            << "Line: " << lineNum << "\"];" << endl;
 	for(auto &it : children)
 	{
 		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
@@ -657,8 +657,8 @@ bool ASTSelectionNode::walk() const
 
 void ASTSelectionNode::printNode(ostream &treeOutFile)
 {
-	treeOutFile << nodeNum << "[label = \"" << label << endl << "SELECTION NODE" <<"\"];" << endl;
-	treeOutFile << "Line: " << lineNum << endl;
+	treeOutFile << nodeNum << "[label = \"" << label << endl << "SELECTION NODE" << endl;
+	treeOutFile << "Line: " << lineNum << "\"];" << endl;
 	for(auto &it : children)
 	{
 		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
@@ -678,8 +678,8 @@ bool ASTIterationNode::walk() const
 
 void ASTIterationNode::printNode(ostream &treeOutFile)
 {
-	treeOutFile << nodeNum << "[label = \"" << label << endl << "ITERATION NODE" <<"\"];" << endl;
-	treeOutFile << "Line: " << lineNum << endl;
+	treeOutFile << nodeNum << "[label = \"" << label << endl << "ITERATION NODE" << endl;
+	treeOutFile << "Line: " << lineNum << "\"];" <<endl;
 	for(auto &it : children)
 	{
 		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
