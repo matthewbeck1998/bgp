@@ -969,7 +969,6 @@ ASTDeclarationNode::ASTDeclarationNode(string node_label, int inputType, ASTNode
         case Double:
             bytesRequired = 8;
             break;
-
     }
     activationFrameSize = bytesRequired;
     if(childNode->getLabel() == "init_declarator_list")
@@ -978,6 +977,12 @@ ASTDeclarationNode::ASTDeclarationNode(string node_label, int inputType, ASTNode
         {
             addChild(*it);
             constructorTypeSet(*it, inputType);
+        }
+    } else if(childNode->getLabel() == "array_node")
+    {
+        for(auto it = ((ASTArrayNode*) childNode) ->getDimensions().begin() ; it != ((ASTArrayNode*) childNode)->getDimensions().end() ; ++it)
+        {
+            activationFrameSize *= *it;
         }
     }
     else
