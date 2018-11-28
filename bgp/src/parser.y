@@ -110,13 +110,13 @@ external_declaration
 	;
 
 function_definition
-	: declarator compound_statement { ASTNode* temp = new ASTFunctionNode("function_definition", $1 -> getType() );
+	: declarator compound_statement { ASTFunctionNode* temp = new ASTFunctionNode("function_definition", $1 -> getType() );
                                       temp -> addChild($1);
                                       temp -> addChild($2);
                                       $$ = temp;
                                       parserOutput("function_definition -> declarator compound_statement");
                                       st.popLevel(); }
-	| declarator declaration_list compound_statement { ASTNode* temp = new ASTFunctionNode("function_definition", $1 -> getType() );
+	| declarator declaration_list compound_statement { ASTFunctionNode* temp = new ASTFunctionNode("function_definition", $1 -> getType() );
 	                                                     $2->setType( $1->getType() );
                                                          //temp -> addChild($1);
                                                          temp -> addChild($2);
@@ -125,7 +125,7 @@ function_definition
                                                          parserOutput("function_definition -> declarator declaration_list compound_statement");
                                                          st.popLevel(); }
 	| declaration_specifiers declarator compound_statement {
-	                                                        ASTNode* temp = new ASTFunctionNode("function_definition", $1 -> getType());
+	                                                        ASTFunctionNode* temp = new ASTFunctionNode("function_definition", $1 -> getType());
                                                             $2->setType( $1->getType() );
                                                             //temp -> addChild($1);
                                                             temp -> addChild($2);
@@ -134,7 +134,7 @@ function_definition
 	                                                        parserOutput("function_definition -> declaration_specifiers declarator compound_statement");
 	                                                        st.popLevel(); }
 	| declaration_specifiers declarator declaration_list compound_statement {
-                                                                             ASTNode* temp = new ASTFunctionNode("function_definition", $1 -> getType());
+                                                                             ASTFunctionNode* temp = new ASTFunctionNode("function_definition", $1 -> getType());
                                                                              $2->setType( $1->getType() );
                                                                                //temp -> addChild($1);
                                                                                temp -> addChild($2);
@@ -150,7 +150,7 @@ declaration
 	| declaration_specifiers init_declarator_list SEMICOLON {
                                                                 // there is a seg fault in between here and
                                                                 sameArray = false;
-	                                                            ASTNode* temp = new ASTDeclarationNode("Declaration", $1->getType(), $2);
+	                                                            ASTDeclarationNode* temp = new ASTDeclarationNode("Declaration", $1->getType(), $2);
 
                                                                  // damn you Will for ditching this project for a girl
 	                                                            $$ = temp;

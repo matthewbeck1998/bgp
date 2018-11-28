@@ -1,6 +1,4 @@
 int main()
 {
-   int x;
-   int y[4];
-   x = y[1] + 5;
+   int y[4][5];
 }

@@ -47,7 +47,7 @@ class ASTNode
 {
     public:
 
-        ASTNode() {}
+        ASTNode(){}
         /*!
          * @name ASTNode
          * @param node_label

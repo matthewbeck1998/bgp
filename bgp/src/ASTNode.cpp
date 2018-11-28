@@ -980,10 +980,14 @@ ASTDeclarationNode::ASTDeclarationNode(string node_label, int inputType, ASTNode
         }
     } else if(childNode->getLabel() == "array_node")
     {
-        for(auto it = ((ASTArrayNode*) childNode) ->getDimensions().begin() ; it != ((ASTArrayNode*) childNode)->getDimensions().end() ; ++it)
+        list<int> dimensions = ( (ASTArrayNode*) childNode ) ->getDimensions();
+        auto it = dimensions.begin();
+        for(int i = 0 ; i < dimensions.size() ; ++i, ++it)
         {
             activationFrameSize *= *it;
         }
+        addChild(childNode);
+        constructorTypeSet(childNode, inputType);
     }
     else
     {
@@ -1032,7 +1036,7 @@ void ASTFunctionNode::printNode(ostream &treeOutFile)
 {
     treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
     treeOutFile << "Line: " << lineNum << endl;
-    treeOutFile << "DECLARATION NODE" << endl;
+    treeOutFile << "FUNCTION NODE" << endl;
     treeOutFile << "type: " << printType(type) << endl;
     treeOutFile << "Activation frame size: " << activationFrameSize <<"\"];" << endl;
     for(auto &it : children)
