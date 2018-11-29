@@ -1,14 +1,8 @@
-int noperboiiii;
-char what;
-void nopers(int o)
-{
-   int z;
-}
 int main()
 {
-   int z[5][2][2];
-   float y;
-
-   z + y;
-
+   int x;
+   int z;
+   int y;
+   int u;
+   x = y + 3 - u + 5 * y / z - 6 + u;
 }
