@@ -1,6 +1,7 @@
 int main()
 {
-   int y[4][5];
    int x;
-   y + x;
+   float y;
+   short z[5][2][2];
+
 }

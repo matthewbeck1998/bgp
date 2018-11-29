@@ -696,6 +696,16 @@ ASTIdNode::ASTIdNode(string node_label, string inputId) : ASTNode::ASTNode(move(
 {
 }
 
+int ASTIdNode::getOffset() const
+{
+    return offset;
+}
+
+void ASTIdNode::setOffset( int inputOffset)
+{
+    offset = inputOffset - typeToByteSize( type ); // inputOffset is the end of the range, subtract the size of variable to get the offset.
+}
+
 string ASTIdNode::getId() const
 {
 	return id;
@@ -721,6 +731,7 @@ void ASTIdNode::printNode(ostream &treeOutFile)
     treeOutFile << "Line: " << lineNum << endl;
 	treeOutFile << "ID NODE" << endl;
     treeOutFile << "id: " << id << endl;
+    treeOutFile << "offset: " << offset << endl;
     treeOutFile << "type: " << printType() << "\"];" << endl;
     for(auto &it : children)
     {
@@ -872,6 +883,22 @@ ASTArrayNode::ASTArrayNode(string node_label, string id, int typeSet): ASTNode::
 {
 }
 
+
+int ASTArrayNode::getOffset() const
+{
+    return offset;
+}
+
+void ASTArrayNode::setOffset( int inputOffset)
+{
+    int bytesRequired = typeToByteSize( type );
+    for(auto it = dimensions.begin() ; it != dimensions.end() ; ++it )
+    {
+        bytesRequired *= *it;
+    }
+    offset = inputOffset - bytesRequired; // inputOffset is the end of the range, subtract the size of variable to get the offset.
+}
+
 ASTArrayNode::ASTArrayNode(string node_label, ASTNode* inputNode): ASTNode::ASTNode(move(node_label)), type(Int)
 {
     for( auto it = inputNode->getChildren().begin() ; it != inputNode->getChildren().end() ; ++it )
@@ -886,6 +913,7 @@ void ASTArrayNode::printNode(ostream &treeOutFile)
 	treeOutFile << "Line: " << lineNum << endl;
 	treeOutFile << "ARRAY NODE" << endl;
 	treeOutFile << "id: " << this ->identifier << endl;
+	treeOutFile << "offset: " << offset << endl;
 	treeOutFile << "dimensions: ";
 	for(auto dim = dimensions.rbegin() ; dim != dimensions.rend() ; dim++ )
 	  treeOutFile << '[' << *dim << ']';
@@ -948,29 +976,7 @@ ASTDeclarationNode::ASTDeclarationNode(string node_label, int inputType, ASTNode
     label = node_label;
     lineNum = line;
     nodeNum = totalNodeCount++;
-    int bytesRequired;
-    switch( inputType )
-    {
-        case Char:
-            bytesRequired = 1;
-            break;
-        case Short:
-            bytesRequired = 2;
-            break;
-        case Int:
-            bytesRequired = 4;
-            break;
-        case Long:
-            bytesRequired = 4;
-            break;
-        case Float:
-            bytesRequired = 4;
-            break;
-        case Double:
-            bytesRequired = 8;
-            break;
-    }
-    activationFrameSize = bytesRequired;
+    activationFrameSize = typeToByteSize( inputType );
     if(childNode->getLabel() == "init_declarator_list")
     {
         for(auto it = childNode->getChildren().begin() ; it != childNode->getChildren().end() ; ++it)
@@ -1028,6 +1034,13 @@ void ASTDeclarationNode::constructorTypeSet( ASTNode* node, int inputType )
     }
 }
 
+void ASTDeclarationNode::setOffset(int inputOffset)
+{
+    if( children.front() -> getLabel() == "array_node" )
+        ( (ASTArrayNode*) children.front() )->setOffset( inputOffset );
+    else
+        ( (ASTIdNode*) children.front() )->setOffset( inputOffset );
+}
 
 ASTFunctionNode::ASTFunctionNode(string node_label, int inputType) : ASTNode(move(node_label)), type(inputType)
 {
@@ -1054,3 +1067,55 @@ int ASTFunctionNode::getType() const
     return type;
 }
 
+
+ASTDeclListNode::ASTDeclListNode(string node_label, ASTNode *inputChild) : ASTNode(move(node_label))
+{
+    addChild(inputChild);
+    ( (ASTDeclarationNode*) inputChild ) -> setOffset(activationFrameSize);
+}
+
+ASTDeclListNode::ASTDeclListNode(string node_label, ASTNode* leftChild, ASTNode* rightChild) : ASTNode(move(node_label))
+{
+    addChild(leftChild);
+    addChild(rightChild);
+    ( (ASTDeclarationNode*) rightChild ) -> setOffset(activationFrameSize);
+}
+void ASTDeclListNode::printNode(ostream &treeOutFile)
+{
+
+    treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+    treeOutFile << "Line: " << lineNum << endl;
+    treeOutFile << "DECL LIST NODE" << endl;
+    treeOutFile << "Activation frame size: " << activationFrameSize <<"\"];" << endl;
+    for(auto &it : children)
+    {
+        treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+        it->printNode(treeOutFile);
+    }
+}
+
+
+int typeToByteSize( int type )
+{
+    switch( type )
+    {
+        case Char:
+            return 1;
+
+        case Short:
+            return 2;
+
+        case Int:
+            return 4;
+
+        case Long:
+            return 4;
+
+        case Float:
+            return 4;
+
+        case Double:
+            return 8;
+
+    }
+}

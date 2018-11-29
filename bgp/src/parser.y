@@ -160,12 +160,17 @@ declaration
 	;
 
 declaration_list
-	: declaration { $$ = $1; parserOutput("declaration_list -> declaration"); st.setInsertMode(false); }
-	| declaration_list declaration { ASTNode* temp = new ASTNode("declaration_list");
-                                       temp -> addChild($1);
-                                       temp -> addChild($2);
-                                       $$ = temp;
-                                       parserOutput("declaration_list -> declaration_list declaration"); st.setInsertMode(false); }
+	: declaration { ASTDeclListNode* temp = new ASTDeclListNode("declaration_list", $1);
+	                $$ = temp;
+                    //$$ = $1;
+	                parserOutput("declaration_list -> declaration"); st.setInsertMode(false); }
+	| declaration_list declaration { 	/*ASTNode* temp = new ASTNode("declaration_list");
+										temp -> addChild($1);
+                                       	temp -> addChild($2);
+                                       	$$ = temp;*/
+	                                    ASTDeclListNode* temp = new ASTDeclListNode("declaration_list", $1, $2);
+	                                    $$ = temp;
+                                       	parserOutput("declaration_list -> declaration_list declaration"); st.setInsertMode(false); }
 	;
 
 declaration_specifiers

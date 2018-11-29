@@ -654,6 +654,10 @@ class ASTIdNode : public ASTNode
          */
         void setType( int inputType );
 
+        int getOffset() const;
+
+        void setOffset( int inputOffset);
+
     /*!
      * @name printType
      * @return returns a string the corresponds to the type of the node
@@ -671,6 +675,7 @@ class ASTIdNode : public ASTNode
          * an int that stores the type of the node
          */
         int type;
+        int offset;
 };
 
 
@@ -863,6 +868,11 @@ public:
 	 */
 	void addDimensions(list<int> inputDimensions);
 
+
+    int getOffset() const;
+
+    void setOffset( int inputOffset);
+
 private:
     /*!
      * list of ints of the dimensions of the array
@@ -878,6 +888,8 @@ private:
 	 * int to hold the type of the array
 	 */
 	int type;
+
+	int offset;
 };
 
 /*!
@@ -916,6 +928,8 @@ class ASTDeclarationNode : public ASTNode
 		 * @return returns the type of the node
 		 */
 		int getType() const;
+
+		void setOffset(int inputOffset);
 	private:
         /*!
          * int to hold the type of the node in
@@ -942,5 +956,15 @@ private:
     int type;
 
 };
+
+class ASTDeclListNode : public ASTNode
+{
+    public:
+    ASTDeclListNode(string node_label, ASTNode* inputChild);
+    ASTDeclListNode(string node_label, ASTNode* leftChild, ASTNode* rightChild);
+    void printNode(ostream &treeOutFile = cout) override;
+};
+
+int typeToByteSize( int type );
 
 #endif //PROJECT_ASTNODE_H
