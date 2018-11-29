@@ -992,9 +992,9 @@ additive_expression
 
 multiplicative_expression
 	: cast_expression { $$ = $1; parserOutput("multiplicative_expression -> cast_expression"); }
-	| multiplicative_expression STAR cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("STAR"), $3);
+	| multiplicative_expression STAR cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("MULT"), $3);
                                                        parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
-	| multiplicative_expression DIV cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("DIVs"), $3);
+	| multiplicative_expression DIV cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("DIV"), $3);
 													   parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
 	| multiplicative_expression MOD cast_expression {  $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("MOD"), $3); //TODO check for ints in MOD
                                                        parserOutput("multiplicative_expression -> multiplicative_expression MOD cast_expression"); }
@@ -1208,6 +1208,7 @@ int main(int argc, char** argv)
     AST tree(root);
 	yyparse();
 	tree.printTree();
+	tree.walk();
 
     outputFile.open( outputIndex ? argv[outputIndex] : "output/defaultOutput.txt");
     if (outputFile.good())

@@ -6,7 +6,7 @@ AST::AST (ASTNode* root)
 	AST::root = root;
 }
 
-bool AST::walkTree() const
+/*bool AST::walkTree() const
 {
     if( root != nullptr)
     {
@@ -20,7 +20,7 @@ bool AST::walkTree() const
 		}
 		return true;
     }
-}
+}*/
 
 void AST::printTree ()
 {
@@ -49,4 +49,17 @@ void AST::printTreeHelper (ASTNode *nodePtr, ofstream& treeOutFile)
 		}
 
 	}
+}
+
+void AST::walk() const
+{
+	//cout << "walk" << endl;
+	if(root != NULL)
+	{
+		//cout << "INSIDE IF" << endl;
+		//cout << root->getLabel() << endl;
+		root->walk();
+	}
+	else
+		cout << "NOOOOO" << endl;
 }

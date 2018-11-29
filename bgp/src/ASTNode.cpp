@@ -1,6 +1,8 @@
 #include "ASTNode.h"
 #include <fstream>
 
+unsigned int ASTNode::ticketCounter = 0;
+
 int ASTNode::totalNodeCount = 0;
 
 string printType(int type)
@@ -60,18 +62,6 @@ void ASTNode::addChild (ASTNode *addNode)
 int ASTNode::getActivationFrameSize() const
 {
     return activationFrameSize;
-}
-
-bool ASTNode::walk() const
-{
-    for(auto it : children)
-	{
-        if(not it->walk())
-        {
-            return false;
-        }
-    }
-    return true;
 }
 
 string ASTNode::getLabel () const
@@ -264,15 +254,6 @@ int ASTMathNode::getHigherType(ASTNode* LHS, ASTNode* RHS) const
 	outputStream << "Unsupported types: " << LHS->getType() << ", " << RHS->getType() << endl;
 }
 
-bool ASTMathNode::walk() const
-{
-    if( ( (ASTVariableNode*) children.front() )->getType() != ( (ASTVariableNode*) children.back() )->getType())
-    {
-        return false;
-    }
-    return true;
-}
-
 void ASTMathNode::printNode(ostream &treeOutFile)
 {
 	treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl << "MATH NODE" << endl;
@@ -408,16 +389,6 @@ ASTAssignNode::ASTAssignNode(string node_label, ASTNode* LHS, ASTNode* mathOp, A
     }
 }
 
-
-bool ASTAssignNode::walk() const
-{
-    if( ( (ASTVariableNode*) children.front() )->getType() != ( (ASTVariableNode*) children.back() )->getType())
-    {
-        return false;
-    }
-    return true;
-}
-
 void ASTAssignNode::printNode(ostream &treeOutFile)
 {
 
@@ -515,10 +486,6 @@ ASTVariableNode::ASTVariableNode(string node_label, int inputType, string inputI
 
 }
 
-bool ASTVariableNode::walk() const
-{
-    return true;
-}
 int ASTVariableNode::getType() const
 {
     return type;
@@ -687,11 +654,6 @@ ASTSelectionNode::ASTSelectionNode(string node_label) : ASTNode::ASTNode(move(no
     
 }
 
-bool ASTSelectionNode::walk() const
-{
-    
-}
-
 void ASTSelectionNode::printNode(ostream &treeOutFile)
 {
 	treeOutFile << nodeNum << "[label = \"" << label << endl << "SELECTION NODE" << endl;
@@ -704,11 +666,6 @@ void ASTSelectionNode::printNode(ostream &treeOutFile)
 }
 
 ASTIterationNode::ASTIterationNode(string node_label) : ASTNode::ASTNode(move(node_label))
-{
-
-}
-
-bool ASTIterationNode::walk() const
 {
 
 }
@@ -981,7 +938,7 @@ void ASTArrayNode::addDimension(int inputDim)
     dimensions.push_back(inputDim);
 }
 
-void ASTArrayNode::addDimensions(list<int> inputDimensions)
+string ASTArrayNode::addDimensions(list<int> inputDimensions)
 {
     while( !inputDimensions.empty() )
     {
@@ -1081,6 +1038,7 @@ void ASTDeclarationNode::setOffset(int inputOffset)
 ASTFunctionNode::ASTFunctionNode(string node_label, int inputType) : ASTNode(move(node_label)), type(inputType)
 {
 }
+
 void ASTFunctionNode::printNode(ostream &treeOutFile)
 {
     treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
@@ -1094,10 +1052,12 @@ void ASTFunctionNode::printNode(ostream &treeOutFile)
         it->printNode(treeOutFile);
     }
 }
+
 void ASTFunctionNode::setType( int inputType )
 {
     type = inputType;
 }
+
 int ASTFunctionNode::getType() const
 {
     return type;
@@ -1131,6 +1091,289 @@ void ASTFunctionNode::addChild(ASTNode *addNode)
     }
 }
 
+vector<string> ASTNode::walk()
+{
+	//cout << "ASTNode " << this->getLabel() << endl;
+	for(auto it : children)
+	{
+		it->walk();
+	}
+	return {};
+}
+
+vector<string> ASTMathNode::walk()
+{
+	//cout << "ASTMathNode " << this->getLabel() << endl;
+	/*if( ( (ASTVariableNode*) children.front() )->getType() != ( (ASTVariableNode*) children.back() )->getType())
+	{
+		return false;
+	}*/
+
+	vector<vector<string>> returnValues;
+	for(auto it : children)
+	{
+		returnValues.push_back(it->walk());
+	}
+
+	string ticket = {"t_" + to_string(ticketCounter++)};
+	//vector<string> temp = {"ADD", ticket, returnValues[0][0], returnValues[2][0]};
+	/*cout << "MATH NODE STUFF " << endl;
+	//cout << "FRONT CHILD: " << getChildren().front()->getLabel() << endl;
+	//cout << "BACK CHILD: " << getChildren().back()->getLabel() << endl;
+	int i = 0;
+	for(auto it: returnValues)
+	{
+		int j = 0;
+		//cout << it.front() << endl;
+		for(auto& rt: it)
+		{
+			cout << "i " << i << " " << "j " << j++ << " " << rt << endl;
+		}
+		i++;
+	}*/
+
+
+	if(getChildren().back()->getLabel() == "IDENTIFIER")
+	{
+		cout << returnValues[2][1] << '\t' << returnValues[2][2] << '\t' << returnValues[2][3] << endl;
+		cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << '\t' << returnValues[0][0] << "\t0(" << returnValues[2][0] << ")" << endl;
+	}
+	else if(getChildren().back()->getLabel() == "array_node")
+	{
+		cout << (*next(getChildren().begin()))->getLabel() << "\t" << ticket << "\t" << returnValues[0][0] << "\t0(" << returnValues[2][0] << ")" << endl;
+	}
+
+	if(getChildren().front()->getLabel() == "IDENTIFIER")
+	{
+		cout << returnValues[0][1] << '\t' << returnValues[0][2] << '\t' << returnValues[0][3] << endl;
+		cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << "\t0(" << returnValues[0][0] << ")\t" << returnValues[2][0] << endl;
+	}
+	else if(getChildren().back()->getLabel() == "INT_CONSTANT")
+	{
+		cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << "\t" << returnValues[0][0] << "\t" << returnValues[2][0] << endl;
+	}
+	if(getChildren().front()->getLabel() == "array_node")
+	{
+		cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << "\t0(" << returnValues[0][0] << ")\t" << returnValues[2][0] << endl;
+	}
+
+
+
+	return {ticket};
+}
+
+vector<string> ASTIdNode::walk()
+{
+	//cout << "ASTIdNode " << this->getLabel() << endl;
+	for(auto it : children)
+	{
+		it->walk();
+	}
+	string ticket = {"t_" + to_string(ticketCounter++)};
+	vector<string> temp = {ticket, "ADDR", ticket, this->getId()};
+	//threeAddressCode.push_back(temp);
+	//cout << "ADDR " << ticket << " " << this->getId() << endl;
+
+	//vector<string> rv = {"ADDR", ticket, };
+	return temp;
+}
+
+vector<string> ASTAssignNode::walk()
+{
+	//cout << "ASTAssignNode " << this->getLabel() << endl;
+	/*if( ( (ASTVariableNode*) children.front() )->getType() != ( (ASTVariableNode*) children.back() )->getType())
+	{
+		return false;
+	}*/
+
+
+
+	vector<vector<string>> returnValues;
+
+	returnValues.push_back(children.front()->walk());
+	if(children.front()->getLabel() != "array_node")
+	{
+		cout << returnValues[0][1] << '\t' << returnValues[0][2] << '\t' << returnValues[0][3] << endl;
+	}
+	returnValues.push_back(children.back()->walk());
+	/*for(auto it : children)
+	{
+		returnValues.push_back(it->walk());
+	}*/
+
+	//vector<string> temp = {"ASSIGN", returnValues[0][0], returnValues[2][0]};
+	/*cout << "ASSIGN NODE STUFF" << endl;
+	int i = 0;
+	for(auto it: returnValues)
+	{
+		int j = 0;
+		for(auto rt: it)
+		{
+			cout << "i " << i << " " << "j " << j++ << " " << rt << endl;
+		}
+		i++;
+	}*/
+
+
+	//cout << "NODE LABEL: " << getChildren().front()->getLabel() << endl;
+
+	if(getChildren().back()->getLabel() != "IDENTIFIER")
+	{
+		//cout << returnValues[0][1] << '\t' << returnValues[0][2] << '\t' << returnValues[0][3] << endl;
+		cout << "ASSIGN\t" << returnValues[0][0] << '\t' << returnValues[1][0] << endl;
+	}
+	else
+	{
+		//cout << returnValues[0][1] << '\t' << returnValues[0][2] << '\t' << returnValues[0][3] << endl;
+		cout << "ASSIGN\t" << returnValues[0][0] << '\t' << returnValues[1][3] << endl;
+	}
+	return {};
+}
+
+vector<string> ASTVariableNode::walk()
+{
+	//cout << "ASTVariable " << this->getLabel() << endl;
+	for(auto it : children)
+	{
+		it->walk();
+	}
+	return {};
+}
+
+vector<string> ASTConstNode::walk()
+{
+	//cout << "ASTConstNode " << this->getLabel() << endl;
+	for(auto it : children)
+	{
+		it->walk();
+	}
+
+
+	if(this->getType() == Int)
+		return {to_string(this->getValue().intVal)};
+	else if(this->getType() == Float)
+		return {to_string(this->getValue().fVal)};
+	else if(this->getType() == Char)
+		return {to_string(this->getValue().charVal)};
+	else if(this->getType() == Double)
+		return {to_string(this->getValue().dVal)};
+	else
+		return {"ERROR IN CONST NODE WALK"};
+}
+
+
+vector<string> ASTIterationNode::walk()
+{
+	//cout << "ASTIterationNode " << this->getLabel() << endl;
+	for(auto it : children)
+	{
+		it->walk();
+	}
+	return {};
+}
+
+vector<string> ASTSelectionNode::walk()
+{
+	//cout << "ASTSelectionNode " << this->getLabel() << endl;
+	for(auto it : children)
+	{
+		it->walk();
+	}
+	return {};
+}
+
+vector<string> ASTDeclarationNode::walk()
+{
+	//cout << "ASTDeclarationNode " << this->getLabel() << endl;
+	for(auto it : children)
+	{
+
+		it->walk();
+		//cout << "LABEL: " << it->getLabel() << endl;
+		if(it->getLabel() == "IDENTIFIER" /*or it->getLabel() == "array_node"*/)
+			ticketCounter--;
+	}
+	return {};
+}
+
+vector<string> ASTTypeNode::walk()
+{
+	//cout << "ASTTypeNode " << this->getLabel() << endl;
+	for(auto it : children)
+	{
+		it->walk();
+	}
+	return {};
+}
+
+vector<string> ASTCastNode::walk()
+{
+	//cout << "ASTCastNode " << this->getLabel() << endl;
+	for(auto it : children)
+	{
+		it->walk();
+	}
+	return {};
+}
+
+vector<string> ASTArrayNode::walk()
+{
+	//cout << "ASTArrayNode " << this->getLabel() << endl;
+	vector<vector<string>> returnValues;
+	for(auto it : children)
+	{
+		returnValues.push_back(it->walk());
+		//cout << "LABEL: " << it->getLabel() << endl;
+		//cout << endl;
+	}
+
+	/*cout << "ARRAY NODE STUFF" << endl;
+	int i = 0;
+	for(auto it: returnValues)
+	{
+		int j = 0;
+		for(auto rt: it)
+		{
+			cout << "i " << i << " " << "j " << j++ << " " << rt << endl;
+		}
+		i++;
+	}*/
+
+	if(!children.empty())
+	{
+		string ticket1 = {"t_" + to_string(ticketCounter++)};
+		string ticket2 = {"t_" + to_string(ticketCounter++)};
+		string ticket3 = {"t_" + to_string(ticketCounter++)};
+		cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t" << returnValues[0][0] << endl;
+		cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
+		cout << "ADD\t" << ticket3 << '\t' << ticket1 << '\t' << ticket2 << endl;
+		return {ticket3};
+	}
+
+
+	return {};
+}
+
+vector<string> ASTFunctionNode::walk()
+{
+	//cout << "ASTFunctionNode " << this->getLabel() << endl;
+	for(auto it : children)
+	{
+		it->walk();
+		ticketCounter--;
+	}
+	return {};
+}
+
+vector<string> ASTDeclListNode::walk()
+{
+	//cout << "ASTDeclarationListNode " << this->getLabel() << endl;
+	for(auto it : children)
+	{
+		it->walk();
+	}
+	return {};
+}
 
 ASTDeclListNode::ASTDeclListNode(string node_label, ASTNode *inputChild) : ASTNode(move(node_label))
 {
