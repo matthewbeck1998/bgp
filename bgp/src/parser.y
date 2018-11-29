@@ -169,6 +169,8 @@ declaration
                                                                 {
                                                                     auto symbolPair = st.searchAll( ( (ASTArrayNode*) $2 )->getId()  ).second;
                                                                     symbolPair->second.offset = currentOffset += ( (ASTArrayNode*) $2 )->getActivationFrameSize();
+                                                                }
+                                                                //cout << currentOffset << endl;
                                                                 }*/
                                                                  // damn you Will for ditching this project for a girl
 	                                                            $$ = temp;
