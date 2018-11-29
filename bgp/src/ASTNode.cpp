@@ -1454,12 +1454,14 @@ vector<string> ASTFunctionCallNode::walk()
 ASTFunctionCallNode::ASTFunctionCallNode(string node_label, ASTNode *inputChild) : ASTNode(move(node_label))
 {
     addChild(inputChild);
+    activationFrameSize = inputChild->getOffset();
 }
 
 ASTFunctionCallNode::ASTFunctionCallNode(string node_label, ASTNode* leftChild, ASTNode* rightChild) : ASTNode(move(node_label))
 {
     addChild(leftChild);
     addChild(rightChild);
+    activationFrameSize = leftChild->getOffset();
 }
 
 void ASTFunctionCallNode::printNode(ostream &treeOutFile)
@@ -1468,6 +1470,7 @@ void ASTFunctionCallNode::printNode(ostream &treeOutFile)
     treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
     treeOutFile << "Line: " << lineNum << endl;
     treeOutFile << "FUNCTION CALL NODE" << endl;
+    treeOutFile << "Offset: " << offset << endl;
     treeOutFile << "Activation frame size: " << activationFrameSize <<"\"];" << endl;
     for(auto &it : children)
     {
