@@ -139,6 +139,15 @@ function_definition
                                                             temp -> addChild($2);
 	                                                        temp->addChild($3);
 	                                                        $$ = temp;
+	                                                        if($2->getLabel() == "direct_declarator")
+                                                            {
+                                                                auto symbolPair = st.searchAll( ( (ASTIdNode*) $2 -> getChildren().front() )-> getId()  ).second;
+                                                                symbolPair->second.offset = currentOffset;
+                                                            } else
+                                                            {
+                                                                auto symbolPair = st.searchAll( ( (ASTIdNode*) $2 ) -> getId()  ).second;
+                                                                symbolPair->second.offset = currentOffset;
+                                                            }
                                                             currentOffset = 0;
 	                                                        parserOutput("function_definition -> declaration_specifiers declarator compound_statement");
 	                                                        st.popLevel(); }
@@ -474,7 +483,7 @@ direct_declarator
                                                                 }
                                                                 arrayPair.second->second.setIsArray(true);
                                                                 int dimension = ((ASTConstNode*)$3)->getValue().intVal;
-                                                                //cout << dimension << endl;
+                                                                //cout << dimension << ", " << sameArray << endl;
                                                                 arrayPair.second->second.addArrayDimension(dimension);
 
                                                                 ASTArrayNode* temp = new ASTArrayNode("array_node", arrayPair.second->second.getIdentifier(), $1 -> getType());
@@ -534,6 +543,7 @@ parameter_list
                                                         temp -> addChild($3);
                                                         $3->setOffset( $1->getActivationFrameSize() );
                                                         $$ = temp;
+                                                        sameArray = false;
 
                                                         ///Symbol table stuff
                                                         if ($1->getLabel() == "IDENTIFIER")
@@ -596,12 +606,16 @@ parameter_declaration
                                                 temp->setDimensions( ( (ASTArrayNode*) $2) ->getDimensions() );
                                                 $$ = temp;
                                             }
+
+                                            sameArray = false;
                                             parserOutput("parameter_declaration -> declaration_specifiers declarator"); }
 	| declaration_specifiers { $$ = $1; parserOutput("parameter_declaration -> declaration_specifiers"); }
 	| declaration_specifiers abstract_declarator {ASTNode* temp = new ASTNode("parameter_declaration");
                                                      temp -> addChild($1);
                                                      temp -> addChild($2);
                                                      $$ = temp;
+
+                                                        sameArray = false;
                                                      parserOutput("parameter_declaration -> declaration_specifiers abstract_declarator"); }
 	;
 
