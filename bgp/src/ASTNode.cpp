@@ -123,6 +123,16 @@ list<int> ASTNode::getDimensions()
     return temp;
 }
 
+void ASTNode::setOffset(int inputOffset)
+{
+    offset = inputOffset;
+}
+
+int ASTNode::getOffset() const
+{
+    return offset;
+}
+
 ASTMathNode::ASTMathNode (string node_label) : ASTNode::ASTNode(move(node_label))
 {
 }
@@ -696,21 +706,6 @@ ASTIdNode::ASTIdNode(string node_label, string inputId) : ASTNode::ASTNode(move(
 {
 }
 
-int ASTIdNode::getOffset() const
-{
-    return offset;
-}
-
-void ASTIdNode::setOffset( int inputOffset )
-{
-    offset = inputOffset - typeToByteSize( type ); // inputOffset is the end of the range, subtract the size of variable to get the offset.
-}
-
-void ASTIdNode::setUseOffset( int inputOffset )
-{
-    offset = inputOffset;
-}
-
 string ASTIdNode::getId() const
 {
 	return id;
@@ -889,11 +884,6 @@ ASTArrayNode::ASTArrayNode(string node_label, string id, int typeSet): ASTNode::
 }
 
 
-int ASTArrayNode::getOffset() const
-{
-    return offset;
-}
-
 void ASTArrayNode::setOffset( int inputOffset)
 {
     int bytesRequired = typeToByteSize( type );
@@ -1041,10 +1031,7 @@ void ASTDeclarationNode::constructorTypeSet( ASTNode* node, int inputType )
 
 void ASTDeclarationNode::setOffset(int inputOffset)
 {
-    if( children.front() -> getLabel() == "array_node" )
-        ( (ASTArrayNode*) children.front() )->setOffset( inputOffset );
-    else
-        ( (ASTIdNode*) children.front() )->setOffset( inputOffset );
+   children.front() ->setOffset( inputOffset );
 }
 
 ASTFunctionNode::ASTFunctionNode(string node_label, int inputType) : ASTNode(move(node_label)), type(inputType)
@@ -1075,8 +1062,8 @@ int ASTFunctionNode::getType() const
 
 ASTDeclListNode::ASTDeclListNode(string node_label, ASTNode *inputChild) : ASTNode(move(node_label))
 {
-    addChild(inputChild);
     ( (ASTDeclarationNode*) inputChild ) -> setOffset(activationFrameSize);
+    addChild(inputChild);
 }
 
 ASTDeclListNode::ASTDeclListNode(string node_label, ASTNode* leftChild, ASTNode* rightChild) : ASTNode(move(node_label))

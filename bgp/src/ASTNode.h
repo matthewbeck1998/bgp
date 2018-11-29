@@ -177,6 +177,9 @@ class ASTNode
 		    outputStream << "setValue, YOU DID SOMETHING BAD" << endl;
         }
 
+        virtual void setOffset(int inputOffset);
+		int getOffset() const;
+
         /*!
          * @name printNode
          * @param treeOutFile
@@ -206,7 +209,8 @@ protected:
 	 * //Holds the children nodes
 	 */
     list<ASTNode*> children;
-        //friend ostream& operator<< (ostream &os, const ASTNode& output);
+
+    int offset;
 };
 
 /*!
@@ -654,12 +658,6 @@ class ASTIdNode : public ASTNode
          */
         void setType( int inputType );
 
-        int getOffset() const;
-
-        void setOffset( int inputOffset);
-
-        void setUseOffset( int inputOffset );
-
     /*!
      * @name printType
      * @return returns a string the corresponds to the type of the node
@@ -677,7 +675,6 @@ class ASTIdNode : public ASTNode
          * an int that stores the type of the node
          */
         int type;
-        int offset;
 };
 
 
@@ -870,10 +867,8 @@ public:
 	 */
 	void addDimensions(list<int> inputDimensions);
 
+	void setOffset(int inputOffset);
 
-    int getOffset() const;
-
-    void setOffset( int inputOffset);
 
 private:
     /*!
@@ -891,7 +886,6 @@ private:
 	 */
 	int type;
 
-	int offset;
 };
 
 /*!
@@ -932,6 +926,7 @@ class ASTDeclarationNode : public ASTNode
 		int getType() const;
 
 		void setOffset(int inputOffset);
+
 	private:
         /*!
          * int to hold the type of the node in

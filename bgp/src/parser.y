@@ -98,9 +98,11 @@ ASTNode* root;
 %%
 
 translation_unit
-	: external_declaration {root->addChild($1);  parserOutput("translation_unit -> external_declaration"); }
-	| translation_unit external_declaration { root->addChild($2);
-	                                          parserOutput("translation_unit -> translation_unit external_declaration");
+	: external_declaration {	$1->setOffset( root->getActivationFrameSize() );
+								root->addChild($1); parserOutput("translation_unit -> external_declaration"); }
+	| translation_unit external_declaration {  $2->setOffset( root->getActivationFrameSize() );
+											   root->addChild($2);
+	                                           parserOutput("translation_unit -> translation_unit external_declaration");
                                             }
 	;
 
@@ -1117,7 +1119,7 @@ identifier
 						}
 						SymbolNode idNode = st.searchAll(yylval.sval).second->second;
 						temp->setType( idNode.getTypeSpecifierIndex() );
-						temp->setUseOffset( idNode.offset );
+						temp->setOffset( idNode.offset );
                     }
                     firstArrayIndex = true;//For array indexing
 					$$ = temp;
