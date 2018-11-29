@@ -64,6 +64,11 @@ int ASTNode::getActivationFrameSize() const
     return activationFrameSize;
 }
 
+void ASTNode::addOffset(int inputOffset)
+{
+    offset += inputOffset;
+}
+
 string ASTNode::getLabel () const
 {
     return label;

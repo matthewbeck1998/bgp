@@ -181,6 +181,7 @@ class ASTNode
 
         virtual void setOffset(int inputOffset);
 		int getOffset() const;
+		void addOffset( int inputOffset );
 
         /*!
          * @name printNode
