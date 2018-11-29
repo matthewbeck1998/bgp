@@ -1043,11 +1043,11 @@ vector<string> ASTMathNode::walk()
 		returnValues.push_back(it->walk());
 	}
 
-	string ticket = {"tempInt" + to_string(ticketCounter++)};
+	string ticket = {"t_" + to_string(ticketCounter++)};
 	//vector<string> temp = {"ADD", ticket, returnValues[0][0], returnValues[2][0]};
 	/*cout << "MATH NODE STUFF " << endl;
-	cout << "FRONT CHILD: " << getChildren().front()->getLabel() << endl;
-	cout << "BACK CHILD: " << getChildren().back()->getLabel() << endl;
+	//cout << "FRONT CHILD: " << getChildren().front()->getLabel() << endl;
+	//cout << "BACK CHILD: " << getChildren().back()->getLabel() << endl;
 	int i = 0;
 	for(auto it: returnValues)
 	{
@@ -1066,6 +1066,10 @@ vector<string> ASTMathNode::walk()
 		cout << returnValues[2][1] << '\t' << returnValues[2][2] << '\t' << returnValues[2][3] << endl;
 		cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << '\t' << returnValues[0][0] << "\t0(" << returnValues[2][0] << ")" << endl;
 	}
+	else if(getChildren().back()->getLabel() == "array_node")
+	{
+		cout << (*next(getChildren().begin()))->getLabel() << "\t" << ticket << "\t" << returnValues[0][0] << "\t0(" << returnValues[2][0] << ")" << endl;
+	}
 
 	if(getChildren().front()->getLabel() == "IDENTIFIER")
 	{
@@ -1075,6 +1079,10 @@ vector<string> ASTMathNode::walk()
 	else if(getChildren().back()->getLabel() == "INT_CONSTANT")
 	{
 		cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << "\t" << returnValues[0][0] << "\t" << returnValues[2][0] << endl;
+	}
+	if(getChildren().front()->getLabel() == "array_node")
+	{
+		cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << "\t0(" << returnValues[0][0] << ")\t" << returnValues[2][0] << endl;
 	}
 
 
@@ -1089,7 +1097,7 @@ vector<string> ASTIdNode::walk()
 	{
 		it->walk();
 	}
-	string ticket = {"tempInt" + to_string(ticketCounter++)};
+	string ticket = {"t_" + to_string(ticketCounter++)};
 	vector<string> temp = {ticket, "ADDR", ticket, this->getId()};
 	//threeAddressCode.push_back(temp);
 	//cout << "ADDR " << ticket << " " << this->getId() << endl;
@@ -1111,7 +1119,10 @@ vector<string> ASTAssignNode::walk()
 	vector<vector<string>> returnValues;
 
 	returnValues.push_back(children.front()->walk());
-	cout << returnValues[0][1] << '\t' << returnValues[0][2] << '\t' << returnValues[0][3] << endl;
+	if(children.front()->getLabel() != "array_node")
+	{
+		cout << returnValues[0][1] << '\t' << returnValues[0][2] << '\t' << returnValues[0][3] << endl;
+	}
 	returnValues.push_back(children.back()->walk());
 	/*for(auto it : children)
 	{
@@ -1130,6 +1141,9 @@ vector<string> ASTAssignNode::walk()
 		}
 		i++;
 	}*/
+
+
+	//cout << "NODE LABEL: " << getChildren().front()->getLabel() << endl;
 
 	if(getChildren().back()->getLabel() != "IDENTIFIER")
 	{
@@ -1201,8 +1215,11 @@ vector<string> ASTDeclarationNode::walk()
 	//cout << "ASTDeclarationNode " << this->getLabel() << endl;
 	for(auto it : children)
 	{
+
 		it->walk();
-		ticketCounter--;
+		//cout << "LABEL: " << it->getLabel() << endl;
+		if(it->getLabel() == "IDENTIFIER" /*or it->getLabel() == "array_node"*/)
+			ticketCounter--;
 	}
 	return {};
 }
@@ -1230,10 +1247,38 @@ vector<string> ASTCastNode::walk()
 vector<string> ASTArrayNode::walk()
 {
 	//cout << "ASTArrayNode " << this->getLabel() << endl;
+	vector<vector<string>> returnValues;
 	for(auto it : children)
 	{
-		it->walk();
+		returnValues.push_back(it->walk());
+		//cout << "LABEL: " << it->getLabel() << endl;
+		//cout << endl;
 	}
+
+	/*cout << "ARRAY NODE STUFF" << endl;
+	int i = 0;
+	for(auto it: returnValues)
+	{
+		int j = 0;
+		for(auto rt: it)
+		{
+			cout << "i " << i << " " << "j " << j++ << " " << rt << endl;
+		}
+		i++;
+	}*/
+
+	if(!children.empty())
+	{
+		string ticket1 = {"t_" + to_string(ticketCounter++)};
+		string ticket2 = {"t_" + to_string(ticketCounter++)};
+		string ticket3 = {"t_" + to_string(ticketCounter++)};
+		cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t" << returnValues[0][0] << endl;
+		cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
+		cout << "ADD\t" << ticket3 << '\t' << ticket1 << '\t' << ticket2 << endl;
+		return {ticket3};
+	}
+
+
 	return {};
 }
 
@@ -1247,6 +1292,17 @@ vector<string> ASTFunctionNode::walk()
 	}
 	return {};
 }
+
+vector<string> ASTDeclListNode::walk()
+{
+	//cout << "ASTDeclarationListNode " << this->getLabel() << endl;
+	for(auto it : children)
+	{
+		it->walk();
+	}
+	return {};
+}
+
 ASTDeclListNode::ASTDeclListNode(string node_label, ASTNode *inputChild) : ASTNode(move(node_label))
 {
     ( (ASTDeclarationNode*) inputChild ) -> setOffset(activationFrameSize);

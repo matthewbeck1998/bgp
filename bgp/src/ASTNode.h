@@ -974,6 +974,7 @@ class ASTDeclListNode : public ASTNode
     ASTDeclListNode(string node_label, ASTNode* inputChild);
     ASTDeclListNode(string node_label, ASTNode* leftChild, ASTNode* rightChild);
     void printNode(ostream &treeOutFile = cout) override;
+    vector<string> walk() override;
 };
 
 int typeToByteSize( int type );
