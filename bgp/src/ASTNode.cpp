@@ -32,7 +32,7 @@ string printType(int type)
 
 
 
-ASTNode::ASTNode (string node_label) : label(move(node_label))
+ASTNode::ASTNode (string node_label) : label(move(node_label)), offset(0)
 {
     lineNum = line;
 	nodeNum = totalNodeCount++;
@@ -41,7 +41,15 @@ ASTNode::ASTNode (string node_label) : label(move(node_label))
 
 void ASTNode::addChild (ASTNode *addNode)
 {
-    activationFrameSize += addNode -> getActivationFrameSize();
+    if( addNode->getLabel() == "compound_statement" or
+        addNode->getLabel() == "declaration_list" or
+        addNode->getLabel() == "Declaration" or
+        addNode->getLabel() == "array_node" or
+        addNode->getLabel() == "IDENTIFIER" or
+        addNode->getLabel() == "direct_declarator" or
+        addNode->getLabel() == "parameter_list" or
+        addNode->getLabel() == "parameter_declaration") // If statement with all the nodes needed for the activation frame size.
+        activationFrameSize += addNode -> getActivationFrameSize();
     if(addNode)
     {
         children.push_back(addNode);
@@ -74,6 +82,24 @@ string ASTNode::getLabel () const
 list<ASTNode *> &ASTNode::getChildren ()
 {
     return children;
+}
+
+void ASTNode::propegateActivation(int inputActivationSize)
+{
+    if(!children.empty())
+    {
+        for(auto it = children.begin() ; it != children.end() ; ++it)
+        {
+            if( label == "compound_statement" or
+                label == "declaration_list" or
+                label == "Declaration" or
+                label == "array_node" or
+                label == "IDENTIFIER" or
+                label == "direct_declarator")
+                (*it)->propegateActivation(inputActivationSize);
+        }
+    }
+    offset += inputActivationSize;
 }
 
 int ASTNode::getNodeNum () const
@@ -122,6 +148,7 @@ list<int> ASTNode::getDimensions()
     temp.clear();
     return temp;
 }
+
 
 void ASTNode::setOffset(int inputOffset)
 {
@@ -723,6 +750,7 @@ int ASTIdNode::getType() const
 void ASTIdNode::setType( int inputType )
 {
     type = inputType;
+    activationFrameSize = typeToByteSize(type);
 }
 
 void ASTIdNode::printNode(ostream &treeOutFile)
@@ -881,6 +909,12 @@ string ASTCastNode::printType() const
 ASTArrayNode::ASTArrayNode(string node_label, string id, int typeSet): ASTNode::ASTNode(move(node_label)),
                                                                        identifier(move(id)), type(typeSet)
 {
+    int bytesRequired = typeToByteSize( type );
+    for(auto it = dimensions.begin() ; it != dimensions.end() ; ++it )
+    {
+        bytesRequired *= *it;
+    }
+    activationFrameSize = bytesRequired;
 }
 
 
@@ -891,7 +925,7 @@ void ASTArrayNode::setOffset( int inputOffset)
     {
         bytesRequired *= *it;
     }
-    offset = inputOffset - bytesRequired; // inputOffset is the end of the range, subtract the size of variable to get the offset.
+    offset = inputOffset;
 }
 
 ASTArrayNode::ASTArrayNode(string node_label, ASTNode* inputNode): ASTNode::ASTNode(move(node_label)), type(Int)
@@ -930,6 +964,16 @@ void ASTArrayNode::setType(int inputType)
 list<int> ASTArrayNode::getDimensions() const
 {
     return dimensions;
+}
+
+void ASTArrayNode::setDimensions(list<int> inputDimensions)
+{
+    dimensions = inputDimensions;
+    activationFrameSize = typeToByteSize( type );
+    for(auto it = dimensions.begin() ; it != dimensions.end() ; ++it)
+    {
+        activationFrameSize *= (*it);
+    }
 }
 
 void ASTArrayNode::addDimension(int inputDim)
@@ -1031,7 +1075,7 @@ void ASTDeclarationNode::constructorTypeSet( ASTNode* node, int inputType )
 
 void ASTDeclarationNode::setOffset(int inputOffset)
 {
-   children.front() ->setOffset( inputOffset );
+   children.front() -> setOffset( inputOffset );
 }
 
 ASTFunctionNode::ASTFunctionNode(string node_label, int inputType) : ASTNode(move(node_label)), type(inputType)
@@ -1059,6 +1103,34 @@ int ASTFunctionNode::getType() const
     return type;
 }
 
+void ASTFunctionNode::addChild(ASTNode *addNode)
+{
+    activationFrameSize += addNode -> getActivationFrameSize();
+    if(addNode)
+    {
+        children.push_back(addNode);
+    }
+    if(!addNode->getChildren().empty())
+    {
+        if( addNode->getLabel() == "direct_declarator" and
+            addNode->getChildren().back()->getLabel() == "parameter_list" )
+        {
+            int currentActivation = 0;
+            auto param_list_child = addNode->getChildren().back();
+            for(auto it = param_list_child->getChildren().begin() ; it != param_list_child->getChildren().end() ; ++it)
+            { //Loops through children of parameter list and gets the activation frame size.
+                int childByteSize = (*it) -> getActivationFrameSize();
+                //(*it) -> setOffset( currentActivation );
+                currentActivation += childByteSize;
+            }
+        } else
+        {
+            //addNode->propegateActivation(activationFrameSize - addNode->getActivationFrameSize());
+        }
+
+    }
+}
+
 
 ASTDeclListNode::ASTDeclListNode(string node_label, ASTNode *inputChild) : ASTNode(move(node_label))
 {
@@ -1069,8 +1141,8 @@ ASTDeclListNode::ASTDeclListNode(string node_label, ASTNode *inputChild) : ASTNo
 ASTDeclListNode::ASTDeclListNode(string node_label, ASTNode* leftChild, ASTNode* rightChild) : ASTNode(move(node_label))
 {
     addChild(leftChild);
-    addChild(rightChild);
     ( (ASTDeclarationNode*) rightChild ) -> setOffset(activationFrameSize);
+    addChild(rightChild);
 }
 void ASTDeclListNode::printNode(ostream &treeOutFile)
 {
@@ -1110,4 +1182,5 @@ int typeToByteSize( int type )
             return 8;
 
     }
+    return 0;
 }

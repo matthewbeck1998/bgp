@@ -64,6 +64,8 @@ class ASTNode
 
         int getActivationFrameSize() const;
 
+        void propegateActivation(int inputActivationSize);
+
         /*!
          * @name getLabel
          * @return returns the label
@@ -853,6 +855,7 @@ public:
 	 */
 	list<int> getDimensions() const;
 
+	void setDimensions(list<int> inputDimensions);
 	/*!
 	 * @name addDimension
 	 * @param inputDim
@@ -949,6 +952,7 @@ class ASTFunctionNode : public  ASTNode
     void printNode(ostream &treeOutFile = cout) override;
     void setType( int inputType );
     int getType() const;
+    void addChild(ASTNode* addNode);
 private:
     int type;
 

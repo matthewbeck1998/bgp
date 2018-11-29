@@ -4,11 +4,12 @@ void nopers(int o)
 {
    int z;
 }
-int main()
+char main(int a, char b[5], float c)
 {
    int z[5][2][2];
    float y;
 
    z + y;
-
+   c + y;
+   a + b;
 }
