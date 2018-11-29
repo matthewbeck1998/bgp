@@ -86,6 +86,7 @@ public:
 	void setIsFunctionDefined(bool isFunctionDefined);
 
 	const list<array<int, 3>> &getFunctionParameters() const;
+	int offset;
 
 private:
 	string identifier;

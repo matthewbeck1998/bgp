@@ -658,6 +658,8 @@ class ASTIdNode : public ASTNode
 
         void setOffset( int inputOffset);
 
+        void setUseOffset( int inputOffset );
+
     /*!
      * @name printType
      * @return returns a string the corresponds to the type of the node

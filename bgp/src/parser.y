@@ -161,15 +161,28 @@ declaration
 
 declaration_list
 	: declaration { ASTDeclListNode* temp = new ASTDeclListNode("declaration_list", $1);
+                    if ($1->getChildren().front()->getLabel() == "IDENTIFIER")
+                    {
+                        auto symbolPair = st.searchAll( ( (ASTIdNode*) $1->getChildren().front() )->getId()  ).second;
+                        symbolPair->second.offset = ( (ASTIdNode*) $1->getChildren().front() )->getOffset();
+                    } else //if it is an array node;
+                    {
+                        auto symbolPair = st.searchAll( ( (ASTArrayNode*) $1->getChildren().front() )->getId()  ).second;
+                        symbolPair->second.offset = ( (ASTArrayNode*) $1->getChildren().front() )->getOffset();
+                    }
 	                $$ = temp;
-                    //$$ = $1;
 	                parserOutput("declaration_list -> declaration"); st.setInsertMode(false); }
-	| declaration_list declaration { 	/*ASTNode* temp = new ASTNode("declaration_list");
-										temp -> addChild($1);
-                                       	temp -> addChild($2);
-                                       	$$ = temp;*/
-	                                    ASTDeclListNode* temp = new ASTDeclListNode("declaration_list", $1, $2);
+	| declaration_list declaration {    ASTDeclListNode* temp = new ASTDeclListNode("declaration_list", $1, $2);
 	                                    $$ = temp;
+                                        if ($2->getChildren().front()->getLabel() == "IDENTIFIER")
+                                        {
+                                            auto symbolPair = st.searchAll( ( (ASTIdNode*) $2->getChildren().front() )->getId()  ).second;
+                                            symbolPair->second.offset = ( (ASTIdNode*) $2->getChildren().front() )->getOffset();
+                                        } else //if it is an array node;
+                                        {
+                                            auto symbolPair = st.searchAll( ( (ASTArrayNode*) $2->getChildren().front() )->getId()  ).second;
+                                            symbolPair->second.offset = ( (ASTArrayNode*) $2->getChildren().front() )->getOffset();
+                                        }
                                        	parserOutput("declaration_list -> declaration_list declaration"); st.setInsertMode(false); }
 	;
 
@@ -1104,6 +1117,7 @@ identifier
 						}
 						SymbolNode idNode = st.searchAll(yylval.sval).second->second;
 						temp->setType( idNode.getTypeSpecifierIndex() );
+						temp->setUseOffset( idNode.offset );
                     }
                     firstArrayIndex = true;//For array indexing
 					$$ = temp;

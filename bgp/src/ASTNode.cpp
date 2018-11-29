@@ -701,9 +701,14 @@ int ASTIdNode::getOffset() const
     return offset;
 }
 
-void ASTIdNode::setOffset( int inputOffset)
+void ASTIdNode::setOffset( int inputOffset )
 {
     offset = inputOffset - typeToByteSize( type ); // inputOffset is the end of the range, subtract the size of variable to get the offset.
+}
+
+void ASTIdNode::setUseOffset( int inputOffset )
+{
+    offset = inputOffset;
 }
 
 string ASTIdNode::getId() const

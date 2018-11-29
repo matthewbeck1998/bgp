@@ -259,6 +259,7 @@ ostream &operator<< (ostream &os, const SymbolNode &node)
 SymbolNode::SymbolNode (const string &identifier, int lineNum, int colNum, int typeSpecifier)
 		: identifier(identifier), lineNum(lineNum), typeSpecifierIndex(typeSpecifier), colNum(colNum)
 {
+	offset = 0;
 	varScopeLevel = -1;
 	isFunction = false;
 	isSigned = true;
