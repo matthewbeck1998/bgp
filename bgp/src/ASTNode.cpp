@@ -1121,6 +1121,7 @@ vector<string> ASTMathNode::walk()
 		returnValues.push_back(it->walk());
 	}
 
+
 	string ticket = {"t_" + to_string(ticketCounter++)};
 	//vector<string> temp = {"ADD", ticket, returnValues[0][0], returnValues[2][0]};
 	/*cout << "MATH NODE STUFF " << endl;
@@ -1408,6 +1409,42 @@ void ASTDeclListNode::printNode(ostream &treeOutFile)
 }
 
 
+vector<string> ASTFunctionCallNode::walk()
+{
+    //cout << "ASTFunctionCallNode " << this->getLabel() << endl;
+    for(auto it : children)
+    {
+        it->walk();
+    }
+    return {};
+}
+
+ASTFunctionCallNode::ASTFunctionCallNode(string node_label, ASTNode *inputChild) : ASTNode(move(node_label))
+{
+    addChild(inputChild);
+}
+
+ASTFunctionCallNode::ASTFunctionCallNode(string node_label, ASTNode* leftChild, ASTNode* rightChild) : ASTNode(move(node_label))
+{
+    addChild(leftChild);
+    addChild(rightChild);
+}
+
+void ASTFunctionCallNode::printNode(ostream &treeOutFile)
+{
+
+    treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+    treeOutFile << "Line: " << lineNum << endl;
+    treeOutFile << "FUNCTION CALL NODE" << endl;
+    treeOutFile << "Activation frame size: " << activationFrameSize <<"\"];" << endl;
+    for(auto &it : children)
+    {
+        treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+        it->printNode(treeOutFile);
+    }
+}
+
+
 int typeToByteSize( int type )
 {
     switch( type )
@@ -1432,4 +1469,16 @@ int typeToByteSize( int type )
 
     }
     return 0;
+}
+
+string getLine( int lineNum )
+{
+    ifstream inputFile;
+    inputFile.open(inputFileName);
+    char returnString[255];
+    for(int i = 0 ; i < lineNum ; ++i)
+    {
+        inputFile.getline(returnString, 255);
+    }
+    return returnString;
 }

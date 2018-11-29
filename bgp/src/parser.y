@@ -25,6 +25,8 @@ ifstream inputFile;
 ofstream outputFile;
 stringstream outputStream;
 stringstream errorStream;
+string inputFileName;
+
 void parserOutput(string s);
 
 //Command line Parse
@@ -1072,10 +1074,8 @@ postfix_expression
     												 	 temp->addChild( $3 );
                                                         $$ = temp;
                                                         parserOutput("postfix_expression -> postfix_expression OBRACKET expression CBRACKET"); }
-	| postfix_expression OPAREN CPAREN { $$ = $1; parserOutput("postfix_expression -> postfix_expression OPAREN CPAREN"); }
-	| postfix_expression OPAREN argument_expression_list CPAREN {ASTNode* temp = new ASTNode("postfix_expression");
-                                                                   temp -> addChild($1);
-                                                                   temp -> addChild($3);
+	| postfix_expression OPAREN CPAREN { $$ = new ASTFunctionCallNode("function_call", $1); parserOutput("postfix_expression -> postfix_expression OPAREN CPAREN"); }
+	| postfix_expression OPAREN argument_expression_list CPAREN {ASTFunctionCallNode* temp = new ASTFunctionCallNode("function_call", $1, $3);
                                                                    $$ = temp;
                                                                    parserOutput("postfix_expression -> postfix_expression OPAREN argument_expression_list CPAREN"); }
 	| postfix_expression PERIOD identifier { ASTNode* temp = new ASTNode("postfix_expression");
@@ -1280,8 +1280,14 @@ int parseCommandLine(int argc, char** argv)
 		"-s"
 	};
 
-    inputFile.open(argv[1]); //Assumes the first command line arguement is the input file.
-    FILE* inputStream = fopen(argv[1], "r");
+	if(argc == 0)
+    {
+	    cerr << "No input file" << endl;
+	    exit(-1);
+    }
+	inputFileName = argv[1];
+    inputFile.open(inputFileName); //Assumes the first command line arguement is the input file.
+    FILE* inputStream = fopen(inputFileName.c_str(), "r");
     if (!inputStream)
     {
         cerr << "Cannot open input file." << endl;

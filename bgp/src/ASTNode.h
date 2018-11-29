@@ -22,6 +22,7 @@ string printType(int type);
  */
 extern stringstream errorStream;
 extern stringstream outputStream;
+extern string inputFileName;
 
 extern int line;
 
@@ -983,6 +984,17 @@ class ASTDeclListNode : public ASTNode
     vector<string> walk() override;
 };
 
+class ASTFunctionCallNode : public ASTNode
+{
+    public:
+    ASTFunctionCallNode(string node_label, ASTNode* inputChild);
+    ASTFunctionCallNode(string node_label, ASTNode* leftChild, ASTNode* rightChild);
+    void printNode(ostream &treeOutFile = cout) override;
+    vector<string> walk() override;
+};
+
 int typeToByteSize( int type );
+
+string getLine( int lineNum );
 
 #endif //PROJECT_ASTNODE_H
