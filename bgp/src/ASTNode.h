@@ -877,7 +877,7 @@ public:
 	 * @param inputDimensions
 	 * @brief adds all the dimensions in inputDimensions to the node
 	 */
-	string addDimensions(list<int> inputDimensions);
+	void addDimensions(list<int> inputDimensions);
 
 
 	vector<string> walk() override;

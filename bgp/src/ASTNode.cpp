@@ -939,7 +939,7 @@ void ASTArrayNode::addDimension(int inputDim)
     dimensions.push_back(inputDim);
 }
 
-string ASTArrayNode::addDimensions(list<int> inputDimensions)
+void ASTArrayNode::addDimensions(list<int> inputDimensions)
 {
     while( !inputDimensions.empty() )
     {

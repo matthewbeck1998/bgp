@@ -461,27 +461,17 @@ direct_declarator
                                                                 {
                                                                     return -1;
                                                                 }
-
                                                                 arrayPair.second->second.setIsArray(true);
                                                                 int dimension = ((ASTConstNode*)$3)->getValue().intVal;
                                                                 //cout << dimension << endl;
                                                                 arrayPair.second->second.addArrayDimension(dimension);
-                                                                /*if(sameArray)
-                                                                {
-                                                                    (( ASTArrayNode*) $$) -> addDimension(dimension);
-                                                                    sameArray = false;
-                                                                }
-                                                                else
-                                                                {*/
-                                                                    ASTArrayNode* temp = new ASTArrayNode("array_node", arrayPair.second->second.getIdentifier(), $1 -> getType());
-                                                                    temp -> addDimension(dimension);
-                                                                    if(sameArray)
-                                                                        temp -> addDimensions ( ( (ASTArrayNode*) $1 )->getDimensions() );
-                                                                    $$ = temp;
-                                                                    sameArray = true;
-                                                                //}
-                                                                //temp -> addChild($1);
-                                                                //temp -> addChild($3);
+
+                                                                ASTArrayNode* temp = new ASTArrayNode("array_node", arrayPair.second->second.getIdentifier(), $1 -> getType());
+                                                                temp -> addDimension(dimension);
+                                                                if(sameArray)
+                                                                    temp -> addDimensions ( ( (ASTArrayNode*) $1 )->getDimensions() );
+                                                                $$ = temp;
+                                                                sameArray = true;
                                                                 parserOutput("direct_declarator -> direct_declarator OBRACKET constant_expression CBRACKET"); }
 	| direct_declarator OPAREN CPAREN { $$ = $1; parserOutput("direct_declarator -> direct_declarator OPAREN CPAREN"); }
 	| direct_declarator OPAREN parameter_type_list CPAREN   {
@@ -1263,6 +1253,7 @@ void yyerror(const char* s)
 
 void parserOutput(string s)
 {
+    cout << s << endl;
     if (outputProductions)
     {
         outputStream << "Rule: " << s << endl;
