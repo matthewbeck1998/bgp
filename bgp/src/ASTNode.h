@@ -863,6 +863,8 @@ public:
 	 */
 	list<int> getDimensions() const;
 
+    void setDimensions(list<int> inputDimensions);
+
 	/*!
 	 * @name addDimension
 	 * @param inputDim

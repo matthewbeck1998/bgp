@@ -875,6 +875,7 @@ ASTArrayNode::ASTArrayNode(string node_label, string id, int typeSet): ASTNode::
 }
 
 
+
 void ASTArrayNode::setOffset( int inputOffset)
 {
     int bytesRequired = typeToByteSize( type );

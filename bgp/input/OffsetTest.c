@@ -6,10 +6,10 @@ void nopers(int o)
 }
 char main(int a, char b[5], float c)
 {
-    int z[5][2][2];
+    //int z[5][2][2];
     float y;
 
-    z + y;
+    //z + y;
     c + y;
     a + b;
 }
