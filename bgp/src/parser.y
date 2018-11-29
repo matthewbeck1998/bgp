@@ -119,6 +119,7 @@ function_definition
                                       temp -> addChild($1);
                                       temp -> addChild($2);
                                       $$ = temp;
+
                                       currentOffset = 0;
                                       parserOutput("function_definition -> declarator compound_statement");
                                       st.popLevel(); }
@@ -207,6 +208,7 @@ declaration_list
                                             $2->getChildren().front()->setOffset( currentOffset );
                                             symbolPair->second.offset = ( (ASTArrayNode*) $2->getChildren().front() )->getOffset();
                                         }
+                                        currentOffset += $2->getActivationFrameSize();
                                        	parserOutput("declaration_list -> declaration_list declaration"); st.setInsertMode(false); }
 	;
 
