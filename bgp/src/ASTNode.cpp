@@ -1125,8 +1125,8 @@ vector<string> ASTMathNode::walk()
 	string ticket = {"t_" + to_string(ticketCounter++)};
 	//vector<string> temp = {"ADD", ticket, returnValues[0][0], returnValues[2][0]};
 	/*cout << "MATH NODE STUFF " << endl;
-	//cout << "FRONT CHILD: " << getChildren().front()->getLabel() << endl;
-	//cout << "BACK CHILD: " << getChildren().back()->getLabel() << endl;
+	cout << "FRONT CHILD: " << getChildren().front()->getLabel() << endl;
+	cout << "BACK CHILD: " << getChildren().back()->getLabel() << endl;
 	int i = 0;
 	for(auto it: returnValues)
 	{
@@ -1140,7 +1140,41 @@ vector<string> ASTMathNode::walk()
 	}*/
 
 
+	if(getChildren().front()->getLabel() == "IDENTIFIER")
+	{
+		cout << returnValues[0][1] << '\t' << returnValues[0][2] << '\t' << returnValues[0][3] << endl;
+		//cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << "\t0(" << returnValues[0][0] << ")\t" << returnValues[2][0] << endl;
+
+	}
 	if(getChildren().back()->getLabel() == "IDENTIFIER")
+	{
+		cout << returnValues[2][1] << '\t' << returnValues[2][2] << '\t' << returnValues[2][3] << endl;
+		//cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << "\t" << returnValues[0][0] << "\t0(" << returnValues[2][0] << ")" << endl;
+	}
+
+
+
+	if((getChildren().back()->getLabel() == "IDENTIFIER" || getChildren().back()->getLabel() == "array_node") &&
+		(getChildren().front()->getLabel() == "IDENTIFIER" || getChildren().front()->getLabel() == "array_node"))
+	{
+		cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << "\t0(" << returnValues[0][0] << ")\t0(" << returnValues[2][0] << ")" << endl;
+	}
+	else if(getChildren().back()->getLabel() == "IDENTIFIER" || getChildren().back()->getLabel() == "array_node")
+	{
+		cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << "\t" << returnValues[0][0] << "\t0(" << returnValues[2][0] << ")" << endl;
+
+	}
+	else if(getChildren().front()->getLabel() == "IDENTIFIER" || getChildren().front()->getLabel() == "array_node")
+	{
+		cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << "\t0(" << returnValues[0][0] << ")\t" << returnValues[2][0] << endl;
+
+	}
+	else
+	{
+		cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << "\t" << returnValues[0][0] << "\t" << returnValues[2][0] << endl;
+	}
+
+	/*if(getChildren().back()->getLabel() == "IDENTIFIER")
 	{
 		//cout << "FIRST" << endl;
 		cout << returnValues[2][1] << '\t' << returnValues[2][2] << '\t' << returnValues[2][3] << endl;
@@ -1179,7 +1213,7 @@ vector<string> ASTMathNode::walk()
 		//cout << "FIFTH" << endl;
 		cout << returnValues[0][1] << '\t' << returnValues[0][2] << '\t' << returnValues[0][3] << endl;
 		cout << (*next(getChildren().begin()))->getLabel() << '\t' << ticket << "\t0(" << returnValues[0][0] << ")\t" << returnValues[2][0] << endl;
-	}
+	}*/
 
 
 
