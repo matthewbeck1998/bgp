@@ -1,7 +1,7 @@
 # BGP Compiler
 
 ## Running PA9
-If your name is Chris Koh or Derek Stratton, you are required to read these instructions twice.\
+If your name is **Chris Koh** or **Derek Stratton**, you are required to read these instructions twice.\
 This is due to the fact that both of you are blind.
 
 **Linux**
