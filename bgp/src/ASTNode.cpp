@@ -1339,9 +1339,8 @@ vector<string> ASTArrayNode::walk()
 	vector<vector<string>> returnValues;
 	for(auto it : children)
 	{
-		returnValues.push_back(it->walk());
 		//cout << "LABEL: " << it->getLabel() << endl;
-		//cout << endl;
+		returnValues.push_back(it->walk());
 	}
 
 	/*cout << "ARRAY NODE STUFF" << endl;
@@ -1358,7 +1357,16 @@ vector<string> ASTArrayNode::walk()
 
 	if(!children.empty())
 	{
-		if(children.front()->getLabel() == "INT_CONSTANT")
+		/*for(auto it: children)
+		{
+			if(it->getLabel() == "INT_CONSTANT")
+			{
+
+			}
+		}*/
+
+
+		if(children.front()->getLabel() == "INT_CONSTANT" or children.front()->getLabel() == "additive_expression")
 		{
 			string ticket1 = {"t_" + to_string(ticketCounter++)};
 			string ticket2 = {"t_" + to_string(ticketCounter++)};
