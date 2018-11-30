@@ -1334,11 +1334,15 @@ vector<string> ASTIterationNode::walk()
 
 vector<string> ASTSelectionNode::walk()
 {
-	//cout << "ASTSelectionNode " << this->getLabel() << endl;
-	for(auto it : children)
+    vector<vector<string>> returnValues;
+	for (auto it : children)
 	{
-		it->walk();
+		returnValues.push_back(it->walk());
 	}
+
+    string trueLabel = to_string(labelCounter++);
+    string endLabel = to_string(labelCounter++);
+    cout << "BEQ" << "\t" << returnValues[1][0] << "\t" << "1" << trueLabel << endl;
 	return {};
 }
 
@@ -1534,45 +1538,6 @@ void ASTRelExprNode::printNode(ostream& treeOutFile)
 
 vector<string> ASTRelExprNode::walk()
 {
-    /*
-	//cout << "ASTArrayNode " << this->getLabel() << endl;
-	vector<vector<string>> returnValues;
-	for(auto it : children)
-	{
-		returnValues.push_back(it->walk());
-		//cout << "LABEL: " << it->getLabel() << endl;
-		//cout << endl;
-	}
-
-	if(!children.empty())
-	{
-		if(children.front()->getLabel() == "INT_CONSTANT")
-		{
-			string ticket1 = {"t_" + to_string(ticketCounter++)};
-			string ticket2 = {"t_" + to_string(ticketCounter++)};
-			string ticket3 = {"t_" + to_string(ticketCounter++)};
-			cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t" << returnValues[0][0] << endl;
-			cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
-			cout << "ADD\t" << ticket3 << '\t' << ticket1 << '\t' << ticket2 << endl;
-			return {ticket3};
-		}
-		else if(children.front()->getLabel() == "IDENTIFIER")
-		{
-	 		cout << returnValues[0][1] << "\t" << returnValues[0][2] << "\t" << returnValues[0][3] << endl;
-			string ticket1 = {"t_" + to_string(ticketCounter++)};
-			string ticket2 = {"t_" + to_string(ticketCounter++)};
-			string ticket3 = {"t_" + to_string(ticketCounter++)};
-			cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t0(" << returnValues[0][0] << ")" << endl;
-			cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
-			cout << "ADD\t" << ticket3 << '\t' << ticket1 << "\t" << ticket2 << endl;
-			return {ticket3};
-		}
-	}
-
-
-	return {};
-    */
-
     vector<vector<string>> returnValues;
 	for (auto it : children)
 	{
@@ -1580,9 +1545,8 @@ vector<string> ASTRelExprNode::walk()
 	}
 
     string ticket = {"t_" + to_string(ticketCounter++)};
-    string firstLabel = {"l_" + to_string(labelCounter++)};
-    string secondLabel = {"l_" + to_string(labelCounter++)};
-    string thirdLabel = {"l_" + to_string(labelCounter++)};
+    string trueLabel = {"l_" + to_string(labelCounter++)};
+    string endLabel = {"l_" + to_string(labelCounter++)};
     string branchFirstArg = "";
     string branchSecondArg = "";
 
@@ -1612,18 +1576,17 @@ vector<string> ASTRelExprNode::walk()
         cout << rightCommand << "\t" << rightTemp << "\t" << rightName << endl;
     }
 
-    cout << "LABEL" << "\t" << firstLabel << endl;
     
     auto it = ++(children.begin()); // get middle child (operator)
     string label = (*it)->getLabel();
     string op = label.substr(0, 2);
     string command = "B" + op;
-    cout << command << "\t" << branchFirstArg << "\t" << branchSecondArg << "\t" << secondLabel << endl;
+    cout << command << "\t" << branchFirstArg << "\t" << branchSecondArg << "\t" << trueLabel << endl;
     cout << "ASSIGN" << "\t" << ticket << "\t" << "0" << endl;
-    cout << "B" << "\t" << thirdLabel << endl;
-    cout << "LABEL" << "\t" << secondLabel << endl;
+    cout << "B" << "\t" << endLabel << endl;
+    cout << "LABEL" << "\t" << trueLabel << endl;
     cout << "ASSIGN" << "\t" << ticket << "\t" << "1" << endl;
-    cout << "LABEL" << "\t" << thirdLabel << endl;
+    cout << "LABEL" << "\t" << endLabel << endl;
 
     return {ticket};
 }
