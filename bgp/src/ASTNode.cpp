@@ -2,6 +2,7 @@
 #include <fstream>
 
 unsigned int ASTNode::ticketCounter = 0;
+unsigned int ASTNode::labelCounter = 0;
 
 int ASTNode::totalNodeCount = 0;
 
@@ -1511,6 +1512,105 @@ void ASTFunctionCallNode::printNode(ostream &treeOutFile)
         treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
         it->printNode(treeOutFile);
     }
+}
+
+ASTRelExprNode::ASTRelExprNode(string node_label) : ASTNode(move(node_label))
+{
+
+}
+
+void ASTRelExprNode::printNode(ostream& treeOutFile)
+{
+    treeOutFile << this->getNodeNum() 
+                << "[label = \"" << this->getLabel() << endl
+	            << "Line: " << lineNum << endl
+	            << "RELATIONAL EXPRESSION NODE" << "\"];" << endl;
+	for (auto &it : children)
+	{
+		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+		it->printNode(treeOutFile);
+	}
+}
+
+vector<string> ASTRelExprNode::walk()
+{
+    /*
+	//cout << "ASTArrayNode " << this->getLabel() << endl;
+	vector<vector<string>> returnValues;
+	for(auto it : children)
+	{
+		returnValues.push_back(it->walk());
+		//cout << "LABEL: " << it->getLabel() << endl;
+		//cout << endl;
+	}
+
+	if(!children.empty())
+	{
+		if(children.front()->getLabel() == "INT_CONSTANT")
+		{
+			string ticket1 = {"t_" + to_string(ticketCounter++)};
+			string ticket2 = {"t_" + to_string(ticketCounter++)};
+			string ticket3 = {"t_" + to_string(ticketCounter++)};
+			cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t" << returnValues[0][0] << endl;
+			cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
+			cout << "ADD\t" << ticket3 << '\t' << ticket1 << '\t' << ticket2 << endl;
+			return {ticket3};
+		}
+		else if(children.front()->getLabel() == "IDENTIFIER")
+		{
+	 		cout << returnValues[0][1] << "\t" << returnValues[0][2] << "\t" << returnValues[0][3] << endl;
+			string ticket1 = {"t_" + to_string(ticketCounter++)};
+			string ticket2 = {"t_" + to_string(ticketCounter++)};
+			string ticket3 = {"t_" + to_string(ticketCounter++)};
+			cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t0(" << returnValues[0][0] << ")" << endl;
+			cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
+			cout << "ADD\t" << ticket3 << '\t' << ticket1 << "\t" << ticket2 << endl;
+			return {ticket3};
+		}
+	}
+
+
+	return {};
+    */
+
+    vector<vector<string>> returnValues;
+	for (auto it : children)
+	{
+		returnValues.push_back(it->walk());
+	}
+
+    string ticket = {"t_" + to_string(ticketCounter++)};
+    string firstLabel = {"l_" + to_string(labelCounter++)};
+    string secondLabel = {"l_" + to_string(labelCounter++)};
+    string thirdLabel = {"l_" + to_string(labelCounter++)};
+
+    string leftCommand = returnValues[0][1];
+    string leftTemp = returnValues[0][2];
+    string leftName = returnValues[0][3];
+    cout << leftCommand << "\t" << leftTemp << "\t" << leftName << endl;
+
+    string rightCommand = returnValues[2][1];
+    string rightTemp = returnValues[2][2];
+    string rightName = returnValues[2][3];
+    cout << rightCommand << "\t" << rightTemp << "\t" << rightName << endl;
+
+    cout << "LABEL" << "\t" << firstLabel << endl;
+    
+    auto it = ++(children.begin()); // get middle child (operator)
+    string label = (*it)->getLabel();
+    string op = label.substr(0, 2);
+    string command = "B" + op;
+    string leftDeref = "0(" + leftTemp + ")";
+    string rightDeref = "0(" + rightTemp + ")";
+    cout << command << "\t" << leftDeref << "\t" << rightDeref << "\t" << secondLabel << endl;
+
+    cout << "ASSIGN" << "\t" << ticket << "\t" << "0" << endl;
+    cout << "B" << "\t" << thirdLabel << endl;
+    cout << "LABEL" << "\t" << secondLabel << endl;
+    cout << "ASSIGN" << "\t" << ticket << "\t" << "1" << endl;
+    cout << "LABEL" << "\t" << thirdLabel << endl;
+
+    return {ticket};
 }
 
 

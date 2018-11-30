@@ -216,6 +216,7 @@ protected:
         //friend ostream& operator<< (ostream &os, const ASTNode& output);
 
    static unsigned int ticketCounter;
+   static unsigned int labelCounter;
    static list<vector<string>> threeAddressCode;
 
     int offset;
@@ -991,6 +992,14 @@ class ASTFunctionCallNode : public ASTNode
     ASTFunctionCallNode(string node_label, ASTNode* leftChild, ASTNode* rightChild);
     void printNode(ostream &treeOutFile = cout) override;
     vector<string> walk() override;
+};
+
+class ASTRelExprNode : public ASTNode
+{
+    public:
+        ASTRelExprNode(string node_label);
+        void printNode(ostream& treeOutFile = cout) override;
+        vector<string> walk() override;
 };
 
 int typeToByteSize( int type );
