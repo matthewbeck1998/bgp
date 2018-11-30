@@ -1,12 +1,9 @@
 float main()
 {
-    int a;
-    char b;
-    a = 5;
+    int i;
+    i = 5;
 	do
 	{
-		b = 'a' + a;
-		a--;
-	}while(a > 0);
-
+		i = i - 1;
+	} while (i > 0);
 }

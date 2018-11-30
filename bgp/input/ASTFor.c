@@ -1,9 +1,9 @@
-int main()
+float main()
 {
     int i;
     i = 5;
     i = i - 1;
-    while (i > 0)
+    for (; i > 0;)
     {
         i = i - 1;
     }
