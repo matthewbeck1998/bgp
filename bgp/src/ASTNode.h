@@ -22,6 +22,7 @@ string printType(int type);
  */
 extern stringstream errorStream;
 extern stringstream outputStream;
+extern string inputFileName;
 
 extern int line;
 
@@ -32,6 +33,7 @@ extern int line;
  */
 union valueUnion
 {
+    double dVal;
     int intVal;
     char charVal;
     float fVal;
@@ -45,6 +47,8 @@ union valueUnion
 class ASTNode
 {
     public:
+
+        ASTNode(){}
         /*!
          * @name ASTNode
          * @param node_label
@@ -59,6 +63,10 @@ class ASTNode
          */
         void addChild(ASTNode* addNode);
 
+        int getActivationFrameSize() const;
+
+        void propegateActivation(int inputActivationSize);
+
         /*!
          * @name getLabel
          * @return returns the label
@@ -69,7 +77,7 @@ class ASTNode
          * @name walk()
          * @return true or false if the table was correctly walked
          */
-        virtual bool walk() const;
+        virtual vector<string> walk();
 
         /*!
          * @name getChildren
@@ -119,7 +127,7 @@ class ASTNode
 		 * @brief virtual setType function, it should not ever be called.
 		 */
 		virtual void setType(int newType) {
-		    //outputStream << "setType, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "setType, YOU DID SOMETHING BAD" << endl;
 		}
 
 		/*!
@@ -127,7 +135,7 @@ class ASTNode
 		 * @return does not return anything. It should never be called
 		 */
 		virtual int getType() const {
-		    //outputStream << "getType, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getType, YOU DID SOMETHING BAD" << endl;
 		}
 
 		/*!
@@ -136,7 +144,7 @@ class ASTNode
 		 * @brief does not do anything, should never be called
 		 */
 		virtual void setId(string newId) {
-		    //outputStream << "setId, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "setId, YOU DID SOMETHING BAD" << endl;
 		}
 
 		/*!
@@ -150,7 +158,7 @@ class ASTNode
 		 * @return returns "no Id. Base Node.". Should never be called.
 		 */
 		virtual  string getId() {
-		    //outputStream << "getId, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getId, YOU DID SOMETHING BAD" << endl;
 		    return "no Id. Base Node.";
 		}
 
@@ -159,7 +167,7 @@ class ASTNode
 		 * @return returns nothing, should never be called.
 		 */
 		virtual string getValue() {
-		    //outputStream << "getValue, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getValue, YOU DID SOMETHING BAD" << endl;
 		}
 
 		/*!
@@ -169,8 +177,12 @@ class ASTNode
 		 */
 		virtual void setValue(string newValue)
         {
-		    //outputStream << "setValue, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "setValue, YOU DID SOMETHING BAD" << endl;
         }
+
+        virtual void setOffset(int inputOffset);
+		int getOffset() const;
+		void addOffset( int inputOffset );
 
         /*!
          * @name printNode
@@ -184,8 +196,8 @@ protected:
      * String to hold the label
      */
 	string label;
-    int colNum; //Not implemented yet
-    int lineNum; //Not implemented yet
+    int colNum; // Not implemented yet.
+    int lineNum;
 
     /*!
      * Holds the unique node number
@@ -193,10 +205,21 @@ protected:
 	int nodeNum;
 
 	/*!
+	 * Holds the size required for the activation frame.
+	 */
+	int activationFrameSize;
+
+	/*!
 	 * //Holds the children nodes
 	 */
     list<ASTNode*> children;
         //friend ostream& operator<< (ostream &os, const ASTNode& output);
+
+   static unsigned int ticketCounter;
+   static unsigned int labelCounter;
+   static list<vector<string>> threeAddressCode;
+
+    int offset;
 };
 
 /*!
@@ -227,7 +250,7 @@ class ASTMathNode : public ASTNode
          * @name walk
          * @return returns true or false based on whether the tree was walked correctly
          */
-        bool walk() const;
+		vector<string> walk();
 
         /*!
          * @name printNode
@@ -311,7 +334,7 @@ class ASTAssignNode : public ASTNode
          * @name walk
          * @return returns true or false based on if the walk was successful
          */
-        bool walk() const;
+		vector<string> walk();
 
         /*!
          * @name printNode
@@ -400,7 +423,7 @@ class ASTVariableNode : public ASTNode
          * @name walk
          * @return returns an bool based on if the tree was successfully walked or not
          */
-        bool walk() const;
+		vector<string> walk() override;
 
         /*!
          * @name getType
@@ -508,6 +531,8 @@ class ASTConstNode : public ASTNode
      */
     void printNode(ostream &treeOutFile = cout) override;
 
+    vector<string> walk() override;
+
     private:
     /*!
      * an int corresponding to the type of the node.
@@ -544,7 +569,7 @@ class ASTSelectionNode : public ASTNode
          * @name walk
          * @return Walks the AST. Returns true if it succeeds and false if it does now
          */
-        bool walk() const;
+		vector<string> walk() override;
 
         /*!
          * @name printNode
@@ -572,7 +597,7 @@ class ASTIterationNode : public ASTNode
          * @name walk
          * @return returns true of false based on if the tree was successfully walked
          */
-        bool walk() const;
+		vector<string> walk() override;
 
         /*!
          * @name printNode
@@ -609,7 +634,7 @@ class ASTIdNode : public ASTNode
          * @name walk
          * @return returns true or false based on if the tree was successfully walked ot not.
          */
-        bool walk() const{}
+		vector<string> walk() override;
 
         /*!
          * @name printNode
@@ -690,7 +715,7 @@ class ASTTypeNode : public  ASTNode
          * @name walk
          * @return returns a bool corresponding to whether the tree was successfully walked or not.
          */
-        bool walk() const{}
+		vector<string> walk() override;
 
         /*!
          * @name printNode
@@ -763,6 +788,8 @@ class ASTCastNode : public ASTNode
          * @brief sets the type of the node to inputType
          */
         void setType( int inputType );
+
+        vector<string> walk() override;
     private:
         /*!
          * @name printType
@@ -839,6 +866,8 @@ public:
 	 */
 	list<int> getDimensions() const;
 
+    void setDimensions(list<int> inputDimensions);
+
 	/*!
 	 * @name addDimension
 	 * @param inputDim
@@ -852,6 +881,12 @@ public:
 	 * @brief adds all the dimensions in inputDimensions to the node
 	 */
 	void addDimensions(list<int> inputDimensions);
+
+
+	vector<string> walk() override;
+
+	void setOffset(int inputOffset);
+
 
 private:
     /*!
@@ -868,6 +903,7 @@ private:
 	 * int to hold the type of the array
 	 */
 	int type;
+
 };
 
 /*!
@@ -899,13 +935,17 @@ class ASTDeclarationNode : public ASTNode
 		 * @param inputType
 		 * @brief sets the type of the node.
 		 */
-		void setType( int inputType );
+		void setType(int inputType);
 
 		/*!
 		 * @name getType
 		 * @return returns the type of the node
 		 */
 		int getType() const;
+		vector<string> walk() override;
+
+		void setOffset(int inputOffset);
+
 	private:
         /*!
          * int to hold the type of the node in
@@ -920,5 +960,58 @@ class ASTDeclarationNode : public ASTNode
 		 */
 		void constructorTypeSet( ASTNode* node, int inputType );
 };
+
+class ASTFunctionNode : public  ASTNode
+{
+    public:
+    ASTFunctionNode(string node_label, int inputType);
+    void printNode(ostream &treeOutFile = cout) override;
+    void setType( int inputType );
+    int getType() const;
+    void addChild(ASTNode* addNode);
+
+    vector<string> walk() override;
+private:
+    int type;
+
+};
+
+class ASTDeclListNode : public ASTNode
+{
+    public:
+    ASTDeclListNode(string node_label, ASTNode* inputChild);
+    ASTDeclListNode(string node_label, ASTNode* leftChild, ASTNode* rightChild);
+    void printNode(ostream &treeOutFile = cout) override;
+    vector<string> walk() override;
+};
+
+class ASTFunctionCallNode : public ASTNode
+{
+    public:
+    ASTFunctionCallNode(string node_label, ASTNode* inputChild);
+    ASTFunctionCallNode(string node_label, ASTNode* leftChild, ASTNode* rightChild);
+    void printNode(ostream &treeOutFile = cout) override;
+    vector<string> walk() override;
+};
+
+class ASTRelExprNode : public ASTNode
+{
+    public:
+        ASTRelExprNode(string node_label);
+        void printNode(ostream& treeOutFile = cout) override;
+        vector<string> walk() override;
+};
+
+class ASTUnaryNode : public ASTNode
+{
+    public:
+        ASTUnaryNode(string node_label);
+        void printNode(ostream& treeOutFile = cout) override;
+        vector<string> walk() override;       
+};
+
+int typeToByteSize( int type );
+
+string getLine( int lineNum );
 
 #endif //PROJECT_ASTNODE_H

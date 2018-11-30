@@ -20,9 +20,10 @@ class AST
 {
     public:
         explicit AST(ASTNode* root);
-        bool walkTree() const;
+        //bool walkTree() const;
         void printTree();
         void printTreeHelper(ASTNode* nodePtr, ofstream& treeOutFile);
+        void walk() const;
 
 
     private:
