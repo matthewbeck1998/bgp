@@ -762,36 +762,47 @@ selection_statement
 iteration_statement
 	: WHILE OPAREN expression CPAREN statement {ASTIterationNode* temp = new ASTIterationNode("iteration_statement");
                                                     temp -> addChild(new ASTNode("WHILE"));
+                                                    temp -> addChild(new ASTNode("NAN"));
                                                     temp -> addChild($3);
+                                                    temp -> addChild(new ASTNode("NAN"));
                                                     temp -> addChild($5);
                                                     $$ = temp;
                                                     parserOutput("iteration_statement -> WHILE OPAREN expression CPAREN statement"); }
-	| DO statement WHILE OPAREN expression CPAREN SEMICOLON { ASTIterationNode* temp = new ASTIterationNode("iteration_statement"); // TODO: Don't need to do but maybe possible
+	| DO statement WHILE OPAREN expression CPAREN SEMICOLON { ASTIterationNode* temp = new ASTIterationNode("iteration_statement");
                                                               temp -> addChild(new ASTNode("DO"));
+                                                              temp -> addChild(new ASTNode("NAN"));
                                                               temp -> addChild($2);
                                                               temp -> addChild(new ASTNode("WHILE"));
                                                               temp -> addChild($5);
                                                               $$ = temp;
                                                               parserOutput("iteration_statement -> DO statement WHILE OPAREN expression CPAREN SEMICOLON"); }
-	| FOR OPAREN SEMICOLON SEMICOLON CPAREN statement { ASTIterationNode* temp = new ASTIterationNode("iteration_statement"); // TODO: Same as do while
+	| FOR OPAREN SEMICOLON SEMICOLON CPAREN statement { ASTIterationNode* temp = new ASTIterationNode("iteration_statement");
                                                           temp -> addChild(new ASTNode("FOR"));
+                                                          temp -> addChild(new ASTNode("NAN"));
+                                                          temp -> addChild(new ASTNode("NAN"));
+                                                          temp -> addChild(new ASTNode("NAN"));
                                                           temp -> addChild($6);
                                                           $$ = temp;
                                                           parserOutput("iteration_statement -> FOR OPAREN SEMICOLON SEMICOLON CPAREN statement"); }
 	| FOR OPAREN SEMICOLON SEMICOLON expression CPAREN statement { ASTIterationNode* temp = new ASTIterationNode("iteration_statement");
                                                                       temp -> addChild(new ASTNode("FOR"));
+                                                                      temp -> addChild(new ASTNode("NAN"));
+                                                                      temp -> addChild(new ASTNode("NAN"));
                                                                       temp -> addChild($5);
                                                                       temp -> addChild($7);
                                                                       $$ = temp;
                                                                       parserOutput("iteration_statement -> FOR OPAREN SEMICOLON SEMICOLON expression CPAREN statement"); }
 	| FOR OPAREN SEMICOLON expression SEMICOLON CPAREN statement {ASTIterationNode* temp = new ASTIterationNode("iteration_statement");
                                                                       temp -> addChild(new ASTNode("FOR"));
+                                                                      temp -> addChild(new ASTNode("NAN"));
                                                                       temp -> addChild($4);
+                                                                      temp -> addChild(new ASTNode("NAN"));
                                                                       temp -> addChild($7);
                                                                       $$ = temp;
                                                                       parserOutput("iteration_statement -> FOR OPAREN SEMICOLON expression SEMICOLON CPAREN statement"); }
 	| FOR OPAREN SEMICOLON expression SEMICOLON expression CPAREN statement { ASTIterationNode* temp = new ASTIterationNode("iteration_statement");
                                                                                   temp -> addChild(new ASTNode("FOR"));
+                                                                                  temp -> addChild(new ASTNode("NAN"));
                                                                                   temp -> addChild($4);
                                                                                   temp -> addChild($6);
                                                                                   temp -> addChild($8);
@@ -800,12 +811,15 @@ iteration_statement
 	| FOR OPAREN expression SEMICOLON SEMICOLON CPAREN statement { ASTIterationNode* temp = new ASTIterationNode("iteration_statement");
                                                                        temp -> addChild(new ASTNode("FOR"));
                                                                        temp -> addChild($3);
+                                                                       temp -> addChild(new ASTNode("NAN"));
+                                                                       temp -> addChild(new ASTNode("NAN"));
                                                                        temp -> addChild($7);
                                                                        $$ = temp;
                                                                        parserOutput("iteration_statement -> FOR OPAREN expression SEMICOLON SEMICOLON CPAREN statement"); }
 	| FOR OPAREN expression SEMICOLON SEMICOLON expression CPAREN statement {ASTIterationNode* temp = new ASTIterationNode("iteration_statement");
                                                                                  temp -> addChild(new ASTNode("FOR"));
                                                                                  temp -> addChild($3);
+                                                                                 temp -> addChild(new ASTNode("NAN"));
                                                                                  temp -> addChild($6);
                                                                                  temp -> addChild($8);
                                                                                  $$ = temp;
@@ -814,6 +828,7 @@ iteration_statement
                                                                                  temp -> addChild(new ASTNode("FOR"));
                                                                                  temp -> addChild($3);
                                                                                  temp -> addChild($5);
+                                                                                 temp -> addChild(new ASTNode("NAN"));
                                                                                  temp -> addChild($8);
                                                                                  $$ = temp;
                                                                                  parserOutput("iteration_statement -> FOR OPAREN expression SEMICOLON expression SEMICOLON CPAREN statement"); }

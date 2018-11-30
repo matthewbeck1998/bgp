@@ -1324,11 +1324,47 @@ vector<string> ASTConstNode::walk()
 
 vector<string> ASTIterationNode::walk()
 {
-	//cout << "ASTIterationNode " << this->getLabel() << endl;
-	for(auto it : children)
-	{
-		it->walk();
-	}
+    auto name = children.begin();
+    auto expr1 = next(name, 1); // for loop init, while/do-while nothing
+    auto expr2 = next(name, 2); // condition in all three
+    auto expr3 = next(name, 3); // for loop do after iteration, while/do-while nothing
+    auto body = next(name, 4); // body in all three
+
+    string iterLabel = "l_" + to_string(labelCounter++);
+    string condLabel = "l_" + to_string(labelCounter++);
+    string exitLabel = "l_" + to_string(labelCounter++);
+
+    // walk(expr1)
+    (*expr1)->walk();
+
+    // LABEL    L0
+    cout << "LABEL" << "\t" << iterLabel << endl;
+
+    // walk(expr2)
+    auto condVec = (*expr2)->walk();
+    string condReg = condVec[0];
+
+    // BEQ      R2
+    cout << "BEQ" << "\t" << condReg << "\t" << "1" << "\t" << condLabel << endl;
+
+    // B        L2
+    cout << "B" << "\t" << exitLabel << endl;
+
+    // LABEL    L1
+    cout << "LABEL" << "\t" << condLabel << endl;
+
+    // walk(body)
+    (*body)->walk();
+    
+    // walk(expr3)
+    (*expr3)->walk();
+
+    // B        L0
+    cout << "B" << "\t" << iterLabel << endl;
+
+    // LABEL    L2
+    cout << "LABEL" << "\t" << exitLabel << endl;
+
 	return {};
 }
 
@@ -1354,7 +1390,6 @@ vector<string> ASTSelectionNode::walk()
     auto trueNodeVec = (*trueNode)->walk();
 
     cout << "LABEL" << "\t" << endLabel << endl;
-
 
 	return {};
 }
