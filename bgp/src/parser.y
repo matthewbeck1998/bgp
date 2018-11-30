@@ -771,9 +771,9 @@ iteration_statement
 	| DO statement WHILE OPAREN expression CPAREN SEMICOLON { ASTIterationNode* temp = new ASTIterationNode("iteration_statement");
                                                               temp -> addChild(new ASTNode("DO"));
                                                               temp -> addChild(new ASTNode("NAN"));
-                                                              temp -> addChild($2);
-                                                              temp -> addChild(new ASTNode("WHILE"));
                                                               temp -> addChild($5);
+                                                              temp -> addChild(new ASTNode("WHILE"));
+                                                              temp -> addChild($2);
                                                               $$ = temp;
                                                               parserOutput("iteration_statement -> DO statement WHILE OPAREN expression CPAREN SEMICOLON"); }
 	| FOR OPAREN SEMICOLON SEMICOLON CPAREN statement { ASTIterationNode* temp = new ASTIterationNode("iteration_statement");

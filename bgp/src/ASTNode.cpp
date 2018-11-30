@@ -1334,8 +1334,15 @@ vector<string> ASTIterationNode::walk()
     string condLabel = "l_" + to_string(labelCounter++);
     string exitLabel = "l_" + to_string(labelCounter++);
 
+
     // walk(expr1)
     (*expr1)->walk();
+
+    // do-while requires body to walk at least once
+    if ((*name)->getLabel() == "DO")
+    {
+        (*body)->walk();
+    }
 
     // LABEL    L0
     cout << "LABEL" << "\t" << iterLabel << endl;
@@ -1358,7 +1365,6 @@ vector<string> ASTIterationNode::walk()
     
     // walk(expr3)
     (*expr3)->walk();
-
     // B        L0
     cout << "B" << "\t" << iterLabel << endl;
 
@@ -1371,7 +1377,7 @@ vector<string> ASTIterationNode::walk()
 vector<string> ASTSelectionNode::walk()
 {
     // TODO: Edge case, if (1)
-    auto relExprNode = ++(children.begin());
+    auto relExprNode = next(children.begin(), 1);
     auto relExprVec = (*relExprNode)->walk();
 
     string returnedTicket = relExprVec[0];
@@ -1380,13 +1386,13 @@ vector<string> ASTSelectionNode::walk()
 
     cout << "BEQ" << "\t" << returnedTicket << "\t" << "1" << "\t" << trueLabel << endl;
 
-    auto falseNode = --(children.end());
+    auto falseNode = prev(children.end(), 1);
     auto falseNodeVec = (*falseNode)->walk();
 
     cout << "B" << "\t" << endLabel << endl;
     cout << "LABEL" << "\t" << trueLabel << endl;
 
-    auto trueNode = ++relExprNode;
+    auto trueNode = next(relExprNode, 1);
     auto trueNodeVec = (*trueNode)->walk();
 
     cout << "LABEL" << "\t" << endLabel << endl;
@@ -1630,13 +1636,36 @@ vector<string> ASTRelExprNode::walk()
     string op = label.substr(0, 2);
     string command = "B" + op;
     cout << command << "\t" << branchFirstArg << "\t" << branchSecondArg << "\t" << trueLabel << endl;
-    cout << "ASSIGN" << "\t" << ticket << "\t" << "0" << endl;
+    cout << "LOAD" << "\t" << ticket << "\t" << "0" << endl;
     cout << "B" << "\t" << endLabel << endl;
     cout << "LABEL" << "\t" << trueLabel << endl;
-    cout << "ASSIGN" << "\t" << ticket << "\t" << "1" << endl;
+    cout << "LOAD" << "\t" << ticket << "\t" << "1" << endl;
     cout << "LABEL" << "\t" << endLabel << endl;
 
     return {ticket};
+}
+
+ASTUnaryNode::ASTUnaryNode(string node_label) : ASTNode(move(node_label))
+{
+
+}
+
+void ASTUnaryNode::printNode(ostream& treeOutFile)
+{
+    treeOutFile << this->getNodeNum() 
+                << "[label = \"" << this->getLabel() << endl
+	            << "Line: " << lineNum << endl
+	            << "RELATIONAL EXPRESSION NODE" << "\"];" << endl;
+	for (auto &it : children)
+	{
+		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+		it->printNode(treeOutFile);
+	}
+}
+
+vector<string> ASTUnaryNode::walk()
+{
+    return {};
 }
 
 

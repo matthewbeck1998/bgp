@@ -1002,6 +1002,14 @@ class ASTRelExprNode : public ASTNode
         vector<string> walk() override;
 };
 
+class ASTUnaryNode : public ASTNode
+{
+    public:
+        ASTUnaryNode(string node_label);
+        void printNode(ostream& treeOutFile = cout) override;
+        vector<string> walk() override;       
+};
+
 int typeToByteSize( int type );
 
 string getLine( int lineNum );
