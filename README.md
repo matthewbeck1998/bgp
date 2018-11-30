@@ -3,7 +3,7 @@
 ## Quick Start
 Here are the quick and dirty instructions for getting some 3AC output to examine.\
 If your name is **Chris Koh** or **Derek Stratton**, you are required to read these instructions twice.\
-This is due to the fact that both of you are blind.
+This is due to the fact that neither of you can follow instructions.
 
 **Linux**
 1. Make sure you are in the bgp directory.
