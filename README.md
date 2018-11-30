@@ -19,7 +19,8 @@ This is due to the fact that both of you are blind.
 4. Run ```bin\bgp.exe input/whileLoop.c``` to see 3AC for a while loop.
 5. Run ```bin\bgp.exe input/doWhileLoop.c``` to see 3AC for a do while loop.
 
-Please note that the 3AC for all three of these inputs are exactly the same. This is due to the fact that all three of the inputs should indeed be the same program written in three different ways.\
+Please note that the 3AC for all three of the inputs are exactly the same.\
+This is due to the fact that all three of the inputs should indeed be the same program written in three different ways.\
 Other test cases can be found in the input directory within the bgp directory (that you should currently be in).
 
 ## Running PA9
