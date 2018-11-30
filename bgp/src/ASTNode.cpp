@@ -1583,16 +1583,34 @@ vector<string> ASTRelExprNode::walk()
     string firstLabel = {"l_" + to_string(labelCounter++)};
     string secondLabel = {"l_" + to_string(labelCounter++)};
     string thirdLabel = {"l_" + to_string(labelCounter++)};
+    string branchFirstArg = "";
+    string branchSecondArg = "";
 
-    string leftCommand = returnValues[0][1];
-    string leftTemp = returnValues[0][2];
-    string leftName = returnValues[0][3];
-    cout << leftCommand << "\t" << leftTemp << "\t" << leftName << endl;
+    if (children.front()->getLabel() == "INT_CONSTANT")
+    {
+        branchFirstArg = returnValues[0][0];
+    }
+    else if (children.front()->getLabel() == "IDENTIFIER")
+    {
+        string leftCommand = returnValues[0][1];
+        string leftTemp = returnValues[0][2];
+        string leftName = returnValues[0][3];
+        branchFirstArg = "0(" + leftTemp + ")";
+        cout << leftCommand << "\t" << leftTemp << "\t" << leftName << endl;
+    }
 
-    string rightCommand = returnValues[2][1];
-    string rightTemp = returnValues[2][2];
-    string rightName = returnValues[2][3];
-    cout << rightCommand << "\t" << rightTemp << "\t" << rightName << endl;
+    if (children.back()->getLabel() == "INT_CONSTANT") // TODO: can only support int constant comparisons right now
+    {
+        branchSecondArg = returnValues[2][0];
+    }
+    else if (children.back()->getLabel() == "IDENTIFIER")
+    {
+        string rightCommand = returnValues[2][1];
+        string rightTemp = returnValues[2][2];
+        string rightName = returnValues[2][3];
+        branchSecondArg = "0(" + rightTemp + ")";
+        cout << rightCommand << "\t" << rightTemp << "\t" << rightName << endl;
+    }
 
     cout << "LABEL" << "\t" << firstLabel << endl;
     
@@ -1600,10 +1618,7 @@ vector<string> ASTRelExprNode::walk()
     string label = (*it)->getLabel();
     string op = label.substr(0, 2);
     string command = "B" + op;
-    string leftDeref = "0(" + leftTemp + ")";
-    string rightDeref = "0(" + rightTemp + ")";
-    cout << command << "\t" << leftDeref << "\t" << rightDeref << "\t" << secondLabel << endl;
-
+    cout << command << "\t" << branchFirstArg << "\t" << branchSecondArg << "\t" << secondLabel << endl;
     cout << "ASSIGN" << "\t" << ticket << "\t" << "0" << endl;
     cout << "B" << "\t" << thirdLabel << endl;
     cout << "LABEL" << "\t" << secondLabel << endl;
