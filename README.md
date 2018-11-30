@@ -1,8 +1,9 @@
 # BGP Compiler
 
 ## Running PA9
-**If your name is Chris Koh or Derek Stratton, you are required to read these instructions twice.**\
-**This is due to the fact that both of you are blind.**\
+If your name is Chris Koh or Derek Stratton, you are required to read these instructions twice.\
+This is due to the fact that both of you are blind.
+
 **Linux**
 1. Make sure you are in the bgp directory.
 2. Compile the code with ```make -C src```.
