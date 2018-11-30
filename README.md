@@ -1,7 +1,7 @@
 # BGP Compiler
 
 ## Running PA9
-**If your name is Chris Koh or Derek Stratton, you are required to read these instructions twice, because you are both blind.**
+**If your name is Chris Koh or Derek Stratton, you are required to read these instructions twice, because you are both blind.**\
 **Linux**
 1. Make sure you are in the bgp directory.
 2. Compile the code with ```make -C src```.
@@ -26,7 +26,7 @@ Example:\
 Your desired input file: ```input/forLoop.c```\
 Your desired output file: ```output/forLoop.dat```\
 Your desired flags: ```-d -p -o```\
-Command: ```bin\bgp.exe input/ASTArray1d.c -d -p -o output/forLoop.dat```\
+Command: ```bin\bgp.exe input/forLoop.c -d -p -o output/forLoop.dat```\
 Graph: ```make graph -C src```\
 You can find the AST visualization in ```output/ASTree.png```.
 
