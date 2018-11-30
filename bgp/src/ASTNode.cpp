@@ -1334,15 +1334,28 @@ vector<string> ASTIterationNode::walk()
 
 vector<string> ASTSelectionNode::walk()
 {
-    vector<vector<string>> returnValues;
-	for (auto it : children)
-	{
-		returnValues.push_back(it->walk());
-	}
+    // TODO: Edge case, if (1)
+    auto relExprNode = ++(children.begin());
+    auto relExprVec = (*relExprNode)->walk();
 
-    string trueLabel = to_string(labelCounter++);
-    string endLabel = to_string(labelCounter++);
-    cout << "BEQ" << "\t" << returnValues[1][0] << "\t" << "1" << trueLabel << endl;
+    string returnedTicket = relExprVec[0];
+    string trueLabel = "l_" + to_string(labelCounter++);
+    string endLabel = "l_" + to_string(labelCounter++);
+
+    cout << "BEQ" << "\t" << returnedTicket << "\t" << "1" << "\t" << trueLabel << endl;
+
+    auto falseNode = --(children.end());
+    auto falseNodeVec = (*falseNode)->walk();
+
+    cout << "B" << "\t" << endLabel << endl;
+    cout << "LABEL" << "\t" << trueLabel << endl;
+
+    auto trueNode = ++relExprNode;
+    auto trueNodeVec = (*trueNode)->walk();
+
+    cout << "LABEL" << "\t" << endLabel << endl;
+
+
 	return {};
 }
 

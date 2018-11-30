@@ -739,6 +739,8 @@ selection_statement
 	                                            temp -> addChild(new ASTNode("IF"));
                                                 temp -> addChild($3);
                                                 temp -> addChild($5);
+                                                temp -> addChild(new ASTNode("ELSE"));
+                                                temp -> addChild(new ASTNode("NAN"));
                                                 $$ = temp;
                                                 parserOutput("selection_statement -> IF OPAREN expression CPAREN statement"); }
 	| IF OPAREN expression CPAREN statement ELSE statement {ASTNode* temp = new ASTSelectionNode("selection_statement");
