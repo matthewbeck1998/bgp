@@ -5,13 +5,22 @@ Here are the quick and dirty instructions for getting some 3AC output to examine
 If your name is **Chris Koh** or **Derek Stratton**, you are required to read these instructions twice.\
 This is due to the fact that both of you are blind.
 
+**Linux**
 1. Make sure you are in the bgp directory.
 2. Compile the code with ```make -C src```.
 3. Run ```./bin/bgp input/forLoop.c``` to see 3AC for a for loop.
 4. Run ```./bin/bgp input/whileLoop.c``` to see 3AC for a while loop.
 5. Run ```./bin/bgp input/doWhileLoop.c``` to see 3AC for a do while loop.
-6. Now note that the 3AC for all three of these inputs are exactly the same.
-7. Other test cases can be found in the input directory within the bgp directory (that you should currently be in).
+
+**Windows**
+1. Make sure you are in the bgp directory.
+2. Compile the code with ```make -C src```.
+3. Run ```bin\bgp.exe input/forLoop.c``` to see 3AC for a for loop.
+4. Run ```bin\bgp.exe input/whileLoop.c``` to see 3AC for a while loop.
+5. Run ```bin\bgp.exe input/doWhileLoop.c``` to see 3AC for a do while loop.
+
+Please note that the 3AC for all three of these inputs are exactly the same. This is due to the fact that all three of the inputs should indeed be the same program written in three different ways.\
+Other test cases can be found in the input directory within the bgp directory (that you should currently be in).
 
 ## Running PA9
 
