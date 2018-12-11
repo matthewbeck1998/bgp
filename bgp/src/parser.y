@@ -483,7 +483,6 @@ direct_declarator
                                                                 }
                                                                 arrayPair.second->second.setIsArray(true);
                                                                 int dimension = ((ASTConstNode*)$3)->getValue().intVal;
-                                                                //cout << dimension << ", " << sameArray << endl;
                                                                 arrayPair.second->second.addArrayDimension(dimension);
 
                                                                 ASTArrayNode* temp = new ASTArrayNode("array_node", arrayPair.second->second.getIdentifier(), $1 -> getType());
@@ -1105,6 +1104,12 @@ postfix_expression
                                                             cerr << "Too many indexes on array " << tempId << endl;
                                                             exit(-1);
                                                         }
+                                                        list<int> tempDimensions;
+                                                        for(int i = 0 ; i < arrayNode.getDimensions().size() ; ++i)
+                                                        {
+                                                            tempDimensions.push_front( arrayNode.getDimensions()[i] );
+                                                        }
+                                                        temp->setDimensions( tempDimensions );
                                                         //cout << $1->getLabel() <<", " << ((ASTIdNode*)$1)->getId() << endl;
     												 	 temp->addChild( $3 );
                                                         $$ = temp;
@@ -1293,7 +1298,6 @@ void yyerror(const char* s)
 
 void parserOutput(string s)
 {
-    //cout << s << endl;
     if (outputProductions)
     {
         outputStream << "Rule: " << s << endl;
