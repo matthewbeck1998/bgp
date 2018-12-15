@@ -49,7 +49,6 @@ string currentFunctionNode = "";
 bool inFunctionPrototype = false;
 bool sameArray = false;
 list<array<int, 3>> matchedParameters;
-bool firstArrayIndex = true;
 int currentOffset = 0;
 
 ASTNode* root;
@@ -1086,16 +1085,17 @@ postfix_expression
     | postfix_expression OBRACKET expression CBRACKET { ASTArrayNode* temp = new ASTArrayNode("array_node", $1);
                                                         string tempId;
                                                         int tempType;
-                                                        if(firstArrayIndex)
+                                                        cout << $1->getLabel() << endl;
+                                                        if( $1->getLabel() == "IDENTIFIER")
                                                         {
                                                             tempId = ( (ASTIdNode*) $1)->getId();
                                                             tempType = ( (ASTIdNode*) $1)->getType();
-                                                            firstArrayIndex = false;
                                                         } else
                                                         {
                                                             tempId = ( (ASTArrayNode*) $1)->getId();
                                                             tempType = ( (ASTArrayNode*) $1)->getType();
                                                         }
+                                                        cout << "$1 stuff works" << tempId << endl;
                                                         temp->setId( tempId );
                                                         temp->setType( tempType );
                                                         SymbolNode arrayNode = st.searchAll( tempId ).second->second;
@@ -1111,7 +1111,9 @@ postfix_expression
                                                         }
                                                         temp->setDimensions( tempDimensions );
                                                         //cout << $1->getLabel() <<", " << ((ASTIdNode*)$1)->getId() << endl;
+                                                        cout << "add the child please" << endl;
     												 	 temp->addChild( $3 );
+    												 	 cout << "child not added" << endl;
                                                         $$ = temp;
                                                         parserOutput("postfix_expression -> postfix_expression OBRACKET expression CBRACKET"); }
 	| postfix_expression OPAREN CPAREN { $$ = new ASTFunctionCallNode("function_call", $1); parserOutput("postfix_expression -> postfix_expression OPAREN CPAREN"); }
@@ -1228,7 +1230,6 @@ identifier
 						temp->setType( idNode.getTypeSpecifierIndex() );
 						temp->setOffset( idNode.offset );
                     }
-                    firstArrayIndex = true;//For array indexing
 					$$ = temp;
                  }
 	;
@@ -1298,6 +1299,7 @@ void yyerror(const char* s)
 
 void parserOutput(string s)
 {
+    cout << s << endl;
     if (outputProductions)
     {
         outputStream << "Rule: " << s << endl;
