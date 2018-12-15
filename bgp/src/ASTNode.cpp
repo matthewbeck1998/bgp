@@ -1030,7 +1030,10 @@ int ASTDeclarationNode::getType() const
 
 void ASTDeclarationNode::constructorTypeSet( ASTNode* node, int inputType )
 {
-    node->setType( inputType );
+    if( node->getLabel() != "ASSIGN" )
+    {
+        node->setType( inputType );
+    }
     for(auto it = node->getChildren().begin() ; it != node->getChildren().end() ; ++it)
     {
         constructorTypeSet(*it, inputType);

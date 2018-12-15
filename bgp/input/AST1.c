@@ -1,6 +1,7 @@
 int main()
 {
-    int help[2][3][4];
-    int x;
-    help[x][2][x + 3] = help[x][4][x+7];
+    int help = 12;
+    char nope = 97;
+    char testoffset = 101;
+    int whatchumean;
 }
