@@ -1234,9 +1234,7 @@ identifier
 						}
 						SymbolNode idNode = st.searchAll(yylval.sval).second->second;
 						temp->setType( idNode.getTypeSpecifierIndex() );
-						cout << idNode.offset << ", " << yylval.sval << endl;
 						temp->setOffset( idNode.offset );
-						cout << temp->getOffset() << endl;
                     }
 					$$ = temp;
                  }
