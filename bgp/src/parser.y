@@ -589,13 +589,12 @@ parameter_list
                                                             auto symbolPair = st.searchAll( ( (ASTIdNode*) $3 )->getId()  ).second;
                                                             symbolPair->second.offset = currentOffset;//( (ASTIdNode*) $3 )->getActivationFrameSize();// - typeToByteSize( ( (ASTIdNode*) $3 ) -> getType() );
                                                             currentOffset += ( (ASTIdNode*) $3 )->getActivationFrameSize();// - typeToByteSize( ( (ASTIdNode*) $3 ) -> getType() );
-                                                            //cout << ( (ASTIdNode*) $3 )->getId() << endl;
+
                                                         } else //if it is an array node;
                                                         {
                                                             auto symbolPair = st.searchAll( ( (ASTArrayNode*) $3 )->getId()  ).second;
                                                             symbolPair->second.offset = currentOffset;//( (ASTArrayNode*) $3 )->getActivationFrameSize();// - typeToByteSize( ( (ASTArrayNode*) $3 ) -> getType() );
                                                             currentOffset += ( (ASTArrayNode*) $3 )->getActivationFrameSize();// - typeToByteSize( ( (ASTArrayNode*) $3 ) -> getType() );
-                                                            //cout << ( (ASTArrayNode*) $3 ) -> getActivationFrameSize() << "|" <<  ( (ASTArrayNode*) $3 )->getId() << endl;
                                                         }
                                                         // no more symbol table adding, thank god.
                                                     }
@@ -1096,7 +1095,6 @@ postfix_expression
     | postfix_expression OBRACKET expression CBRACKET { ASTArrayNode* temp = new ASTArrayNode("array_node", $1);
                                                         string tempId;
                                                         int tempType;
-                                                        cout << $1->getLabel() << endl;
                                                         if( $1->getLabel() == "IDENTIFIER")
                                                         {
                                                             tempId = ( (ASTIdNode*) $1)->getId();
@@ -1106,7 +1104,6 @@ postfix_expression
                                                             tempId = ( (ASTArrayNode*) $1)->getId();
                                                             tempType = ( (ASTArrayNode*) $1)->getType();
                                                         }
-                                                        cout << "$1 stuff works" << tempId << endl;
                                                         temp->setId( tempId );
                                                         temp->setType( tempType );
                                                         SymbolNode arrayNode = st.searchAll( tempId ).second->second;
@@ -1121,10 +1118,7 @@ postfix_expression
                                                             tempDimensions.push_front( arrayNode.getDimensions()[i] );
                                                         }
                                                         temp->setDimensions( tempDimensions );
-                                                        //cout << $1->getLabel() <<", " << ((ASTIdNode*)$1)->getId() << endl;
-                                                        cout << "add the child please" << endl;
     												 	 temp->addChild( $3 );
-    												 	 cout << "child not added" << endl;
                                                         $$ = temp;
                                                         parserOutput("postfix_expression -> postfix_expression OBRACKET expression CBRACKET"); }
 	| postfix_expression OPAREN CPAREN { $$ = new ASTFunctionCallNode("function_call", $1); parserOutput("postfix_expression -> postfix_expression OPAREN CPAREN"); }
@@ -1224,12 +1218,10 @@ string
 
 identifier
 	: IDENTIFIER {
-	                //cout << "Identifier: " << yylval.sval << endl;
 					ASTIdNode* temp = new ASTIdNode("IDENTIFIER", yylval.sval);
                     parserOutput("identifier -> IDENTIFIER"); 
                     nodeIdentifier = yylval.sval; 
                     nodeLineNumber = line;
-                    //cout << "\tInsert mode: " << (st.getInsertMode() == 1 ? "True" : "False") << endl;
                     if (!st.getInsertMode())
                     {
                     	if(st.searchAll(nodeIdentifier).first == -1)
