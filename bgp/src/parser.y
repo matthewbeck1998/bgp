@@ -593,8 +593,8 @@ parameter_list
                                                         } else //if it is an array node;
                                                         {
                                                             auto symbolPair = st.searchAll( ( (ASTArrayNode*) $3 )->getId()  ).second;
-                                                            symbolPair->second.offset = currentOffset;//( (ASTArrayNode*) $3 )->getActivationFrameSize();// - typeToByteSize( ( (ASTArrayNode*) $3 ) -> getType() );
-                                                            currentOffset += ( (ASTArrayNode*) $3 )->getActivationFrameSize();// - typeToByteSize( ( (ASTArrayNode*) $3 ) -> getType() );
+                                                            symbolPair->second.offset = currentOffset; //( (ASTArrayNode*) $3 )->getActivationFrameSize();// - typeToByteSize( ( (ASTArrayNode*) $3 ) -> getType() );
+                                                            currentOffset += ( (ASTArrayNode*) $3 )->getActivationFrameSize(); // - typeToByteSize( ( (ASTArrayNode*) $3 ) -> getType() );
                                                         }
                                                         // no more symbol table adding, thank god.
                                                     }
@@ -1219,7 +1219,10 @@ string
 identifier
 	: IDENTIFIER {
 					ASTIdNode* temp = new ASTIdNode("IDENTIFIER", yylval.sval);
-                    parserOutput("identifier -> IDENTIFIER"); 
+					string outputString = "identifier -> IDENTIFIER (";
+					outputString += yylval.sval;
+					outputString += ")";
+                    parserOutput(outputString);
                     nodeIdentifier = yylval.sval; 
                     nodeLineNumber = line;
                     if (!st.getInsertMode())
@@ -1231,7 +1234,9 @@ identifier
 						}
 						SymbolNode idNode = st.searchAll(yylval.sval).second->second;
 						temp->setType( idNode.getTypeSpecifierIndex() );
+						cout << idNode.offset << ", " << yylval.sval << endl;
 						temp->setOffset( idNode.offset );
+						cout << temp->getOffset() << endl;
                     }
 					$$ = temp;
                  }

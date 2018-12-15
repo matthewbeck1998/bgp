@@ -884,16 +884,12 @@ ASTArrayNode::ASTArrayNode(string node_label, string id, int typeSet): ASTNode::
 
 void ASTArrayNode::setOffset( int inputOffset)
 {
-    int bytesRequired = typeToByteSize( type );
-    for(auto it = dimensions.begin() ; it != dimensions.end() ; ++it )
-    {
-        bytesRequired *= *it;
-    }
     offset = inputOffset;
 }
 
 ASTArrayNode::ASTArrayNode(string node_label, ASTNode* inputNode): ASTNode::ASTNode(move(node_label)), type(Int)
 {
+    offset = inputNode->getOffset();
     for( auto it = inputNode->getChildren().begin() ; it != inputNode->getChildren().end() ; ++it )
     {
         addChild( *it );

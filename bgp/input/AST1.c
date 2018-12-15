@@ -1,7 +1,9 @@
+int w;
 int main()
 {
     int help = 12;
-    char nope = 97;
-    char testoffset = 101;
-    int whatchumean;
+    int boi[2][3][4];
+    int what;
+    boi[help][help +2][help] = boi [help][help][help + 15];
+    what;
 }
