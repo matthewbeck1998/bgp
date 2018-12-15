@@ -1401,33 +1401,34 @@ vector<string> ASTArrayNode::walk()
 		returnValues.push_back(it->walk());
 	}
 
-	cout << "ARRAY NODE STUFF Line: " << lineNum << endl;
-	int i = 0;
-	for(const auto& it: returnValues)
-	{
-		int j = 0;
-		for(const auto& rt: it)
-		{
-			cout << "i " << i << " " << "j " << j++ << " " << rt << endl;
-		}
-		i++;
-	}
 
 
-	for(auto dim = dimensions.rbegin() ; dim != dimensions.rend() ; dim++ )
-	{
-		cout << "[" <<  (*dim) << "]";
-	}
-
-	cout << endl;
+//	cout << "ARRAY NODE STUFF Line: " << lineNum << endl;
+//	int i = 0;
+//	for(const auto& it: returnValues)
+//	{
+//		int j = 0;
+//		for(const auto& rt: it)
+//		{
+//			cout << "i " << i << " " << "j " << j++ << " " << rt << endl;
+//		}
+//		i++;
+//	}
+//
+//
+//	for(auto dim = dimensions.rbegin() ; dim != dimensions.rend() ; dim++ )
+//	{
+//		cout << "[" <<  (*dim) << "]";
+//	}
+//
+//	cout << endl;
 
 	if(!children.empty())
 	{
 		if(children.size() == 1)
 		{
 			if(children.front()->getLabel() == "INT_CONSTANT" or
-			   children.front()->getLabel() == "additive_expression" or
-			   children.front()->getLabel() == "array_node")
+			   children.front()->getLabel() == "additive_expression" )
 			{
 				string ticket1 = {"t_" + to_string(ticketCounter++)};
 				string ticket2 = {"t_" + to_string(ticketCounter++)};
@@ -1438,14 +1439,16 @@ vector<string> ASTArrayNode::walk()
 				cout << "ADD\t" << ticket3 << '\t' << ticket1 << '\t' << ticket2 << endl;
 				return {ticket3};
 			}
-			else if(children.front()->getLabel() == "IDENTIFIER")
+			else if(children.front()->getLabel() == "IDENTIFIER" or
+				children.front()->getLabel() == "array_node")
 			{
-				cout << returnValues[0][1] << "\t" << returnValues[0][2] << "\t" << returnValues[0][3] << endl;
+				if(children.front()->getLabel() == "IDENTIFIER")
+					cout << returnValues[0][1] << "\t" << returnValues[0][2] << "\t" << returnValues[0][3] << endl;
 				string ticket1 = {"t_" + to_string(ticketCounter++)};
 				string ticket2 = {"t_" + to_string(ticketCounter++)};
 				string ticket3 = {"t_" + to_string(ticketCounter++)};
-				cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t0(" << returnValues[0][0]
-					 << ")" << endl;
+				cout << "MULT\t" << ticket1 << "\t0(" << returnValues[0][0] << ")\tsizeof(" << printType(type)
+						<< ")" << endl;
 				cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
 				cout << "ADD\t" << ticket3 << '\t' << ticket1 << "\t" << ticket2 << endl;
 				return {ticket3};
@@ -1453,18 +1456,28 @@ vector<string> ASTArrayNode::walk()
 		}
 		else
 		{
+			int num = 0;
+			for(auto child: children)
+			{
+				if(child->getLabel() == "IDENTIFIER")
+				{
+					cout << returnValues[num][1] << "\t" << returnValues[num][2] << "\t" << returnValues[num][3]
+						 << endl;
+				}
+				num++;
+			}
 			int startingDim = 1;
 			int rVal = 0;
 			for(auto child: children)
 			{
+
 				int ticketReturnNumber = 2;
 				for(auto dim = next(dimensions.rbegin(), startingDim); dim != dimensions.rend(); dim++)
 				{
 					ticketReturnNumber++;
 					string previousTicket = {"t_" + to_string(ticketCounter - 1)};
 					if(child->getLabel() == "INT_CONSTANT" or
-					   child->getLabel() == "additive_expression" or
-					   child->getLabel() == "array_node")
+					   child->getLabel() == "additive_expression")
 					{
 						string currentTicket = {"t_" + to_string(ticketCounter++)};
 						if(dim == next(dimensions.rbegin(), startingDim))
@@ -1476,10 +1489,10 @@ vector<string> ASTArrayNode::walk()
 							cout << "MULT\t" << currentTicket << "\t" << previousTicket << "\t" << *dim << endl;
 						}
 					}
-					else if(child->getLabel() == "IDENTIFIER")
+					else if(child->getLabel() == "IDENTIFIER" or child->getLabel() == "array_node")
 					{
-						cout << returnValues[rVal][1] << "\t" << returnValues[rVal][2] << "\t" << returnValues[rVal][3]
-							 << endl;
+//						cout << returnValues[rVal][1] << "\t" << returnValues[rVal][2] << "\t" << returnValues[rVal][3]
+//							 << endl;
 						string currentTicket = {"t_" + to_string(ticketCounter++)};
 						if(dim == next(dimensions.rbegin(), startingDim))
 						{
@@ -1499,19 +1512,19 @@ vector<string> ASTArrayNode::walk()
 				if(child == children.back())
 				{
 					if(child->getLabel() == "INT_CONSTANT" or
-					   child->getLabel() == "additive_expression" or
-					   child->getLabel() == "array_node")
+					   child->getLabel() == "additive_expression")
 					{
-						cout << "LAAAAA" << endl;
 						cout << "ADD\t" << "t_" + to_string(ticketCounter++) + '\t'
 							 << "t_" + to_string(ticketCounter - 2) + '\t'
-							 << returnValues[rVal][0] + '\t' << endl;
+							 << returnValues[rVal][0] << endl;
 					}
-					else if(child->getLabel() == "IDENTIFIER")
+					else if(child->getLabel() == "IDENTIFIER" or child->getLabel() == "array_node")
 					{
-						//cout << returnValues[rVal][1] << "\t" << returnValues[rVal][2] << "\t" << returnValues[rVal][3]
-							 //<< endl;
-						 cout << "Back" << endl;
+						string ticket = {"t_" + to_string(ticketCounter++)};
+						//cout << "ADDR\t" << ticket + '\t' << returnValues[rVal][3] << endl;
+						cout << "ADD\t" << ticket + '\t' << "t_" + to_string(ticketCounter - 2) + '\t'
+										<< "0("	<< returnValues[rVal][0] << ")" << endl;
+
 
 					}
 				}
