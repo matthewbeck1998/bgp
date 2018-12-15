@@ -1402,50 +1402,182 @@ vector<string> ASTArrayNode::walk()
 		returnValues.push_back(it->walk());
 	}
 
-	/*cout << "ARRAY NODE STUFF" << endl;
+	cout << "ARRAY NODE STUFF Line: " << lineNum << endl;
 	int i = 0;
-	for(auto it: returnValues)
+	for(const auto& it: returnValues)
 	{
 		int j = 0;
-		for(auto rt: it)
+		for(const auto& rt: it)
 		{
 			cout << "i " << i << " " << "j " << j++ << " " << rt << endl;
 		}
 		i++;
-	}*/
+	}
+
+
+	for(auto dim = dimensions.rbegin() ; dim != dimensions.rend() ; dim++ )
+	{
+		cout << "[" <<  (*dim) << "]";
+	}
+
+	cout << endl;
 
 	if(!children.empty())
 	{
-		/*for(auto it: children)
+		if(children.size() == 1)
 		{
-			if(it->getLabel() == "INT_CONSTANT")
+			if(children.front()->getLabel() == "INT_CONSTANT" or
+			   children.front()->getLabel() == "additive_expression" or
+			   children.front()->getLabel() == "array_node")
 			{
+				string ticket1 = {"t_" + to_string(ticketCounter++)};
+				string ticket2 = {"t_" + to_string(ticketCounter++)};
+				string ticket3 = {"t_" + to_string(ticketCounter++)};
 
+				cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t" << returnValues[0][0] << endl;
+				cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
+				cout << "ADD\t" << ticket3 << '\t' << ticket1 << '\t' << ticket2 << endl;
+				return {ticket3};
 			}
-		}*/
-
-
-		if(children.front()->getLabel() == "INT_CONSTANT" or children.front()->getLabel() == "additive_expression")
+			else if(children.front()->getLabel() == "IDENTIFIER")
+			{
+				cout << returnValues[0][1] << "\t" << returnValues[0][2] << "\t" << returnValues[0][3] << endl;
+				string ticket1 = {"t_" + to_string(ticketCounter++)};
+				string ticket2 = {"t_" + to_string(ticketCounter++)};
+				string ticket3 = {"t_" + to_string(ticketCounter++)};
+				cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t0(" << returnValues[0][0]
+					 << ")" << endl;
+				cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
+				cout << "ADD\t" << ticket3 << '\t' << ticket1 << "\t" << ticket2 << endl;
+				return {ticket3};
+			}
+		}
+		else
 		{
+			int startingDim = 1;
+			int rVal = 0;
+			for(auto child: children)
+			{
+				int ticketReturnNumber = 2;
+				for(auto dim = next(dimensions.rbegin(), startingDim); dim != dimensions.rend(); dim++)
+				{
+					ticketReturnNumber++;
+					string previousTicket = {"t_" + to_string(ticketCounter - 1)};
+					if(child->getLabel() == "INT_CONSTANT" or
+					   child->getLabel() == "additive_expression" or
+					   child->getLabel() == "array_node")
+					{
+						string currentTicket = {"t_" + to_string(ticketCounter++)};
+						if(dim == next(dimensions.rbegin(), startingDim))
+						{
+							cout << "MULT\t" << currentTicket << "\t" << returnValues[rVal][0] << "\t" << *dim << endl;
+						}
+						else
+						{
+							cout << "MULT\t" << currentTicket << "\t" << previousTicket << "\t" << *dim << endl;
+						}
+					}
+					else if(child->getLabel() == "IDENTIFIER")
+					{
+						cout << returnValues[rVal][1] << "\t" << returnValues[rVal][2] << "\t" << returnValues[rVal][3]
+							 << endl;
+						string currentTicket = {"t_" + to_string(ticketCounter++)};
+						if(dim == next(dimensions.rbegin(), startingDim))
+						{
+							cout << "MULT\t" << currentTicket << "\t0(" << returnValues[rVal][0] << ")\t" << *dim << endl;
+						}
+						else
+						{
+							cout << "MULT\t" << currentTicket << "\t" << previousTicket << "\t" << *dim << endl;
+						}
+					}
+					else
+					{
+						cout << "AHHHHHHHHH" << endl;
+					}
+
+				}
+				if(child == children.back())
+				{
+					if(child->getLabel() == "INT_CONSTANT" or
+					   child->getLabel() == "additive_expression" or
+					   child->getLabel() == "array_node")
+					{
+						cout << "LAAAAA" << endl;
+						cout << "ADD\t" << "t_" + to_string(ticketCounter++) + '\t'
+							 << "t_" + to_string(ticketCounter - 2) + '\t'
+							 << returnValues[rVal][0] + '\t' << endl;
+					}
+					else if(child->getLabel() == "IDENTIFIER")
+					{
+						//cout << returnValues[rVal][1] << "\t" << returnValues[rVal][2] << "\t" << returnValues[rVal][3]
+							 //<< endl;
+						 cout << "Back" << endl;
+
+					}
+				}
+				else if(child != children.front())
+				{
+					string ticket = {"t_" + to_string(ticketCounter++)};
+					//cout << endl << "Counter: " << ticketCounter << endl;
+					//cout << "Rval: " << rVal << endl;
+					//cout << "Dim size: " << dimensions.size() << endl << endl;
+					cout << "ADD\t" << ticket  + '\t'
+						 << "t_" + to_string(ticketCounter - ticketReturnNumber) + '\t'
+						 << "t_" + to_string(ticketCounter - 2) + '\t' << endl;
+					ticketReturnNumber = 0;
+				}
+				startingDim++;
+				rVal++;
+			}
+
 			string ticket1 = {"t_" + to_string(ticketCounter++)};
 			string ticket2 = {"t_" + to_string(ticketCounter++)};
 			string ticket3 = {"t_" + to_string(ticketCounter++)};
-			cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t" << returnValues[0][0] << endl;
-			cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
-			cout << "ADD\t" << ticket3 << '\t' << ticket1 << '\t' << ticket2 << endl;
+
+			cout << "MULT\t" << ticket1 << "\t" << "t_" + to_string(ticketCounter - 4) + '\t'
+				 << "sizeof(" << printType(type) << ")" << endl;
+			cout << "ADDR\t" << ticket2 << "\t" << identifier << endl;
+			cout << "ADD\t" << ticket3 << "\t" << ticket2 << '\t' << ticket1 << endl;
+
 			return {ticket3};
 		}
-		else if(children.front()->getLabel() == "IDENTIFIER")
-		{
-	 		cout << returnValues[0][1] << "\t" << returnValues[0][2] << "\t" << returnValues[0][3] << endl;
-			string ticket1 = {"t_" + to_string(ticketCounter++)};
-			string ticket2 = {"t_" + to_string(ticketCounter++)};
-			string ticket3 = {"t_" + to_string(ticketCounter++)};
-			cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t0(" << returnValues[0][0] << ")" << endl;
-			cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
-			cout << "ADD\t" << ticket3 << '\t' << ticket1 << "\t" << ticket2 << endl;
-			return {ticket3};
-		}
+
+//		for(const auto &it: returnValues)
+//		{
+//			for(auto dim = dimensions.rbegin() + 1; dim != dimensions.rend() ; dim++ )
+//			{
+//				string previousTicket = {to_string(ticketCounter)};
+//				if(children.front()->getLabel() == "INT_CONSTANT" or
+//				   children.front()->getLabel() == "additive_expression")
+//				{
+//					string ticket1 = {"t_" + to_string(ticketCounter++)};
+//					string ticket2 = {"t_" + to_string(ticketCounter++)};
+//					string ticket3 = {"t_" + to_string(ticketCounter++)};
+//					cout << "MULT\t" << "t_" + to_string(++ticketCounter) + '\t' << *dim  << '\t'
+//						<< returnValues[0][0] << endl;
+//					cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t" << returnValues[0][0] << endl;
+//					cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
+//					cout << "ADD\t" << ticket3 << '\t' << ticket1 << '\t' << ticket2 << endl;
+//					return {ticket3};
+//				}
+//				else if(children.front()->getLabel() == "IDENTIFIER")
+//				{
+//					cout << returnValues[0][1] << "\t" << returnValues[0][2] << "\t" << returnValues[0][3] << endl;
+//					cout << "MULT\t" << "t_" + to_string(ticketCounter++) + '\t' << *dim  << '\t'
+//						<< returnValues[0][0] << endl;
+//					string ticket1 = {"t_" + to_string(ticketCounter++)};
+//					string ticket2 = {"t_" + to_string(ticketCounter++)};
+//					string ticket3 = {"t_" + to_string(ticketCounter++)};
+//					cout << "MULT\t" << ticket1 << "\tsizeof(" << printType(type) << ")\t0(" << returnValues[0][0]
+//						 << ")"
+//						 << endl;
+//					cout << "ADDR\t" << ticket2 << '\t' << identifier << endl;
+//					cout << "ADD\t" << ticket3 << '\t' << ticket1 << "\t" << ticket2 << endl;
+//					return {ticket3};
+//				}
+//			}
+//		}
 	}
 
 
