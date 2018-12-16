@@ -65,6 +65,11 @@ int ASTNode::getActivationFrameSize() const
     return activationFrameSize;
 }
 
+void ASTNode::setActivationFrameSize(int inputActivationFrameSize)
+{
+    activationFrameSize = inputActivationFrameSize;
+}
+
 void ASTNode::addOffset(int inputOffset)
 {
     offset += inputOffset;
@@ -1026,7 +1031,8 @@ int ASTDeclarationNode::getType() const
 
 void ASTDeclarationNode::constructorTypeSet( ASTNode* node, int inputType )
 {
-    if( node->getLabel() != "ASSIGN" )
+    if( node->getLabel() != "ASSIGN" and
+        node->getLabel() != "init_declarator_list")
     {
         node->setType( inputType );
     }
@@ -1393,6 +1399,11 @@ vector<string> ASTCastNode::walk()
 
 vector<string> ASTArrayNode::walk()
 {
+	if(!children.empty() and dimensions.size() != children.size())
+	{
+		cout << "ERROR: wrong dimensional access on line " << lineNum << endl;
+		exit(EXIT_FAILURE);
+	}
 	//cout << "ASTArrayNode " << this->getLabel() << endl;
 	vector<vector<string>> returnValues;
 	for(auto it : children)
@@ -1453,6 +1464,12 @@ vector<string> ASTArrayNode::walk()
 				cout << "ADD\t" << ticket3 << '\t' << ticket1 << "\t" << ticket2 << endl;
 				return {ticket3};
 			}
+			else
+			{
+				cout << "ERROR: " << children.front()->getLabel() << " not supported for array accesss on line " <<
+						lineNum;
+				exit(EXIT_FAILURE);
+			}
 		}
 		else
 		{
@@ -1505,7 +1522,8 @@ vector<string> ASTArrayNode::walk()
 					}
 					else
 					{
-						cout << "AHHHHHHHHH" << endl;
+						cout << "ERROR: " << child->getLabel() << " not supported for array access on line " << lineNum << endl;
+						exit(EXIT_FAILURE);
 					}
 
 				}
@@ -1526,6 +1544,11 @@ vector<string> ASTArrayNode::walk()
 										<< "0("	<< returnValues[rVal][0] << ")" << endl;
 
 
+					}
+					else
+					{
+						cout << "ERROR: " << child->getLabel() << " not supported for array access on line " << lineNum << endl;
+						exit(EXIT_FAILURE);
 					}
 				}
 				else if(child != children.front())
