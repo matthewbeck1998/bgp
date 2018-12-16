@@ -1502,10 +1502,16 @@ void ASTDeclListNode::printNode(ostream &treeOutFile)
 
 vector<string> ASTFunctionCallNode::walk()
 {
-    //cout << "ASTFunctionCallNode " << this->getLabel() << endl;
-    for(auto it : children)
+    ASTIdNode* nameNode = (ASTIdNode*)children.front();
+    string funcName = nameNode->getId();
+    if (funcName == "printInt")
     {
-        it->walk();
+        auto args = children.begin();
+        advance(args, 1);
+        auto argsRet = (*args)->walk();
+        cout << argsRet[1] << "\t" << argsRet[2] << "\t" << argsRet[3] << endl;
+        string ticket = "t_" + to_string(ticketCounter++);
+        cout << "PRINT" << "\t" << argsRet[0] << endl;
     }
     return {};
 }

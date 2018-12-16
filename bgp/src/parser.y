@@ -1115,9 +1115,9 @@ postfix_expression
                                                         $$ = temp;
                                                         parserOutput("postfix_expression -> postfix_expression OBRACKET expression CBRACKET"); }
 	| postfix_expression OPAREN CPAREN { $$ = new ASTFunctionCallNode("function_call", $1); parserOutput("postfix_expression -> postfix_expression OPAREN CPAREN"); }
-	| postfix_expression OPAREN argument_expression_list CPAREN {ASTFunctionCallNode* temp = new ASTFunctionCallNode("function_call", $1, $3);
-                                                                   $$ = temp;
-                                                                   parserOutput("postfix_expression -> postfix_expression OPAREN argument_expression_list CPAREN"); }
+	| postfix_expression OPAREN argument_expression_list CPAREN {   ASTFunctionCallNode* temp = new ASTFunctionCallNode("function_call", $1, $3);
+                                                                    $$ = temp;
+                                                                    parserOutput("postfix_expression -> postfix_expression OPAREN argument_expression_list CPAREN"); }
 	| postfix_expression PERIOD identifier { ASTNode* temp = new ASTNode("postfix_expression");
                                                temp -> addChild($1);
                                                temp -> addChild(new ASTNode("PERIOD"));
