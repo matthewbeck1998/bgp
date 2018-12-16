@@ -49,7 +49,6 @@ string currentFunctionNode = "";
 bool inFunctionPrototype = false;
 bool sameArray = false;
 list<array<int, 3>> matchedParameters;
-bool firstArrayIndex = true;
 int currentOffset = 0;
 
 ASTNode* root;
@@ -168,24 +167,12 @@ declaration
 	: declaration_specifiers SEMICOLON {    $$ = new ASTDeclarationNode( "declaration", $1->getType(), $1);
                                             parserOutput("declaration -> declaration_specifiers SEMICOLON"); }
 	| declaration_specifiers init_declarator_list SEMICOLON {
-                                                                // there is a seg fault in between here and
                                                                 sameArray = false;
 	                                                            ASTDeclarationNode* temp = new ASTDeclarationNode("Declaration", $1->getType(), $2);
-                                                                /*if ($2->getLabel() == "IDENTIFIER")
-                                                                {
-                                                                    auto symbolPair = st.searchAll( ( (ASTIdNode*) $2 )->getId()  ).second;
-                                                                    symbolPair->second.offset = currentOffset += ( (ASTIdNode*) $2 )->getActivationFrameSize();
-                                                                } else //if it is an array node;
-                                                                {
-                                                                    auto symbolPair = st.searchAll( ( (ASTArrayNode*) $2 )->getId()  ).second;
-                                                                    symbolPair->second.offset = currentOffset += ( (ASTArrayNode*) $2 )->getActivationFrameSize();
-                                                                }
-                                                                //cout << currentOffset << endl;
-                                                                }*/
+
                                                                  // damn you Will for ditching this project for a girl
 	                                                            $$ = temp;
 	                                                            parserOutput("declaration -> declaration_specifiers init_declarator_list SEMICOLON");
-                                                                // here
                                                             }
 	;
 
@@ -197,11 +184,20 @@ declaration_list
                         auto symbolPair = st.searchAll( ( (ASTIdNode*) $1->getChildren().front() )->getId()  ).second;
                         $1->setOffset( currentOffset );
                         symbolPair->second.offset = ( (ASTIdNode*) $1->getChildren().front() )->getOffset();
-                    } else //if it is an array node;
+                    } else if($1->getChildren().front()->getLabel() == "init_declarator") //Need nested if to handle array nodes
+                    {
+                        auto symbolPair = st.searchAll( ( (ASTIdNode*) $1->getChildren().front()->getChildren().front() )->getId()  ).second;
+                        $1->setOffset( currentOffset ); // Probably don't need?
+                        $1->getChildren().front()->setOffset( currentOffset );
+                        symbolPair->second.offset = $1->getOffset(); // Need the line two line previous if you do it this way.
+                    } else if($1->getChildren().front()->getLabel() == "array_node")//if it is an array node;
                     {
                         auto symbolPair = st.searchAll( ( (ASTArrayNode*) $1->getChildren().front() )->getId()  ).second;
                         $1->setOffset( currentOffset );
                         symbolPair->second.offset = ( (ASTArrayNode*) $1->getChildren().front() )->getOffset();
+                    } else
+                    {
+                        cerr << "Something wrong in declaration_list -> declaration. " << endl << "Label is: " << $1->getChildren().front()->getLabel() << endl;
                     }
                     currentOffset += $1->getActivationFrameSize();
 	                $$ = temp;
@@ -213,11 +209,20 @@ declaration_list
                                             auto symbolPair = st.searchAll( ( (ASTIdNode*) $2->getChildren().front() )->getId()  ).second;
                                             $2->getChildren().front()->setOffset( currentOffset );
                                             symbolPair->second.offset = ( (ASTIdNode*) $2->getChildren().front() )->getOffset();
-                                        } else //if it is an array node;
+                                        } else if( $2->getChildren().front()->getLabel() == "init_declarator" )
+                                        { // Need a nested if for arrayNode initializer
+                                            auto symbolPair = st.searchAll( ( (ASTIdNode*) $2->getChildren().front()->getChildren().front() )->getId()  ).second;
+                                            $2->getChildren().front()->setOffset( currentOffset );
+                                            $2->getChildren().front()->getChildren().front()->setOffset( currentOffset );
+                                            symbolPair->second.offset = ( (ASTIdNode*) $2->getChildren().front() )->getOffset();
+                                        } else if( $2->getChildren().front()->getLabel() == "array_node" )//if it is an array node;
                                         {
                                             auto symbolPair = st.searchAll( ( (ASTArrayNode*) $2->getChildren().front() )->getId()  ).second;
                                             $2->getChildren().front()->setOffset( currentOffset );
                                             symbolPair->second.offset = ( (ASTArrayNode*) $2->getChildren().front() )->getOffset();
+                                        } else
+                                        {
+                                            cerr << "Something went wrong in declaration_list -> declaration_list declaration" << endl << "Label: " << $2->getChildren().front()->getLabel() << endl;
                                         }
                                         currentOffset += $2->getActivationFrameSize();
                                        	parserOutput("declaration_list -> declaration_list declaration"); st.setInsertMode(false); }
@@ -317,8 +322,13 @@ init_declarator_list
 
 init_declarator
 	: declarator {$$ = $1; parserOutput("init_declarator -> declarator"); }
-	| declarator ASSIGN initializer { $$ = new ASTAssignNode("init_declarator", $1, new ASTNode("ASSIGN"), $3);
-                                      parserOutput("init_declarator -> declarator ASSIGN initializer"); }
+	| declarator ASSIGN initializer {
+                                        if( $1->getLabel() == "IDENTIFIER" )
+                                        {
+                                            ( (ASTIdNode*) $1)->setType( nodeTypeSpecifier ); // Very fragile.. help.
+                                        }
+                                        $$ = new ASTAssignNode("init_declarator", $1, new ASTNode("ASSIGN"), $3);
+                                        parserOutput("init_declarator -> declarator ASSIGN initializer"); }
 	;
 
 struct_declaration
@@ -579,13 +589,12 @@ parameter_list
                                                             auto symbolPair = st.searchAll( ( (ASTIdNode*) $3 )->getId()  ).second;
                                                             symbolPair->second.offset = currentOffset;//( (ASTIdNode*) $3 )->getActivationFrameSize();// - typeToByteSize( ( (ASTIdNode*) $3 ) -> getType() );
                                                             currentOffset += ( (ASTIdNode*) $3 )->getActivationFrameSize();// - typeToByteSize( ( (ASTIdNode*) $3 ) -> getType() );
-                                                            //cout << ( (ASTIdNode*) $3 )->getId() << endl;
+
                                                         } else //if it is an array node;
                                                         {
                                                             auto symbolPair = st.searchAll( ( (ASTArrayNode*) $3 )->getId()  ).second;
-                                                            symbolPair->second.offset = currentOffset;//( (ASTArrayNode*) $3 )->getActivationFrameSize();// - typeToByteSize( ( (ASTArrayNode*) $3 ) -> getType() );
-                                                            currentOffset += ( (ASTArrayNode*) $3 )->getActivationFrameSize();// - typeToByteSize( ( (ASTArrayNode*) $3 ) -> getType() );
-                                                            //cout << ( (ASTArrayNode*) $3 ) -> getActivationFrameSize() << "|" <<  ( (ASTArrayNode*) $3 )->getId() << endl;
+                                                            symbolPair->second.offset = currentOffset; //( (ASTArrayNode*) $3 )->getActivationFrameSize();// - typeToByteSize( ( (ASTArrayNode*) $3 ) -> getType() );
+                                                            currentOffset += ( (ASTArrayNode*) $3 )->getActivationFrameSize(); // - typeToByteSize( ( (ASTArrayNode*) $3 ) -> getType() );
                                                         }
                                                         // no more symbol table adding, thank god.
                                                     }
@@ -1086,11 +1095,10 @@ postfix_expression
     | postfix_expression OBRACKET expression CBRACKET { ASTArrayNode* temp = new ASTArrayNode("array_node", $1);
                                                         string tempId;
                                                         int tempType;
-                                                        if(firstArrayIndex)
+                                                        if( $1->getLabel() == "IDENTIFIER")
                                                         {
                                                             tempId = ( (ASTIdNode*) $1)->getId();
                                                             tempType = ( (ASTIdNode*) $1)->getType();
-                                                            firstArrayIndex = false;
                                                         } else
                                                         {
                                                             tempId = ( (ASTArrayNode*) $1)->getId();
@@ -1110,7 +1118,6 @@ postfix_expression
                                                             tempDimensions.push_front( arrayNode.getDimensions()[i] );
                                                         }
                                                         temp->setDimensions( tempDimensions );
-                                                        //cout << $1->getLabel() <<", " << ((ASTIdNode*)$1)->getId() << endl;
     												 	 temp->addChild( $3 );
                                                         $$ = temp;
                                                         parserOutput("postfix_expression -> postfix_expression OBRACKET expression CBRACKET"); }
@@ -1211,12 +1218,13 @@ string
 
 identifier
 	: IDENTIFIER {
-	                //cout << "Identifier: " << yylval.sval << endl;
 					ASTIdNode* temp = new ASTIdNode("IDENTIFIER", yylval.sval);
-                    parserOutput("identifier -> IDENTIFIER"); 
+					string outputString = "identifier -> IDENTIFIER (";
+					outputString += yylval.sval;
+					outputString += ")";
+                    parserOutput(outputString);
                     nodeIdentifier = yylval.sval; 
                     nodeLineNumber = line;
-                    //cout << "\tInsert mode: " << (st.getInsertMode() == 1 ? "True" : "False") << endl;
                     if (!st.getInsertMode())
                     {
                     	if(st.searchAll(nodeIdentifier).first == -1)
@@ -1228,7 +1236,6 @@ identifier
 						temp->setType( idNode.getTypeSpecifierIndex() );
 						temp->setOffset( idNode.offset );
                     }
-                    firstArrayIndex = true;//For array indexing
 					$$ = temp;
                  }
 	;
@@ -1298,6 +1305,7 @@ void yyerror(const char* s)
 
 void parserOutput(string s)
 {
+    //cout << s << endl;
     if (outputProductions)
     {
         outputStream << "Rule: " << s << endl;
