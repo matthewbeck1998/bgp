@@ -65,6 +65,8 @@ class ASTNode
 
         int getActivationFrameSize() const;
 
+        void setActivationFrameSize(int inputActivationFrameSize);
+
         void propegateActivation(int inputActivationSize);
 
         /*!

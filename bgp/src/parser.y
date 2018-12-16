@@ -35,6 +35,8 @@ bool command_l = false;
 bool command_s = false;
 //
 
+void recursiveOffsetInitDeclList( ASTNode* currentNode );
+
 SymbolTable st;
 string nodeIdentifier = "";
 int nodeLineNumber = -1;
@@ -195,6 +197,11 @@ declaration_list
                         auto symbolPair = st.searchAll( ( (ASTArrayNode*) $1->getChildren().front() )->getId()  ).second;
                         $1->setOffset( currentOffset );
                         symbolPair->second.offset = ( (ASTArrayNode*) $1->getChildren().front() )->getOffset();
+                    } else if ($1->getChildren().front()->getLabel() == "init_declarator_list")
+                    {
+                        recursiveOffsetInitDeclList( $1 );
+                        temp->setActivationFrameSize( currentOffset );
+                        currentOffset -= $1->getActivationFrameSize(); // Subtract for the plus.
                     } else
                     {
                         cerr << "Something wrong in declaration_list -> declaration. " << endl << "Label is: " << $1->getChildren().front()->getLabel() << endl;
@@ -1379,4 +1386,37 @@ int parseCommandLine(int argc, char** argv)
 	}
 
 	return outputIndex; 
+}
+
+
+void recursiveOffsetInitDeclList( ASTNode* currentNode )
+{
+    if( currentNode->getLabel() == "init_declarator" )
+    {
+        currentNode = currentNode->getChildren().front();
+    }
+
+    if( currentNode->getLabel() == "init_declarator_list" or
+        currentNode->getLabel() == "Declaration")
+    {
+        recursiveOffsetInitDeclList( currentNode->getChildren().front() );
+        recursiveOffsetInitDeclList( currentNode->getChildren().back() );
+    } else if( currentNode->getLabel() == "array_node")
+    {
+        auto symbolPair = st.searchAll( ( (ASTArrayNode*) currentNode )->getId()  ).second;
+        currentNode->setOffset( currentOffset );
+        symbolPair->second.offset = currentOffset;
+        symbolPair->second.setTypeQualifierIndex( currentNode->getType() );
+        currentOffset += currentNode -> getActivationFrameSize();
+    } else if ( currentNode->getLabel() == "IDENTIFIER" )
+    {
+        auto symbolPair = st.searchAll( ( (ASTIdNode*) currentNode )->getId()  ).second;
+        currentNode->setOffset( currentOffset );
+        symbolPair->second.offset = currentOffset;
+        symbolPair->second.setTypeQualifierIndex( currentNode->getType() );
+        currentOffset += currentNode -> getActivationFrameSize();
+    } else
+    {
+        cerr << "Something went wrong in recursiveOffsetInitDeclList." << endl;
+    }
 }

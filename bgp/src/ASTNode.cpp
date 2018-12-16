@@ -65,6 +65,11 @@ int ASTNode::getActivationFrameSize() const
     return activationFrameSize;
 }
 
+void ASTNode::setActivationFrameSize(int inputActivationFrameSize)
+{
+    activationFrameSize = inputActivationFrameSize;
+}
+
 void ASTNode::addOffset(int inputOffset)
 {
     offset += inputOffset;
@@ -1026,7 +1031,8 @@ int ASTDeclarationNode::getType() const
 
 void ASTDeclarationNode::constructorTypeSet( ASTNode* node, int inputType )
 {
-    if( node->getLabel() != "ASSIGN" )
+    if( node->getLabel() != "ASSIGN" and
+        node->getLabel() != "init_declarator_list")
     {
         node->setType( inputType );
     }
