@@ -480,7 +480,6 @@ direct_declarator
                             {
                                 return 1;
                             }
-
                             lastNodeInserted = nodeIdentifier;
                             nodeIdentifier = "";
                             nodeLineNumber = -1;
@@ -1240,7 +1239,7 @@ identifier
                         	return 1;
 						}
 						SymbolNode idNode = st.searchAll(yylval.sval).second->second;
-						temp->setType( idNode.getTypeSpecifierIndex() );
+                        temp->setType( idNode.getTypeSpecifierIndex() );
 						temp->setOffset( idNode.offset );
                     }
 					$$ = temp;
@@ -1406,17 +1405,18 @@ void recursiveOffsetInitDeclList( ASTNode* currentNode )
         auto symbolPair = st.searchAll( ( (ASTArrayNode*) currentNode )->getId()  ).second;
         currentNode->setOffset( currentOffset );
         symbolPair->second.offset = currentOffset;
-        symbolPair->second.setTypeQualifierIndex( currentNode->getType() );
+        symbolPair->second.setTypeSpecifierIndex( currentNode->getType() );
         currentOffset += currentNode -> getActivationFrameSize();
     } else if ( currentNode->getLabel() == "IDENTIFIER" )
     {
         auto symbolPair = st.searchAll( ( (ASTIdNode*) currentNode )->getId()  ).second;
         currentNode->setOffset( currentOffset );
         symbolPair->second.offset = currentOffset;
-        symbolPair->second.setTypeQualifierIndex( currentNode->getType() );
+        symbolPair->second.setTypeSpecifierIndex( currentNode->getType() );
         currentOffset += currentNode -> getActivationFrameSize();
     } else
     {
         cerr << "Something went wrong in recursiveOffsetInitDeclList." << endl;
     }
+
 }
