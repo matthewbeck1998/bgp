@@ -1050,19 +1050,19 @@ shift_expression
 
 additive_expression
 	: multiplicative_expression { $$ = $1; parserOutput("additive_expression -> multiplicative_expression"); }
-	| additive_expression ADD multiplicative_expression { $$ = new ASTMathNode("additive_expression", $1, new ASTNode("ADD"), $3);
+	| additive_expression ADD multiplicative_expression { $$ = new ASTMathNode("additive_expression", $1, new ASTNode("add"), $3);
 	                                                      parserOutput("additive_expression -> additive_expression ADD multiplicative_expression"); }
-	| additive_expression SUB multiplicative_expression { $$ = new ASTMathNode("additive_expression", $1, new ASTNode("SUB"), $3);
+	| additive_expression SUB multiplicative_expression { $$ = new ASTMathNode("additive_expression", $1, new ASTNode("sub"), $3);
                                                           parserOutput("additive_expression -> additive_expression SUB multiplicative_expression"); }
 	;
 
 multiplicative_expression
 	: cast_expression { $$ = $1; parserOutput("multiplicative_expression -> cast_expression"); }
-	| multiplicative_expression STAR cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("MULT"), $3);
+	| multiplicative_expression STAR cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("mult"), $3);
                                                        parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
-	| multiplicative_expression DIV cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("DIV"), $3);
+	| multiplicative_expression DIV cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("div"), $3);
 													   parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
-	| multiplicative_expression MOD cast_expression {  $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("MOD"), $3); //TODO check for ints in MOD
+	| multiplicative_expression MOD cast_expression {  $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("mod"), $3); //TODO check for ints in MOD
                                                        parserOutput("multiplicative_expression -> multiplicative_expression MOD cast_expression"); }
 	;
 
@@ -1110,8 +1110,8 @@ unary_expression
 unary_operator
 	: AMPERSAND { $$ = new ASTNode("AMPERSAND"); parserOutput("unary_operator -> AMPERSAND"); }
 	| STAR { $$ = new ASTNode("STAR"); parserOutput("unary_operator -> STAR"); }
-	| ADD { $$ = new ASTNode("ADD"); parserOutput("unary_operator -> ADD"); }
-	| SUB { $$ = new ASTNode("SUB"); parserOutput("unary_operator -> SUB"); }
+	| ADD { $$ = new ASTNode("add"); parserOutput("unary_operator -> ADD"); }
+	| SUB { $$ = new ASTNode("sub"); parserOutput("unary_operator -> SUB"); }
 	| B_NOT { $$ = new ASTNode("B_NOT"); parserOutput("unary_operator -> B_NOT"); }
 	| L_NOT { $$ = new ASTNode("L_NOT"); parserOutput("unary_operator -> L_NOT"); }
 	;
@@ -1276,7 +1276,7 @@ int main(int argc, char** argv)
     AST tree(root);
 	yyparse();
 	tree.printTree();
-	// tree.walk();
+	tree.walk();
 
     outputFile.open( outputIndex ? argv[outputIndex] : "output/defaultOutput.txt");
     if (outputFile.good())

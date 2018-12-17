@@ -79,7 +79,7 @@ class ASTNode
          * @name walk()
          * @return true or false if the table was correctly walked
          */
-        virtual vector<string> walk();
+        virtual string walk();
 
         /*!
          * @name getChildren
@@ -252,7 +252,7 @@ class ASTMathNode : public ASTNode
          * @name walk
          * @return returns true or false based on whether the tree was walked correctly
          */
-		vector<string> walk();
+		string walk();
 
         /*!
          * @name printNode
@@ -336,7 +336,7 @@ class ASTAssignNode : public ASTNode
          * @name walk
          * @return returns true or false based on if the walk was successful
          */
-		vector<string> walk();
+		string walk();
 
         /*!
          * @name printNode
@@ -425,7 +425,7 @@ class ASTVariableNode : public ASTNode
          * @name walk
          * @return returns an bool based on if the tree was successfully walked or not
          */
-		vector<string> walk() override;
+		string walk() override;
 
         /*!
          * @name getType
@@ -533,7 +533,7 @@ class ASTConstNode : public ASTNode
      */
     void printNode(ostream &treeOutFile = cout) override;
 
-    vector<string> walk() override;
+    string walk() override;
 
     private:
     /*!
@@ -571,7 +571,7 @@ class ASTSelectionNode : public ASTNode
          * @name walk
          * @return Walks the AST. Returns true if it succeeds and false if it does now
          */
-		vector<string> walk() override;
+		string walk() override;
 
         /*!
          * @name printNode
@@ -599,7 +599,7 @@ class ASTIterationNode : public ASTNode
          * @name walk
          * @return returns true of false based on if the tree was successfully walked
          */
-		vector<string> walk() override;
+		string walk() override;
 
         /*!
          * @name printNode
@@ -636,7 +636,7 @@ class ASTIdNode : public ASTNode
          * @name walk
          * @return returns true or false based on if the tree was successfully walked ot not.
          */
-		vector<string> walk() override;
+		string walk() override;
 
         /*!
          * @name printNode
@@ -717,7 +717,7 @@ class ASTTypeNode : public  ASTNode
          * @name walk
          * @return returns a bool corresponding to whether the tree was successfully walked or not.
          */
-		vector<string> walk() override;
+		string walk() override;
 
         /*!
          * @name printNode
@@ -791,7 +791,7 @@ class ASTCastNode : public ASTNode
          */
         void setType( int inputType );
 
-        vector<string> walk() override;
+        string walk() override;
     private:
         /*!
          * @name printType
@@ -885,7 +885,7 @@ public:
 	void addDimensions(list<int> inputDimensions);
 
 
-	vector<string> walk() override;
+	string walk() override;
 
 	void setOffset(int inputOffset);
 
@@ -944,7 +944,7 @@ class ASTDeclarationNode : public ASTNode
 		 * @return returns the type of the node
 		 */
 		int getType() const;
-		vector<string> walk() override;
+		string walk() override;
 
 		void setOffset(int inputOffset);
 
@@ -972,7 +972,7 @@ class ASTFunctionNode : public  ASTNode
     int getType() const;
     void addChild(ASTNode* addNode);
 
-    vector<string> walk() override;
+    string walk() override;
 private:
     int type;
 
@@ -984,7 +984,7 @@ class ASTDeclListNode : public ASTNode
     ASTDeclListNode(string node_label, ASTNode* inputChild);
     ASTDeclListNode(string node_label, ASTNode* leftChild, ASTNode* rightChild);
     void printNode(ostream &treeOutFile = cout) override;
-    vector<string> walk() override;
+    string walk() override;
 };
 
 class ASTFunctionCallNode : public ASTNode
@@ -993,7 +993,7 @@ class ASTFunctionCallNode : public ASTNode
     ASTFunctionCallNode(string node_label, ASTNode* inputChild);
     ASTFunctionCallNode(string node_label, ASTNode* leftChild, ASTNode* rightChild);
     void printNode(ostream &treeOutFile = cout) override;
-    vector<string> walk() override;
+    string walk() override;
 };
 
 class ASTRelExprNode : public ASTNode
@@ -1001,7 +1001,7 @@ class ASTRelExprNode : public ASTNode
     public:
         ASTRelExprNode(string node_label);
         void printNode(ostream& treeOutFile = cout) override;
-        vector<string> walk() override;
+        string walk() override;
 };
 
 class ASTUnaryNode : public ASTNode
@@ -1009,7 +1009,7 @@ class ASTUnaryNode : public ASTNode
     public:
         ASTUnaryNode(string node_label);
         void printNode(ostream& treeOutFile = cout) override;
-        vector<string> walk() override;       
+        string walk() override;
 };
 
 class ASTArrayInitializerNode : public ASTNode
