@@ -2073,7 +2073,7 @@ int typeToByteSize( int type )
             return 1;
 
         case Short:
-            return 2;
+            return 4;
 
         case Int:
             return 4;

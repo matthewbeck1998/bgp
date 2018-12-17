@@ -2,26 +2,9 @@ int main()
 {
 	int x;
 	int a[10];
-
-	x + x;
-	x + 3;
-	x + a[2];
-	3 + 3;
-	3 + x;
-	3 + a[7];
-	a[2] + a[3];
-	a[3] + 5;
-	a[0] + x;
-
-	//3 + 5 * 6 / 3 + 5;
-	//6 * 3 + 2 - x;
-	//3 + x * 7 + a[3];
-
-	x = 3;
-	x = a[3];
-	x = 3 + 3;
-	a[2] = 3;
-	a[3] = x;
-	a[5] = 3 + 3;
+	char whatchumean;
+	double testyboiiii;
+	float floooatyboi;
+	short dowehandleshorts;
 
 }

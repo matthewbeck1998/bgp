@@ -129,7 +129,7 @@ class ASTNode
 		 * @brief virtual setType function, it should not ever be called.
 		 */
 		virtual void setType(int newType) {
-		    outputStream << "setType, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "setType, YOU DID SOMETHING BAD. Label: " << label << endl;
 		}
 
 		/*!
@@ -137,7 +137,7 @@ class ASTNode
 		 * @return does not return anything. It should never be called
 		 */
 		virtual int getType() const {
-		    outputStream << "getType, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getType, YOU DID SOMETHING BAD. Label: " << label << endl;
 		}
 
 		/*!
@@ -146,7 +146,7 @@ class ASTNode
 		 * @brief does not do anything, should never be called
 		 */
 		virtual void setId(string newId) {
-		    outputStream << "setId, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "setId, YOU DID SOMETHING BAD. Label: " << label << endl;
 		}
 
 		/*!
@@ -160,7 +160,7 @@ class ASTNode
 		 * @return returns "no Id. Base Node.". Should never be called.
 		 */
 		virtual  string getId() {
-		    outputStream << "getId, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getId, YOU DID SOMETHING BAD. Label: " << label << endl;
 		    return "no Id. Base Node.";
 		}
 
@@ -169,7 +169,7 @@ class ASTNode
 		 * @return returns nothing, should never be called.
 		 */
 		virtual string getValue() {
-		    outputStream << "getValue, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "getValue, YOU DID SOMETHING BAD. Label: " << label << endl;
 		}
 
 		/*!
@@ -179,7 +179,7 @@ class ASTNode
 		 */
 		virtual void setValue(string newValue)
         {
-		    outputStream << "setValue, YOU DID SOMETHING BAD" << endl;
+		    outputStream << "setValue, YOU DID SOMETHING BAD. Label: " << label << endl;
         }
 
         virtual void setOffset(int inputOffset);
