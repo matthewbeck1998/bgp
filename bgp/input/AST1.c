@@ -1,8 +1,5 @@
-int w;
 int main()
 {
-    char help = 12, x, y, z, hitehsi = 123;
-    int test;
-    x = y;
-    z = test;
+    char help[1] = {1, 5, 6, 7, 8, 234};
+    char c ='a', b = 98;
 }

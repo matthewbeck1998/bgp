@@ -1012,6 +1012,19 @@ class ASTUnaryNode : public ASTNode
         vector<string> walk() override;       
 };
 
+class ASTArrayInitializerNode : public ASTNode
+{
+	public:
+		ASTArrayInitializerNode(string node_label, ASTNode* parentNode, ASTConstNode* childNode, int inputType);
+		int getType() const;
+		void setType( int inputType );
+		vector<double> getValues() const;
+		void printNode(ostream& treeOutFile = cout) override;
+    private:
+        vector<double> values;
+        int type;
+};
+
 int typeToByteSize( int type );
 
 string getLine( int lineNum );

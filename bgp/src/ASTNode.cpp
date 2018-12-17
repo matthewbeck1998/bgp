@@ -1103,6 +1103,94 @@ void ASTFunctionNode::addChild(ASTNode *addNode)
     }
 }
 
+
+ASTArrayInitializerNode::ASTArrayInitializerNode(string node_label, ASTNode* parentNode, ASTConstNode* childNode, int inputType)
+: ASTNode(move(node_label)), type(inputType)
+{
+    if(parentNode->getLabel() == "initializer_list")
+    {
+        ASTConstNode* tempParent = (ASTConstNode*) parentNode->getChildren().front();
+        valueUnion tempValueUnion = tempParent->getValue();
+        double value;
+        switch( tempParent->getType() )
+        {
+            case Int:
+                value = tempValueUnion.intVal;
+                break;
+            case Float:
+                value = tempValueUnion.fVal;
+                break;
+            case Char:
+                value = tempValueUnion.charVal;
+                break;
+            case Double:
+                value = tempValueUnion.dVal;
+                break;
+            default:
+                break;
+        }
+        values.push_back( value );
+    } else
+    {
+        for (double value : ((ASTArrayInitializerNode *) parentNode)->getValues()) {
+            values.push_back(value);
+        }
+    }
+    valueUnion tempValueUnion = childNode->getValue();
+    double value;
+    switch( childNode->getType() )
+    {
+        case Int:
+            value = tempValueUnion.intVal;
+            break;
+        case Float:
+            value = tempValueUnion.fVal;
+            break;
+        case Char:
+            value = tempValueUnion.charVal;
+            break;
+        case Double:
+            value = tempValueUnion.dVal;
+            break;
+        default:
+            break;
+    }
+    values.push_back( value );
+}
+int ASTArrayInitializerNode::getType() const
+{
+    return type;
+}
+void ASTArrayInitializerNode::setType( int inputType )
+{
+    type = inputType;
+}
+vector<double> ASTArrayInitializerNode::getValues() const
+{
+    return values;
+}
+
+void ASTArrayInitializerNode::printNode(ostream &treeOutFile)
+{
+    treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+    treeOutFile << "Line: " << lineNum << endl;
+    treeOutFile << "Array Initializer Node" << endl;
+    treeOutFile << "Type: " << printType(type) << endl;
+    treeOutFile << "Values: ";
+    for(int value : values)
+    {
+        treeOutFile << "[" << value << "] ";
+    }
+
+    treeOutFile <<"\"];" << endl;
+
+    for(auto &it : children)
+    {
+        treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+        it->printNode(treeOutFile);
+    }
+}
+
 vector<string> ASTNode::walk()
 {
 	//cout << "ASTNode " << this->getLabel() << endl;

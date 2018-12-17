@@ -340,7 +340,11 @@ init_declarator
                                         if( $1->getLabel() == "IDENTIFIER" )
                                         {
                                             ( (ASTIdNode*) $1)->setType( nodeTypeSpecifier ); // Very fragile.. help.
+                                        } else if( $1->getLabel() == "array_node" )
+                                        {
+                                            ( (ASTArrayNode*) $1)->setType( nodeTypeSpecifier );
                                         }
+                                        $3->setType( nodeTypeSpecifier );
                                         $$ = new ASTAssignNode("init_declarator", $1, new ASTNode("ASSIGN"), $3);
                                         parserOutput("init_declarator -> declarator ASSIGN initializer"); }
 	;
@@ -491,7 +495,7 @@ direct_declarator
                             nodeIdentifier = "";
                             nodeLineNumber = -1;
                             nodeStorageClassSpecifier = -1;
-                            nodeTypeSpecifier = 3;
+                            //nodeTypeSpecifier = 3;
                             nodeTypeQualifier = -1;
                             nodeIsFunction = false;
                             nodeIsSigned = true;
@@ -670,7 +674,7 @@ initializer_list
 	                temp -> addChild($1);
 	                $$ = temp;
 	                parserOutput("initializer_list -> initializer"); }
-	| initializer_list COMMA initializer {    $$ -> addChild($3);
+	| initializer_list COMMA initializer {    $$ = new ASTArrayInitializerNode("array_initializer", $1, (ASTConstNode*) $3, $3->getType() );
                                               parserOutput("initializer_list -> initializer_list COMMA initializer"); }
 	;
 

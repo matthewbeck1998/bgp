@@ -655,7 +655,7 @@ productions_off         [@][p][-]
 {character_constant}    {
                             scannerOutput(yytext, "CHARACTER_CONSTANT");
 							incrementColumn(yyleng);
-                            strcpy(yylval.sval, &yytext[1]);
+                            strcpy(yylval.sval, yytext);
                             return CHARACTER_CONSTANT;
                         }
 
