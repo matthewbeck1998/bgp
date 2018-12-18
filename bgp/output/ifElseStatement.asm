@@ -29,3 +29,6 @@ $l3:
 addiu	$t0, $sp, 0
 li	$t2, 1
 sw	$t2, 0($t0)
+lw	$ra, 4($sp)
+addiu	$sp, $sp, 8
+jr	$ra

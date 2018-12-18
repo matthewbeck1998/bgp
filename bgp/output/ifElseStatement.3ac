@@ -24,3 +24,4 @@ label	$l3
 addiu	$t10	$sp	0
 li	$t11	1
 sw	$t11	0($t10)
+end	8
