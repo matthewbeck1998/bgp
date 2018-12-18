@@ -28,7 +28,11 @@ def searchTemp(temp):
             return reg["name"]
 
 def handleFunc(inst):
-    return inst
+    label = [inst[0] + ":"]
+    allocate = ["subiu", "$sp", "$sp", inst[2]]
+    raOffset = str(int(inst[2]) - 4) + "($sp)"
+    saveReturn = ["sw", "$ra", raOffset]
+    return [label, allocate, saveReturn]
 
 def handleRet(inst):
     return inst
@@ -61,6 +65,16 @@ def handleMath(inst):
     inst[3] = searchTemp(inst[3]) if isTemp(inst[3]) else inst[3]
     return inst
 
+def handleDiv(inst):
+    first = [inst[0], inst[2], inst[3]]
+    second = ["mflo", inst[1]]
+    return [first, second]
+
+def handleMod(inst):
+    first = [inst[0], inst[2], inst[3]]
+    second = ["mfhi", inst[1]]
+    return [first, second]
+
 def translate(inst):
     kjv = {
         "func": handleFunc,
@@ -75,7 +89,7 @@ def translate(inst):
         "subiu": handleMath,
 
         "mul": handleMath,
-        "div": handleMath,  # NEED TO LOOK AT THIS
+        "div": handleMath,
 
         "li": handleLoad,
         "lw": handleLoad,
@@ -85,11 +99,12 @@ def translate(inst):
 
     cmd = inst[0]
     translatedList = kjv[cmd](inst)
+    return translatedList
 
-    cmdStr = translatedList[0] + "\t"
-    ops = translatedList[1:]
+def stringify(li):
+    cmdStr = li[0] + "\t"
+    ops = li[1:]
     opsStr = ', '.join(ops) + "\n"
-
     instStr = cmdStr + opsStr
     return instStr
 
@@ -99,166 +114,28 @@ with open(inputFile, 'r') as fp:
     output = []
     for line in fp:
         inst = line.split()
-        if inst:
-            output.append(translate(inst))
+        translated = translate(inst)
+
+        if inst[0] == "func":
+            insts = handleFunc(inst)
+            for inst in insts:
+                instStr = stringify(inst)
+                output.append(instStr)
+        elif inst[0] == "div":
+            insts = handleDiv(translated)
+            for inst in insts:
+                instStr = stringify(inst)
+                output.append(instStr)
+        elif inst[0] == "mod":
+            insts = handleMod(translated)
+            for inst in insts:
+                instStr = stringify(inst)
+                output.append(instStr)
+        elif inst:
+            translatedStr = stringify(translated)
+            output.append(translatedStr)
 
 outputFile = sys.argv[2]
 with open(outputFile, 'w') as fp:
     for line in output:
         fp.write(line)
-
-#
-# fullList = []
-#
-# li = ["addiu", "$t0", "$sp", "16"]
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ["subiu", "$t1", "$t0", "8"]
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ['li', '$t2', '1']
-# ret = handleLoad(li)
-#
-# fullList.append(li)
-#
-# li = ['sw', '$t2', '0($t1)']
-# ret = handleStore(li)
-#
-# fullList.append(li)
-#
-# li = ['addiu', '$t3', '$sp', '16']
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ['subiu', '$t4', '$t3', '12']
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ['li', '$t5', '2']
-# ret = handleLoad(li)
-#
-# fullList.append(li)
-#
-# li = ['sw', '$t5', '0($t4)']
-# ret = handleStore(li)
-#
-# fullList.append(li)
-#
-# li = ['addiu', '$t6', '$sp', '16']
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ['subiu', '$t7', '$t6', '16']
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ['li', '$t8', '3']
-# ret = handleLoad(li)
-#
-# fullList.append(li)
-#
-# li = ['sw', '$t8', '0($t7)']
-# ret = handleStore(li)
-#
-# fullList.append(li)
-#
-# li = ['addiu', '$t9', '$sp', '16']
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ['subiu', '$t10', '$t9', '8']
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ['lw', '$t11', '0($t10)']
-# ret = handleLoad(li)
-#
-# fullList.append(li)
-#
-# li = ['addiu', '$t12', '$sp', '16']
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ['subiu', '$t13', '$t12', '16']
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ['lw', '$t14', '0($t13)']
-# ret = handleLoad(li)
-#
-# fullList.append(li)
-#
-# li = ['add', '$t15', '$t11', '$t14']
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ['addiu', '$t16', '$sp', '16']
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ['subiu', '$t17', '$t16', '16']
-# ret = handleMath(li)
-#
-# fullList.append(li)
-#
-# li = ['sw', '$t15', '0($t17)']
-# ret = handleStore(li)
-#
-# fullList.append(li)
-#
-# li = ['li', '$t18', '0']
-# ret = handleLoad(li)
-#
-# fullList.append(li)
-#
-# li = ['ret', '$t18']
-#
-# for x in fullList:
-#     s1 = x[0] + "\t"
-#     ops = x[1:]
-#     print("\t" + s1 + ', '.join(ops))
-
-# func    main    16
-# addiu   $t0     $sp     FS
-# subiu   $t1     $t0     getOffset(x)
-# li      $t2     1
-# sw      $t2     0($t1)
-#
-# addiu   $t3     $sp     FS
-# subiu   $t4     $t3     getOffset(y)
-# li      $t5     2
-# sw      $t5     0($t4)
-#
-# addiu   $t6     $sp     FS
-# subiu   $t7     $t6     getOffset(z)
-# li      $t8     3
-# sw      $t8     0($t7)
-#
-# addiu   $t9     $sp     FS
-# subiu   $t10    $t9     getOffset(x)
-# addiu   $t11    $sp     FS
-# subiu   $t12    $t11    getOffset(z)
-# lw      $t13    0($10)
-# lw      $t14    0($12)
-# add     $t15    $t13    $t14            # $t15 = x + z
-#
-# addiu   $t16    $sp     FS
-# subiu   $t17    $t16    getOffset(z)
-# sw      $t15    0($t17)
-#
-# li      $t18    0
-# ret     $t18
