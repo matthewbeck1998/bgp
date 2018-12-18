@@ -1109,7 +1109,7 @@ void ASTDeclarationNode::setOffset(int inputOffset)
 
 ASTFunctionNode::ASTFunctionNode(string node_label, int inputType) : ASTNode(move(node_label)), type(inputType)
 {
-    ticketLabel = "$t" + to_string(ticketCounter++);
+    ticketLabel = "$l" + to_string(ticketCounter++);
 }
 
 string ASTFunctionNode::getTicketLabel() const
