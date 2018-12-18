@@ -16,3 +16,8 @@ char main(int a, int poop, char b[5], float c, int e[5], int d)
     a + b;
     e + d;
 }
+
+double anothertestyboi(char a)
+{
+    double test;
+}
