@@ -354,6 +354,7 @@ ASTAssignNode::ASTAssignNode(string node_label, ASTArrayNode *LHS, ASTNode *math
     valueUnion temp;
     temp.intVal = value;
     addChild( LHS );
+    addChild(new ASTNode("ASSIGN"));
     ASTArrayNode* tempLHS = new ASTArrayNode(LHS);
     addChild( new ASTMathNode("additive_expression", tempLHS, mathOp, new ASTConstNode("INT_CONSTANT", type, temp) ) );
 
@@ -366,6 +367,7 @@ ASTAssignNode::ASTAssignNode(string node_label, ASTIdNode *LHS, ASTNode* mathOp)
     valueUnion temp;
     temp.intVal = value;
     addChild( LHS );
+    addChild(new ASTNode("ASSIGN"));
     ASTIdNode* tempLHS = new ASTIdNode(LHS);
     addChild( new ASTMathNode("additive_expression", tempLHS, mathOp, new ASTConstNode("INT_CONSTANT", type, temp) ) );
 }

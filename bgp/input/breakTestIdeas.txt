@@ -1,3 +1,5 @@
 Empty function node. Breaks ours?
 Globals
 decrement/increment with arrays
+Array initializer const + const big break
+Array initializer with one input
