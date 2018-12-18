@@ -1858,7 +1858,7 @@ string ASTIterationNode::walk()
 			string ticket0 = "$t" + to_string(ticketCounter++);
 
 			cout << "li\t" << ticket0 + "\t" << expr->walk() << endl;
-			cout << "bne\t" << ticket0 + "\t" << 0 << "\t" << label0 << endl;
+			cout << "bne\t" << ticket0 + "\t" << "$0" << "\t" << label0 << endl;
 			cout << "j\t" << label1 << endl;
 		}
 		else if(expr->getLabel() == "IDENTIFIER")
@@ -1868,7 +1868,7 @@ string ASTIterationNode::walk()
 
 			cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << expr->getOffset() << endl;
 			cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
-			cout << "bne\t" << ticket1 + "\t" << 0 << "\t" << label0 << endl;
+			cout << "bne\t" << ticket1 + "\t" << "$0\t" << label0 << endl;
 			cout << "j\t" << label1 << endl;
 		}
 		else if(expr->getLabel() == "array_node")
@@ -1878,13 +1878,13 @@ string ASTIterationNode::walk()
 
 			cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << expr->walk() << endl;
 			cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
-			cout << "bne\t" << ticket1 + "\t" << 0 << "\t" << label0 << endl;
+			cout << "bne\t" << ticket1 + "\t" << "$0\t" << label0 << endl;
 			cout << "j\t" << label1 << endl;
 		}
 		else
 		{
 			string reg = expr->walk();
-			cout << "bne\t" << reg + "\t" << 0 << "\t" << label0 << endl;
+			cout << "bne\t" << reg + "\t" << "$0\t" << label0 << endl;
 			cout << "j\t" << label1 << endl;
 		}
 		cout << "label\t" << label1 << endl;
@@ -1904,7 +1904,7 @@ string ASTIterationNode::walk()
 
 			string reg = expr->walk();
 			cout << "li\t" << ticket0 + "\t" << reg  << endl;
-			cout << "bne\t" << ticket0 + "\t" << 0 << "\t" << label0 << endl;
+			cout << "bne\t" << ticket0 + "\t" << "$0\t" << label0 << endl;
 			cout << "j\t" << label2 << endl;
 		}
 		else if(expr->getLabel() == "IDENTIFIER")
@@ -1914,7 +1914,7 @@ string ASTIterationNode::walk()
 
 			cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << expr->getOffset() << endl;
 			cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
-			cout << "bne\t" << ticket1 + "\t" << 0 << "\t" << label0 << endl;
+			cout << "bne\t" << ticket1 + "\t" << "$0\t" << label0 << endl;
 			cout << "j\t" << label2 << endl;
 		}
 		else if(expr->getLabel() == "array_node")
@@ -1924,13 +1924,13 @@ string ASTIterationNode::walk()
 
 			cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << expr->walk() << endl;
 			cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
-			cout << "bne\t" << ticket1 + "\t" << 0 << "\t" << label0 << endl;
+			cout << "bne\t" << ticket1 + "\t" << "$0\t" << label0 << endl;
 			cout << "j\t" << label2 << endl;
 		}
 		else
 		{
 			string reg = expr->walk();
-			cout << "bne\t" << reg  + "\t" << 0 << "\t" << label0 << endl;
+			cout << "bne\t" << reg  + "\t" << "$0\t" << label0 << endl;
 			cout << "j\t" << label2 << endl;
 		}
 		cout << "label\t" << label0 << endl;
@@ -1976,7 +1976,7 @@ string ASTSelectionNode::walk()
 	string label0 = "$l" + to_string(labelCounter++);
 	string label1 = "$l" + to_string(labelCounter++);
 
-	cout << "bne\t" << selectionRegister + "\t" << 0 << "\t" << label0 << endl;//Price was here.
+	cout << "bne\t" << selectionRegister + "\t" << "$0" << "\t" << label0 << endl;//Price was here.
 	(*next(children.begin(), 4))->walk();
 	cout << "j\t" << label1 << endl;
 	cout << "label\t" << label0 << endl;
@@ -2208,7 +2208,6 @@ string ASTRelExprNode::walk()
 		string ticket1 = "$t" + to_string(ticketCounter++);
 		string ticket2 = "$t" + to_string(ticketCounter++);
 		string ticket3 = "$t" + to_string(ticketCounter++);
-		string ticket4 = "$t" + to_string(ticketCounter++);
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2225,12 +2224,12 @@ string ASTRelExprNode::walk()
 
 		cout << (*next(children.begin()))->getLabel() + "\t" << ticket2 + "\t"
 			 << ticket3 + "\t" << label0 << endl;
-		cout << "li\t" << ticket4 + "\t" << 0 << endl;
+		cout << "li\t" << "$s7\t" << 0 << endl;
 		cout << "j\t" << label1 << endl;
 		cout << "label\t" << label0 << endl;
-		cout << "li\t" << ticket4 + "\t" << 1 << endl;
+		cout << "li\t" << "$s7\t" << 1 << endl;
 		cout << "label\t" << label1 << endl;
-		return ticket4;
+		return "$s7";
 
 	}
 	else if(children.front()->getLabel() == "IDENTIFIER" and
@@ -2239,7 +2238,7 @@ string ASTRelExprNode::walk()
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
 		string ticket2 = "$t" + to_string(ticketCounter++);
-		string ticket3 = "$t" + to_string(ticketCounter++);
+		string ticket3 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2268,7 +2267,7 @@ string ASTRelExprNode::walk()
 		string ticket1 = "$t" + to_string(ticketCounter++);
 		string ticket2 = "$t" + to_string(ticketCounter++);
 		string ticket3 = "$t" + to_string(ticketCounter++);
-		string ticket4 = "$t" + to_string(ticketCounter++);
+		string ticket4 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2298,7 +2297,7 @@ string ASTRelExprNode::walk()
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
-		string ticket2 = "$t" + to_string(ticketCounter++);
+		string ticket2 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2322,7 +2321,7 @@ string ASTRelExprNode::walk()
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
 		string ticket2 = "$t" + to_string(ticketCounter++);
-		string ticket3 = "$t" + to_string(ticketCounter++);
+		string ticket3 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2349,7 +2348,7 @@ string ASTRelExprNode::walk()
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
 		string ticket2 = "$t" + to_string(ticketCounter++);
-		string ticket3 = "$t" + to_string(ticketCounter++);
+		string ticket3 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2376,7 +2375,7 @@ string ASTRelExprNode::walk()
 		string ticket1 = "$t" + to_string(ticketCounter++);
 		string ticket2 = "$t" + to_string(ticketCounter++);
 		string ticket3 = "$t" + to_string(ticketCounter++);
-		string ticket4 = "$t" + to_string(ticketCounter++);
+		string ticket4 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2406,7 +2405,7 @@ string ASTRelExprNode::walk()
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
 		string ticket2 = "$t" + to_string(ticketCounter++);
-		string ticket3 = "$t" + to_string(ticketCounter++);
+		string ticket3 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2433,7 +2432,7 @@ string ASTRelExprNode::walk()
 		string ticket1 = "$t" + to_string(ticketCounter++);
 		string ticket2 = "$t" + to_string(ticketCounter++);
 		string ticket3 = "$t" + to_string(ticketCounter++);
-		string ticket4 = "$t" + to_string(ticketCounter++);
+		string ticket4 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2461,7 +2460,7 @@ string ASTRelExprNode::walk()
 			and children.back()->getLabel() == "INT_CONSTANT")
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
-		string ticket1 = "$t" + to_string(ticketCounter++);
+		string ticket1 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2483,7 +2482,7 @@ string ASTRelExprNode::walk()
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
-		string ticket2 = "$t" + to_string(ticketCounter++);
+		string ticket2 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2508,7 +2507,7 @@ string ASTRelExprNode::walk()
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
-		string ticket2 = "$t" + to_string(ticketCounter++);
+		string ticket2 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2532,7 +2531,7 @@ string ASTRelExprNode::walk()
 			 or children.back()->getLabel() == "multiplicative_expression"))
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
-		string ticket1 = "$t" + to_string(ticketCounter++);
+		string ticket1 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2553,7 +2552,7 @@ string ASTRelExprNode::walk()
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
-		string ticket2 = "$t" + to_string(ticketCounter++);
+		string ticket2 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2577,7 +2576,7 @@ string ASTRelExprNode::walk()
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
-		string ticket2 = "$t" + to_string(ticketCounter++);
+		string ticket2 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
@@ -2600,7 +2599,7 @@ string ASTRelExprNode::walk()
 			(children.back()->getLabel() == "additive_expression"
 			 or children.back()->getLabel() == "multiplicative_expression"))
 	{
-		string ticket0 = "$t" + to_string(ticketCounter++);
+		string ticket0 = "$s7";
 
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
