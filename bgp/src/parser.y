@@ -122,12 +122,9 @@ function_definition
                                       temp -> addChild($1);
                                       temp -> addChild($2);
                                       $$ = temp;
-                                      if( currentOffset % 4 != 0 )
-                                        temp->setActivationFrameSize( (currentOffset + 4) + 4 - ( (currentOffset + 4) % 4) );
-                                      else
-                                      {
-                                        temp->setActivationFrameSize( currentOffset );
-                                      }
+                                      if( currentOffset % 8 != 0 )
+                                        currentOffset = (currentOffset + 8) - ( currentOffset % 8 ) ;
+                                      temp->setActivationFrameSize( currentOffset );
                                       temp->giveReturnNodeMyActivationFrameSize( currentOffset );
                                       temp->reverseTheOffsetSize( currentOffset );
                                       currentOffset = 4;
@@ -139,12 +136,9 @@ function_definition
                                                          temp -> addChild($2);
                                                          temp -> addChild($3);
                                                          $$ = temp;
-                                                         if( currentOffset % 4 != 0 )
-                                                            temp->setActivationFrameSize( (currentOffset + 4) + 4 - ( (currentOffset + 4) % 4) );
-                                                         else
-                                                         {
-                                                            temp->setActivationFrameSize( currentOffset );
-                                                         }
+                                                         if( currentOffset % 8 != 0 )
+                                                            currentOffset = (currentOffset + 8) - ( currentOffset % 8 ) ;
+                                                         temp->setActivationFrameSize( currentOffset );
                                                          temp->giveReturnNodeMyActivationFrameSize( currentOffset );
                                                          temp->reverseTheOffsetSize( currentOffset );
                                                          currentOffset = 4;
@@ -157,12 +151,9 @@ function_definition
                                                             temp -> addChild($2);
 	                                                        temp -> addChild($3);
 	                                                        $$ = temp;
-                                                            if( currentOffset % 4 != 0 )
-                                                                temp->setActivationFrameSize( (currentOffset + 4) + 4 - ( (currentOffset + 4) % 4) );
-                                                            else
-                                                            {
-                                                                temp->setActivationFrameSize( currentOffset );
-                                                            }
+                                                            if( currentOffset % 8 != 0 )
+                                                                currentOffset = (currentOffset + 8) - ( currentOffset % 8 ) ;
+                                                            temp->setActivationFrameSize( currentOffset );
                                                             temp->giveReturnNodeMyActivationFrameSize( currentOffset );
                                                             temp->reverseTheOffsetSize( currentOffset );
                                                             currentOffset = 4;
@@ -176,12 +167,9 @@ function_definition
                                                                                temp -> addChild($3);
                                                                                temp -> addChild($4);
                                                                                $$ = temp;
-                                                                               if( currentOffset % 4 != 0 ) // The activation frame of functions is a multiple of 4
-                                                                                   temp->setActivationFrameSize( (currentOffset + 4) + 4 - ( (currentOffset + 4) % 4) );
-                                                                               else
-                                                                               {
-                                                                                   temp->setActivationFrameSize( currentOffset );
-                                                                               }
+                                                                               if( currentOffset % 8 != 0 )
+                                                                                   currentOffset = (currentOffset + 8) - ( currentOffset % 8 ) ;
+                                                                               temp->setActivationFrameSize( currentOffset );
                                                                                temp->giveReturnNodeMyActivationFrameSize( currentOffset );
                                                                                temp->reverseTheOffsetSize( currentOffset );
                                                                                currentOffset = 4;
@@ -375,6 +363,7 @@ init_declarator
                     } else if( $1->getLabel() == "array_node" )
                     {
                         ( (ASTArrayNode*) $1)->setType( nodeTypeSpecifier );// Very fragile.. help.
+                        ( (ASTArrayNode*) $1)->setTheArrayNodeActivationFrameSize();
                         auto symbolPair = st.searchAll( ( (ASTArrayNode*) $1)->getId()  ).second;
                         handleOffsetType( ( (ASTArrayNode*) $1)->getType() );
                         currentOffset += ( (ASTArrayNode*) $1)->getActivationFrameSize();
@@ -394,6 +383,7 @@ init_declarator
                                         } else if( $1->getLabel() == "array_node" )
                                         {
                                             ( (ASTArrayNode*) $1)->setType( nodeTypeSpecifier );// Very fragile.. help.
+                                            ( (ASTArrayNode*) $1)->setTheArrayNodeActivationFrameSize();
                                             auto symbolPair = st.searchAll( ( (ASTArrayNode*) $1)->getId()  ).second;
                                             handleOffsetType( ( (ASTArrayNode*) $1)->getType() );
                                             currentOffset += ( (ASTArrayNode*) $1)->getActivationFrameSize();
@@ -1520,7 +1510,6 @@ void recursiveOffsetInitDeclList( ASTNode* currentNode )
 */
 void handleOffsetType( int inputType )
 {
-    cout << inputType << endl;
     switch (inputType)
     {
         case Char:

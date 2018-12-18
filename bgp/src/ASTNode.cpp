@@ -891,6 +891,15 @@ void ASTArrayNode::setOffset( int inputOffset)
     offset = inputOffset;
 }
 
+void ASTArrayNode::setTheArrayNodeActivationFrameSize()
+{
+    activationFrameSize = typeToByteSize( type );
+    for( int arrayDimension : dimensions)
+    {
+        activationFrameSize *= arrayDimension;
+    }
+}
+
 ASTArrayNode::ASTArrayNode(string node_label, ASTNode* inputNode): ASTNode::ASTNode(move(node_label)), type(Int)
 {
     offset = inputNode->getOffset();
@@ -1074,9 +1083,8 @@ int ASTFunctionNode::getType() const
     return type;
 }
 
-void ASTFunctionNode::addChild(ASTNode *addNode)
+/*void ASTFunctionNode::addChild(ASTNode *addNode)
 {
-    activationFrameSize += addNode -> getActivationFrameSize();
     if(addNode)
     {
         children.push_back(addNode);
@@ -1100,7 +1108,7 @@ void ASTFunctionNode::addChild(ASTNode *addNode)
         }
 
     }
-}
+}*/
 
 
 ASTArrayInitializerNode::ASTArrayInitializerNode(string node_label, ASTNode* parentNode, ASTConstNode* childNode, int inputType)

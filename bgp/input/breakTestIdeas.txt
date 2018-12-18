@@ -1,1 +1,2 @@
 Empty function node. Breaks ours?
+Globals

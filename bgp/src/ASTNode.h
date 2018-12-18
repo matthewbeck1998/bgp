@@ -893,6 +893,8 @@ public:
 
 	void setOffset(int inputOffset);
 
+	void setTheArrayNodeActivationFrameSize();
+
 
 private:
     /*!
@@ -974,7 +976,7 @@ class ASTFunctionNode : public  ASTNode
     void printNode(ostream &treeOutFile = cout) override;
     void setType( int inputType );
     int getType() const;
-    void addChild(ASTNode* addNode);
+    //void addChild(ASTNode* addNode);
 
     string walk() override;
 private:

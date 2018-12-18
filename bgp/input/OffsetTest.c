@@ -1,5 +1,5 @@
-int noperboiiii;
-char what;
+//int noperboiiii;
+//char what;
 void nopers(int o)
 {
     int z;
