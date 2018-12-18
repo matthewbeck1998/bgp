@@ -1164,11 +1164,12 @@ int ASTFunctionNode::getType() const
 
 
 ASTArrayInitializerNode::ASTArrayInitializerNode(string node_label, ASTNode* parentNode, ASTConstNode* childNode, int inputType)
-: ASTNode(move(node_label)), type(inputType)
+        : ASTNode(move(node_label)), type(inputType)
 {
     if(parentNode->getLabel() == "initializer_list")
     {
-        ASTConstNode* tempParent = (ASTConstNode*) parentNode->getChildren().front();
+        values.push_back( ( (ASTArrayInitializerNode*) parentNode )->getValues().front() );
+        /*ASTConstNode* tempParent = parentNode->getChildren().front();
         valueUnion tempValueUnion = tempParent->getValue();
         double value;
         switch( tempParent->getType() )
@@ -1188,7 +1189,7 @@ ASTArrayInitializerNode::ASTArrayInitializerNode(string node_label, ASTNode* par
             default:
                 break;
         }
-        values.push_back( value );
+        values.push_back( value );*/
     } else
     {
         for (double value : ((ASTArrayInitializerNode *) parentNode)->getValues()) {
@@ -1216,6 +1217,32 @@ ASTArrayInitializerNode::ASTArrayInitializerNode(string node_label, ASTNode* par
     }
     values.push_back( value );
 }
+
+ASTArrayInitializerNode::ASTArrayInitializerNode(string node_label, ASTConstNode* childNode, int inputType)
+        : ASTNode(move(node_label)), type(inputType)
+{
+    valueUnion tempValueUnion = childNode->getValue();
+    double value;
+    switch( childNode->getType() )
+    {
+        case Int:
+            value = tempValueUnion.intVal;
+            break;
+        case Float:
+            value = tempValueUnion.fVal;
+            break;
+        case Char:
+            value = tempValueUnion.charVal;
+            break;
+        case Double:
+            value = tempValueUnion.dVal;
+            break;
+        default:
+            break;
+    }
+    values.push_back( value );
+}
+
 int ASTArrayInitializerNode::getType() const
 {
     return type;

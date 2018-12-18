@@ -738,9 +738,9 @@ initializer
 	;
 
 initializer_list
-	: initializer { ASTNode* temp = new ASTNode("initializer_list");
-	                temp -> addChild($1);
-	                $$ = temp;
+	: initializer { /*ASTNode* temp*/$$ = new ASTArrayInitializerNode( "initializer_list", (ASTConstNode*) $1, $1->getType() );
+	                //temp -> addChild($1);
+	                //$$ = temp;
 	                parserOutput("initializer_list -> initializer"); }
 	| initializer_list COMMA initializer {    $$ = new ASTArrayInitializerNode("array_initializer", $1, (ASTConstNode*) $3, $3->getType() );
                                               parserOutput("initializer_list -> initializer_list COMMA initializer"); }

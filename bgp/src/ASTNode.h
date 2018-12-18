@@ -1033,6 +1033,7 @@ class ASTArrayInitializerNode : public ASTNode
 {
 	public:
 		ASTArrayInitializerNode(string node_label, ASTNode* parentNode, ASTConstNode* childNode, int inputType);
+        ASTArrayInitializerNode(string node_label, ASTConstNode* childNode, int inputType);
 		int getType() const;
 		void setType( int inputType );
 		vector<double> getValues() const;

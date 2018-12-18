@@ -1,6 +1,6 @@
 int main()
 {
-    int nono[2], yesyes[4] = {1, 2};
+    int nono[2], yesyes[4] = {1, 2, 3};
     int test;
     ++test;
     --test;
