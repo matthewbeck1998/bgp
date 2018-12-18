@@ -46,11 +46,11 @@ li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 0
 sw	$t2, 0($t0)
-addiu	$t0, $sp, 8
+addiu	$t0, $sp, 4
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
-addiu	$t0, $sp, 8
+addiu	$t0, $sp, 4
 sw	$t2, 0($t0)
 j	$l6
 $l7:	

@@ -40,11 +40,11 @@ li	$t14	1
 add	$t15	$t13	$t14
 addiu	$t16	$sp	0
 sw	$t15	0($t16)
-addiu	$t17	$sp	8
+addiu	$t17	$sp	4
 lw	$t18	0($t17)
 li	$t19	1
 add	$t20	$t18	$t19
-addiu	$t21	$sp	8
+addiu	$t21	$sp	4
 sw	$t20	0($t21)
 j	$l6
 label	$l7
