@@ -1057,13 +1057,13 @@ equality_expression
 	: relational_expression { $$ = $1; parserOutput("equality_expression -> relational_expression"); }
 	| equality_expression EQ_OP relational_expression { ASTRelExprNode* temp = new ASTRelExprNode("equality_expression");
                                                          temp -> addChild($1);
-                                                         temp -> addChild(new ASTNode("BEQ"));
+                                                         temp -> addChild(new ASTNode("beq"));
                                                          temp -> addChild($3);
                                                          $$ = temp;
                                                          parserOutput("equality_expression -> equality_expression EQ_OP relational_expression"); }
 	| equality_expression NE_OP relational_expression { ASTRelExprNode* temp = new ASTRelExprNode("equality_expression");
                                                          temp -> addChild($1);
-                                                         temp -> addChild(new ASTNode("BNE"));
+                                                         temp -> addChild(new ASTNode("bne"));
                                                          temp -> addChild($3);
                                                          $$ = temp;
                                                          parserOutput("equality_expression -> equality_expression NE_OP relational_expression"); }
@@ -1073,25 +1073,25 @@ relational_expression
 	: shift_expression { $$ = $1; parserOutput("relational_expression -> shift_expression"); }
 	| relational_expression LT_OP shift_expression { ASTRelExprNode* temp = new ASTRelExprNode("relational_expression");
                                                       temp -> addChild($1);
-                                                      temp -> addChild(new ASTNode("BLT"));
+                                                      temp -> addChild(new ASTNode("blt"));
                                                       temp -> addChild($3);
                                                       $$ = temp;
                                                       parserOutput("relational_expression -> relational_expression LT_OP shift_expression"); }
 	| relational_expression GT_OP shift_expression { ASTRelExprNode* temp = new ASTRelExprNode("relational_expression");
                                                        temp -> addChild($1);
-                                                       temp -> addChild(new ASTNode("BGT"));
+                                                       temp -> addChild(new ASTNode("bgt"));
                                                        temp -> addChild($3);
                                                        $$ = temp;
                                                        parserOutput("relational_expression -> relational_expression GT_OP shift_expression"); }
 	| relational_expression LE_OP shift_expression { ASTRelExprNode* temp = new ASTRelExprNode("relational_expression");
                                                        temp -> addChild($1);
-                                                       temp -> addChild(new ASTNode("BLE"));
+                                                       temp -> addChild(new ASTNode("ble"));
                                                        temp -> addChild($3);
                                                        $$ = temp;
                                                        parserOutput("relational_expression -> relational_expression LE_OP shift_expression"); }
 	| relational_expression GE_OP shift_expression { ASTRelExprNode* temp = new ASTRelExprNode("relational_expression");
                                                        temp -> addChild($1);
-                                                       temp -> addChild(new ASTNode("BGE"));
+                                                       temp -> addChild(new ASTNode("bge"));
                                                        temp -> addChild($3);
                                                        $$ = temp;
                                                        parserOutput("relational_expression -> relational_expression GE_OP shift_expression"); }
