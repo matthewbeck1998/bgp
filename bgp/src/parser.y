@@ -1145,17 +1145,31 @@ cast_expression
 
 unary_expression
 	: postfix_expression { $$ = $1;  parserOutput("unary_expression -> postfix_expression"); }
-	| INC_OP unary_expression { ASTNode* temp = new ASTNode("unary_expression");
+	| INC_OP unary_expression { /*ASTAssignNode* temp = new ASTAssignNode("pre_inc", $2, new ASTNode("add"));
                                    temp -> addChild(new ASTNode("INC_OP"));
                                    temp -> addChild($2);
-                                   $$ = temp;
+                                   $$ = temp;*/
+                                    if($2->getLabel() == "IDENTIFIER")
+                                    {
+                                        $$ = new ASTAssignNode("pre_dec", (ASTIdNode*) $2, new ASTNode("add"));
+                                    } else if ($2->getLabel() == "array_node")
+                                    {
+                                        $$ = new ASTAssignNode("pre_dec", (ASTArrayNode*) $2, new ASTNode("add"));
+                                    }
                                    parserOutput("unary_expression -> INC_OP unary_expression"); }
-	| DEC_OP unary_expression { ASTNode* temp = new ASTNode("unary_expression");
+	| DEC_OP unary_expression { /*ASTAssignNode* temp = new ASTAssignNode("pre_dec", $2, new ASTNode("sub"));
                                    temp -> addChild(new ASTNode("DEC_OP"));
                                    temp -> addChild($2);
-                                   $$ = temp;
+                                   $$ = temp;*/
+	                                if($2->getLabel() == "IDENTIFIER")
+                                    {
+                                        $$ = new ASTAssignNode("pre_dec", (ASTIdNode*) $2, new ASTNode("sub"));
+                                    } else if ($2->getLabel() == "array_node")
+                                    {
+                                        $$ = new ASTAssignNode("pre_dec", (ASTArrayNode*) $2, new ASTNode("sub"));
+                                    }
                                    parserOutput("unary_expression -> DEC_OP unary_expression"); }
-    | unary_operator cast_expression { ASTNode* temp = new ASTNode("unary_expression");
+    | unary_operator cast_expression { ASTUnaryNode* temp = new ASTUnaryNode("unary_expression");
                                       temp -> addChild($1);
                                       temp -> addChild($2);
                                       $$ = temp;
@@ -1341,7 +1355,7 @@ int main(int argc, char** argv)
     AST tree(root);
 	yyparse();
 	tree.printTree();
-	tree.walk();
+	//tree.walk();
 
     outputFile.open( outputIndex ? argv[outputIndex] : "output/defaultOutput.txt");
     if (outputFile.good())

@@ -347,6 +347,37 @@ ASTAssignNode::ASTAssignNode (string node_label) : ASTNode::ASTNode(move(node_la
 {
 }
 
+ASTAssignNode::ASTAssignNode(string node_label, ASTArrayNode *LHS, ASTNode *mathOp) : ASTNode::ASTNode(move(node_label))
+{
+    setType( LHS->getType() );
+    int value = 1;
+    valueUnion temp;
+    temp.intVal = value;
+    addChild( LHS );
+    ASTArrayNode* tempLHS = new ASTArrayNode(LHS);
+    addChild( new ASTMathNode("additive_expression", tempLHS, mathOp, new ASTConstNode("INT_CONSTANT", type, temp) ) );
+
+}
+
+ASTAssignNode::ASTAssignNode(string node_label, ASTIdNode *LHS, ASTNode* mathOp) : ASTNode::ASTNode(move(node_label))
+{
+    setType( LHS->getType() );
+    int value = 1;
+    valueUnion temp;
+    temp.intVal = value;
+    addChild( LHS );
+    ASTIdNode* tempLHS = new ASTIdNode(LHS);
+    addChild( new ASTMathNode("additive_expression", tempLHS, mathOp, new ASTConstNode("INT_CONSTANT", type, temp) ) );
+}
+
+
+ASTConstNode::ASTConstNode(ASTConstNode *RHS) : ASTNode::ASTNode(move(RHS->getLabel()))
+{
+    type = RHS->getType();
+    value = RHS->getValue();
+}
+
+
 ASTAssignNode::ASTAssignNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNode* RHS) : ASTNode::ASTNode(move(node_label))
 {
     activationFrameSize = LHS->getActivationFrameSize() + mathOp -> getActivationFrameSize() + RHS->getActivationFrameSize();
@@ -694,6 +725,25 @@ void ASTIterationNode::printNode(ostream &treeOutFile)
 
 ASTIdNode::ASTIdNode(string node_label) : ASTNode::ASTNode(move(node_label))
 {
+}
+
+ASTIdNode::ASTIdNode(ASTIdNode *RHS) : ASTNode::ASTNode(move(RHS->getLabel()))
+{
+    offset = RHS->getOffset();
+    type = RHS->getType();
+    id = RHS->getId();
+}
+
+ASTArrayNode::ASTArrayNode(ASTArrayNode *RHS)  : ASTNode::ASTNode(move(RHS->getLabel()))
+{
+    dimensions = RHS->getDimensions();
+    offset = RHS->getOffset();
+    type = RHS->getType();
+    identifier = RHS->getId();
+    for( ASTNode* child : RHS->getChildren() )
+    {
+        addChild( new ASTConstNode( (ASTConstNode*) child) );
+    }
 }
 
 ASTIdNode::ASTIdNode(string node_label, string inputId) : ASTNode::ASTNode(move(node_label)), id(inputId)
@@ -2624,7 +2674,7 @@ void ASTUnaryNode::printNode(ostream& treeOutFile)
     treeOutFile << this->getNodeNum() 
                 << "[label = \"" << this->getLabel() << endl
 	            << "Line: " << lineNum << endl
-	            << "RELATIONAL EXPRESSION NODE" << "\"];" << endl;
+	            << "UNARY NODE" << "\"];" << endl;
 	for (auto &it : children)
 	{
 		treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;

@@ -1,2 +1,3 @@
 Empty function node. Breaks ours?
 Globals
+decrement/increment with arrays

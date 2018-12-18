@@ -312,88 +312,6 @@ class ASTMathNode : public ASTNode
 };
 
 
-/*!
- * @name ASTAssignNode
- * @brief node to hold all assignment operations
- */
-class ASTAssignNode : public ASTNode
-{
-    public:
-        /*!
-         * @name ASTAssignNode
-         * @param node_label
-         * @brief creates a new object with label equal to node_label
-         */
-        ASTAssignNode(string node_label);
-
-        /*!
-         * @name ASTAssignNode
-         * @param node_label
-         * @param LHS
-         * @param mathOp
-         * @param RHS
-         * @brief creates a new object. Sets the label to node_label and adds children LHS, mathOp, and RHS.
-         */
-        ASTAssignNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNode* RHS);
-
-        /*!
-         * @name walk
-         * @return returns true or false based on if the walk was successful
-         */
-		string walk();
-
-        /*!
-         * @name printNode
-         * @param treeOutFile
-         * @brief prints the node in a tree dot format
-         */
-        void printNode(ostream &treeOutFile = cout) override;
-
-        /*!
-         * @name setType
-         * @param newType
-         * @brief sets the type to newType
-         */
-        void setType(int newType);
-
-        /*!
-         * @name getType
-         * @return returns the int that corresponds to the type.
-         */
-        int getType() const;
-    private:
-
-        /*!
-         * @name getHigherType
-         * @param LHS
-         * @param RHS
-         * @return gets the int that corresponds to the dominant type
-         */
-        int getHigherType(ASTNode* LHS, ASTNode* RHS) const;
-
-        /*!
-         * @name printType
-         * @return returns a string that corresponds to the type
-         */
-        string printType() const;
-
-        /*!
-         * @name printType
-         * @param node
-         * @return returns a string that corresponds to the type of node
-         */
-        string printType(ASTNode*& node) const;
-
-        /*!
-         * int that store the type
-         */
-        int type;
-
-        /*!
-         * string that stores the value. Should be removed.
-         */
-        string value;
-};
 
 /*!
  * @name ASTVariableNode
@@ -503,6 +421,8 @@ class ASTConstNode : public ASTNode
      */
     ASTConstNode(string node_label, int inputType, valueUnion value);
 
+
+    ASTConstNode(ASTConstNode* RHS);
     /*!
      * @name getType
      * @return returns the type of the node
@@ -635,6 +555,8 @@ class ASTIdNode : public ASTNode
          * @brief Creates a new node object. Sets label equal to node_label and id equal to inputId
          */
         ASTIdNode(string node_label, string inputId);
+
+        ASTIdNode(ASTIdNode* RHS);
 
         /*!
          * @name walk
@@ -833,6 +755,8 @@ public:
 	 */
     ASTArrayNode(string node_label, ASTNode* inputNode);
 
+
+    ASTArrayNode(ASTArrayNode* RHS);
     /*!
      * @name printNode
      * @param treeOutFile
@@ -913,6 +837,93 @@ private:
 	int type;
 
 };
+
+/*!
+ * @name ASTAssignNode
+ * @brief node to hold all assignment operations
+ */
+class ASTAssignNode : public ASTNode
+{
+public:
+    /*!
+     * @name ASTAssignNode
+     * @param node_label
+     * @brief creates a new object with label equal to node_label
+     */
+    ASTAssignNode(string node_label);
+
+    /*!
+     * @name ASTAssignNode
+     * @param node_label
+     * @param LHS
+     * @param mathOp
+     * @param RHS
+     * @brief creates a new object. Sets the label to node_label and adds children LHS, mathOp, and RHS.
+     */
+    ASTAssignNode(string node_label, ASTNode* LHS, ASTNode* mathOp, ASTNode* RHS);
+
+    ASTAssignNode(string node_label, ASTIdNode* LHS, ASTNode* mathOp);
+    ASTAssignNode(string node_label, ASTArrayNode* LHS, ASTNode* mathOp);
+    /*!
+     * @name walk
+     * @return returns true or false based on if the walk was successful
+     */
+    string walk();
+
+    /*!
+     * @name printNode
+     * @param treeOutFile
+     * @brief prints the node in a tree dot format
+     */
+    void printNode(ostream &treeOutFile = cout) override;
+
+    /*!
+     * @name setType
+     * @param newType
+     * @brief sets the type to newType
+     */
+    void setType(int newType);
+
+    /*!
+     * @name getType
+     * @return returns the int that corresponds to the type.
+     */
+    int getType() const;
+private:
+
+    /*!
+     * @name getHigherType
+     * @param LHS
+     * @param RHS
+     * @return gets the int that corresponds to the dominant type
+     */
+    int getHigherType(ASTNode* LHS, ASTNode* RHS) const;
+
+    /*!
+     * @name printType
+     * @return returns a string that corresponds to the type
+     */
+    string printType() const;
+
+    /*!
+     * @name printType
+     * @param node
+     * @return returns a string that corresponds to the type of node
+     */
+    string printType(ASTNode*& node) const;
+
+    /*!
+     * int that store the type
+     */
+    int type;
+
+    /*!
+     * string that stores the value. Should be removed.
+     */
+    string value;
+};
+
+
 
 /*!
  * @name ASTDeclarationNode
