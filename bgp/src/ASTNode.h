@@ -67,6 +67,8 @@ class ASTNode
 
         void setActivationFrameSize(int inputActivationFrameSize);
 
+        void giveReturnNodeMyActivationFrameSize( int functionActivationFrameSize );
+
         void propegateActivation(int inputActivationSize);
 
         /*!
@@ -1023,6 +1025,14 @@ class ASTArrayInitializerNode : public ASTNode
     private:
         vector<double> values;
         int type;
+};
+
+class ASTReturnNode : public ASTNode
+{
+    public:
+        ASTReturnNode( string node_label );
+        ASTReturnNode( string node_label, ASTNode* childNode );
+        void printNode(ostream& treeOutFile = cout) override;
 };
 
 int typeToByteSize( int type );

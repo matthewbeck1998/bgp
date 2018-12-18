@@ -1190,6 +1190,46 @@ void ASTArrayInitializerNode::printNode(ostream &treeOutFile)
     }
 }
 
+void ASTNode::giveReturnNodeMyActivationFrameSize( int functionActivationSize )
+{
+    if(label == "RETURN")
+    {
+        activationFrameSize = functionActivationSize;
+    } else
+    {
+        for(ASTNode* child : children)
+        {
+            child->giveReturnNodeMyActivationFrameSize( functionActivationSize );
+        }
+    }
+
+}
+
+ASTReturnNode::ASTReturnNode(string node_label) : ASTNode(move(node_label))
+{
+}
+
+ASTReturnNode::ASTReturnNode(string node_label, ASTNode *childNode) : ASTNode(move(node_label))
+{
+    addChild( childNode );
+}
+
+void ASTReturnNode::printNode(ostream &treeOutFile)
+{
+    treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
+    treeOutFile << "Line: " << lineNum << endl;
+    treeOutFile << "Return Node" << endl;
+    treeOutFile << "Activation Frame Size: " << activationFrameSize << endl;
+
+    treeOutFile <<"\"];" << endl;
+
+    for(auto &it : children)
+    {
+        treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
+        it->printNode(treeOutFile);
+    }
+}
+
 string ASTNode::walk()
 {
 	//cout << "ASTNode: " << this->getLabel() << endl;

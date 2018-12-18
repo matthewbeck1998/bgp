@@ -125,6 +125,7 @@ function_definition
                                       if( temp->getActivationFrameSize() % 8 != 0 )
                                         temp->setActivationFrameSize( (temp->getActivationFrameSize() + 4) + 8 - ( (temp->getActivationFrameSize() + 4) % 8) );
                                       currentOffset = 4;
+                                      temp->giveReturnNodeMyActivationFrameSize( temp->getActivationFrameSize() );
                                       parserOutput("function_definition -> declarator compound_statement");
                                       st.popLevel(); }
 	| declarator declaration_list compound_statement { ASTFunctionNode* temp = new ASTFunctionNode("function_definition", ( ( ASTTypeNode* )$1 )-> getType() );
@@ -136,6 +137,7 @@ function_definition
                                                          if( temp->getActivationFrameSize() % 8 != 0 )
                                                             temp->setActivationFrameSize( (temp->getActivationFrameSize() + 4) + 8 - ( (temp->getActivationFrameSize() + 4) % 8) );
                                                          currentOffset = 4;
+                                                         temp->giveReturnNodeMyActivationFrameSize( temp->getActivationFrameSize() );
                                                          parserOutput("function_definition -> declarator declaration_list compound_statement");
                                                          st.popLevel(); }
 	| declaration_specifiers declarator compound_statement {
@@ -161,6 +163,7 @@ function_definition
                                                                 symbolPair->second.offset = currentOffset;
                                                             }
                                                             currentOffset = 4;
+                                                            temp->giveReturnNodeMyActivationFrameSize( temp->getActivationFrameSize() );
 	                                                        parserOutput("function_definition -> declaration_specifiers declarator compound_statement");
 	                                                        st.popLevel(); }
 	| declaration_specifiers declarator declaration_list compound_statement {
@@ -174,6 +177,7 @@ function_definition
                                                                                if( temp->getActivationFrameSize() % 8 != 0 ) // The activation frame of functions is a multiple of 8
                                                                                    temp->setActivationFrameSize( (temp->getActivationFrameSize() + 8) + 8 - ( (temp->getActivationFrameSize() + 8) % 8) );
                                                                                currentOffset = 4;
+                                                                               temp->giveReturnNodeMyActivationFrameSize( temp->getActivationFrameSize() );
                                                                                parserOutput("function_definition -> declaration_specifiers declarator declaration_list compound_statement");
                                                                                st.popLevel(); }
 	;
@@ -922,12 +926,9 @@ jump_statement
                                   parserOutput("jump_statement -> GOTO identifier SEMICOLON"); }
 	| CONTINUE SEMICOLON { $$ = new ASTNode("CONTINUE"); parserOutput("jump_statement -> CONTINUE SEMICOLON"); }
 	| BREAK SEMICOLON { $$ = new ASTNode("BREAK"); parserOutput("jump_statement -> BREAK SEMICOLON"); }
-	| RETURN SEMICOLON { $$ = new ASTNode("RETURN"); parserOutput("jump_statement -> RETURN SEMICOLON"); }
-	| RETURN expression SEMICOLON { ASTNode* temp = new ASTNode("jump_statement");
-                                      temp -> addChild(new ASTNode("RETURN"));
-                                      temp -> addChild($2);
-                                      $$ = temp;
-                                      parserOutput("jump_statement -> RETURN expression SEMICOLON"); }
+	| RETURN SEMICOLON { $$ = new ASTReturnNode("RETURN"); parserOutput("jump_statement -> RETURN SEMICOLON"); }
+	| RETURN expression SEMICOLON { $$ = new ASTReturnNode("RETURN", $2);
+                                    parserOutput("jump_statement -> RETURN expression SEMICOLON"); }
 	;
 
 expression
