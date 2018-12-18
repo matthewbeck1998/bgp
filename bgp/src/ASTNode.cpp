@@ -1109,6 +1109,26 @@ void ASTDeclarationNode::setOffset(int inputOffset)
 
 ASTFunctionNode::ASTFunctionNode(string node_label, int inputType) : ASTNode(move(node_label)), type(inputType)
 {
+    ticketLabel = "$t" + to_string(ticketCounter++);
+}
+
+string ASTFunctionNode::getTicketLabel() const
+{
+    return ticketLabel;
+}
+
+void ASTNode::sendTheReturnNodeTheTicketLabel( string inputTicketLabel )
+{
+    if( label == "RETURN" )
+    {
+        ticketLabel = inputTicketLabel;
+    } else
+    {
+        for( ASTNode* child : children )
+        {
+            child->sendTheReturnNodeTheTicketLabel( inputTicketLabel );
+        }
+    }
 }
 
 void ASTFunctionNode::printNode(ostream &treeOutFile)
@@ -1117,7 +1137,8 @@ void ASTFunctionNode::printNode(ostream &treeOutFile)
     treeOutFile << "Line: " << lineNum << endl;
     treeOutFile << "FUNCTION NODE" << endl;
     treeOutFile << "type: " << printType(type) << endl;
-    treeOutFile << "Activation frame size: " << activationFrameSize <<"\"];" << endl;
+    treeOutFile << "Activation frame size: " << activationFrameSize << endl;
+    treeOutFile << "ticketLabel: " << ticketLabel <<"\"];" << endl;
     for(auto &it : children)
     {
         treeOutFile << nodeNum << " -> " << it->getNodeNum() << endl;
@@ -1319,6 +1340,7 @@ void ASTReturnNode::printNode(ostream &treeOutFile)
 {
     treeOutFile << this->getNodeNum() << "[label = \"" << this->getLabel() << endl;
     treeOutFile << "Line: " << lineNum << endl;
+    treeOutFile << "Ticket Label: " << ticketLabel << endl;
     treeOutFile << "Return Node" << endl;
     treeOutFile << "Activation Frame Size: " << activationFrameSize << endl;
 
