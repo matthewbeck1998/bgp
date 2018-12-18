@@ -1612,7 +1612,7 @@ string ASTAssignNode::walk()
 		cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << children.front()->getOffset() << endl;;
 		//cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << children.front()->getOffset() << endl;
 		cout << "li\t" << ticket1 + "\t" << returnValues[2] << endl;
-		cout << "sw\t" << ticket1 + '\t' << "0(" + ticket1 + ")" << endl;
+		cout << "sw\t" << ticket1 + '\t' << "0(" + ticket0 + ")" << endl;
 	}
 	else if(children.front()->getLabel() == "IDENTIFIER" and
 			children.back()->getLabel() == "array_node")
@@ -1792,38 +1792,30 @@ string ASTIterationNode::walk()
 string ASTSelectionNode::walk()
 {
 	string selectionRegister = "NAHHHH";
-	//if()
-	auto falseNode = prev(children.end(), 1);
+	if((*next(children.begin()))->getLabel() == "IDENTIFIER")
+	{
+		string ticket0 = "$t" + to_string(ticketCounter++);
+		string ticket1 = "$t" + to_string(ticketCounter++);
 
+		cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << (*next(children.begin()))->getOffset() << endl;
+		cout << "lw\t" << ticket1 + "\t" << "0("+ticket0+")" << endl;
+		selectionRegister.assign(ticket1);
+	}
+	else
+	{
+		selectionRegister.assign((*next(children.begin()))->walk());
+	}
+	string label0 = "$l" + to_string(labelCounter++);
+	string label1 = "$l" + to_string(labelCounter++);
 
-//	//cout << "ASTSelectionNode: " << endl;
-//	for(auto it: children)
-//	{
-//		it->walk();
-//	}
-//
-//    // TODO: Edge case, if (1)
-//    auto relExprNode = next(children.begin(), 1);
-//    auto relExprVec = (*relExprNode)->walk();
-//
-//    string returnedTicket = relExprVec;
-//    string trueLabel = "l_" + to_string(labelCounter++);
-//    string endLabel = "l_" + to_string(labelCounter++);
-//
-//    cout << "BEQ" << "\t" << returnedTicket << "\t" << "1" << "\t" << trueLabel << endl;
-//
-//    auto falseNode = prev(children.end(), 1);
-//    auto falseNodeVec = (*falseNode)->walk();
-//
-//    cout << "B" << "\t" << endLabel << endl;
-//    cout << "LABEL" << "\t" << trueLabel << endl;
-//
-//    auto trueNode = next(relExprNode, 1);
-//    auto trueNodeVec = (*trueNode)->walk();
-//
-//    cout << "LABEL" << "\t" << endLabel << endl;
-//
-//	return {};
+	cout << "bne\t" << selectionRegister + "\t" << 0 << "\t" << label0 << endl;
+	(*next(children.begin(), 4))->walk();
+	cout << "j\t" << label1 << endl;
+	cout << "LABEL\t" << label0 << endl;
+	(*next(children.begin(), 2))->walk();
+	cout << "LABEL\t" << label1 << endl;
+
+	return {};
 }
 
 
