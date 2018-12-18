@@ -96,6 +96,8 @@ class ASTNode
          */
 		static int totalNodeCount;
 
+		void sendTheReturnNodeTheTicketLabel( string inputTicketLabel );
+
 		/*!
 		 * @name getColNum
 		 * @return returns the column number
@@ -202,6 +204,7 @@ protected:
      * String to hold the label
      */
 	string label;
+	string ticketLabel;
     int colNum; // Not implemented yet.
     int lineNum;
 
@@ -987,6 +990,7 @@ class ASTFunctionNode : public  ASTNode
     void printNode(ostream &treeOutFile = cout) override;
     void setType( int inputType );
     int getType() const;
+    string getTicketLabel() const;
     //void addChild(ASTNode* addNode);
 
     string walk() override;

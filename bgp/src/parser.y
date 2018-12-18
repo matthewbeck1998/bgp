@@ -127,6 +127,7 @@ function_definition
                                       temp->setActivationFrameSize( currentOffset );
                                       temp->giveReturnNodeMyActivationFrameSize( currentOffset );
                                       temp->reverseTheOffsetSize( currentOffset );
+                                      temp->sendTheReturnNodeTheTicketLabel( temp->getTicketLabel() );
                                       currentOffset = 4;
                                       parserOutput("function_definition -> declarator compound_statement");
                                       st.popLevel(); }
@@ -141,6 +142,7 @@ function_definition
                                                          temp->setActivationFrameSize( currentOffset );
                                                          temp->giveReturnNodeMyActivationFrameSize( currentOffset );
                                                          temp->reverseTheOffsetSize( currentOffset );
+                                                         temp->sendTheReturnNodeTheTicketLabel( temp->getTicketLabel() );
                                                          currentOffset = 4;
                                                          parserOutput("function_definition -> declarator declaration_list compound_statement");
                                                          st.popLevel(); }
@@ -156,6 +158,7 @@ function_definition
                                                             temp->setActivationFrameSize( currentOffset );
                                                             temp->giveReturnNodeMyActivationFrameSize( currentOffset );
                                                             temp->reverseTheOffsetSize( currentOffset );
+                                                            temp->sendTheReturnNodeTheTicketLabel( temp->getTicketLabel() );
                                                             currentOffset = 4;
 	                                                        parserOutput("function_definition -> declaration_specifiers declarator compound_statement");
 	                                                        st.popLevel(); }
@@ -172,6 +175,7 @@ function_definition
                                                                                temp->setActivationFrameSize( currentOffset );
                                                                                temp->giveReturnNodeMyActivationFrameSize( currentOffset );
                                                                                temp->reverseTheOffsetSize( currentOffset );
+                                                                               temp->sendTheReturnNodeTheTicketLabel( temp->getTicketLabel() );
                                                                                currentOffset = 4;
                                                                                parserOutput("function_definition -> declaration_specifiers declarator declaration_list compound_statement");
                                                                                st.popLevel(); }
