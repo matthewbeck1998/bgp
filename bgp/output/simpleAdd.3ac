@@ -16,13 +16,11 @@ sw      $t8     0($t7)
 
 addiu   $t9     $sp     FS
 subiu   $t10    $t9     getOffset(x)
-lw      $t11    0($t10)
-
-addiu   $t12    $sp     FS
-subiu   $t13    $t12    getOffset(z)
-lw      $t14    0($t13)
-
-add     $t15    $t11    $t14
+addiu   $t11    $sp     FS
+subiu   $t12    $t11    getOffset(z)
+lw      $t13    0($t10)
+lw      $t14    0($t12)
+add     $t15    $t13    $t14
 
 addiu   $t16    $sp     FS
 subiu   $t17    $t16    getOffset(z)
