@@ -19,7 +19,6 @@ def assignTemp(val):
             reg["val"] = val
             reg["free"] = False
             return reg["name"]
-    return "$t10"
 
 def searchTemp(temp):
     for reg in RAT:
@@ -27,14 +26,14 @@ def searchTemp(temp):
             reg["free"] = True
             return reg["name"]
 
-def handleFunc(inst):
+def handleFunction(inst):
     label = [inst[0] + ":"]
     allocate = ["subiu", "$sp", "$sp", inst[2]]
     raOffset = str(int(inst[2]) - 4) + "($sp)"
     saveReturn = ["sw", "$ra", raOffset]
     return [label, allocate, saveReturn]
 
-def handleRet(inst):
+def handleReturn(inst):
     return inst
 
 def handleLoad(inst):
@@ -75,10 +74,18 @@ def handleMod(inst):
     second = ["mfhi", inst[1]]
     return [first, second]
 
+def handleJump(inst):
+    return inst
+
+def handleBranch(inst):
+    inst[1] = searchTemp(inst[1]) if isTemp(inst[1]) else inst[1]
+    inst[2] = searchTemp(inst[2]) if isTemp(inst[2]) else inst[2]
+    return inst
+
 def translate(inst):
     kjv = {
-        "func": handleFunc,
-        "ret": handleRet,
+        "func": handleFunction,
+        "ret": handleReturn,
 
         "add": handleMath,
         "addi": handleMath,
@@ -95,6 +102,15 @@ def translate(inst):
         "lw": handleLoad,
 
         "sw": handleStore,
+
+        "j": handleJump,
+
+        "beq": handleBranch,
+        "bne": handleBranch,
+        "bgt": handleBranch,
+        "bge": handleBranch,
+        "blt": handleBranch,
+        "ble": handleBranch,
     }
 
     cmd = inst[0]
