@@ -27,7 +27,7 @@ def searchTemp(temp):
             return reg["name"]
 
 def handleFunction(inst):
-    label = [inst[0] + ":"]
+    label = [inst[1] + ":"]
     allocate = ["subiu", "$sp", "$sp", inst[2]]
     raOffset = str(int(inst[2]) - 4) + "($sp)"
     storeReturn = ["sw", "$ra", raOffset]
@@ -38,10 +38,10 @@ def handleReturn(inst):
     return ["move", "$v0", reg]
 
 def handleEnd(inst):
-    raOffset = str(int(inst[2]) - 4) + "($sp)"
+    raOffset = str(int(inst[1]) - 4) + "($sp)"
     loadReturn = ["lw", "$ra", raOffset]
-    deallocate = ["addiu", "$sp", "$sp", inst[2]]
-    jump = ["j", "$ra"]
+    deallocate = ["addiu", "$sp", "$sp", inst[1]]
+    jump = ["jr", "$ra"]
     return [loadReturn, deallocate, jump]
 
 def handleLoad(inst):
@@ -146,6 +146,11 @@ with open(inputFile, 'r') as fp:
             for inst in insts:
                 instStr = stringify(inst)
                 output.append(instStr)
+        elif inst[0] == "end":
+            insts = handleEnd(inst)
+            for inst in insts:
+                instStr = stringify(inst)
+                output.append(instStr)
         elif inst[0] == "div":
             insts = handleDiv(translated)
             for inst in insts:
@@ -162,5 +167,13 @@ with open(inputFile, 'r') as fp:
 
 outputFile = sys.argv[2]
 with open(outputFile, 'w') as fp:
+    startASM = [
+        ["jal", "main"],
+        ["li", "$v0", "10"],
+        ["syscall"]
+    ]
+    startStr = [stringify(line) for line in startASM]
+    for line in startStr:
+        fp.write(line)
     for line in output:
         fp.write(line)
