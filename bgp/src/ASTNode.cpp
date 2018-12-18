@@ -2149,7 +2149,6 @@ void ASTDeclListNode::printNode(ostream &treeOutFile)
     }
 }
 
-
 ASTFunctionCallNode::ASTFunctionCallNode(string node_label, ASTNode *inputChild) : ASTNode(move(node_label))
 {
     addChild(inputChild);
