@@ -33,32 +33,6 @@ string printType(int type)
 	}
 }
 
-size_t typeToSize( int type )
-{
-	switch( type )
-	{
-		case Char:
-			return sizeof(char);
-
-		case Short:
-			return sizeof(short);
-
-		case Int:
-			return sizeof(int);
-
-		case Long:
-			return sizeof(long);
-
-		case Float:
-			return sizeof(float);
-
-		case Double:
-			return sizeof(double);
-
-	}
-	return 0;
-}
-
 
 ASTNode::ASTNode (string node_label) : label(move(node_label)), offset(0)
 {
@@ -1843,45 +1817,61 @@ string ASTArrayNode::walk()
 //	}
 //
 //	cout << endl;
-//
-//	if(!children.empty())
-//	{
-//		if(children.size() == 1)
-//		{
-//			if(children.front()->getLabel() == "INT_CONSTANT")
-//			{
-//				string ticket0 = "$t" + to_string(ticketCounter++);
-//				string ticket1 = "$t" + to_string(ticketCounter++);
-//				string ticket2 = "$t" + to_string(ticketCounter++);
-//
-//				cout << "li\t" << ticket0 + "\t" << returnValues[0] << endl;
-//				cout << "mul\t" << ticket1 + "\t" << ticket0 + "\t" << typeToSize(type) << endl;
-//				cout << "addiu"
-//				return ticket1;
-//			}
-//			else if(children.front()->getLabel() == "IDENTIFIER")
-//			{
-//				string ticket0 = "$t" + to_string(ticketCounter++);
-//				string ticket1 = "$t" + to_string(ticketCounter++);
-//				string ticket2 = "$t" + to_string(ticketCounter++);
-//
-//				cout << "lw\t" << ticket0 + "\t" << children.front()->getOffset() << "($sp)"
-//					 << " ## " << ((ASTIdNode*)children.front()) -> getId() << endl;
-//				cout << "mul\t" << ticket1 + "\t" << ticket0 + "\t" << typeToSize(type) << endl;
-//				cout << "addiu\t" << ticket2 + "\t" << ticket1 + "\t" << offset << endl;
-//			}
-//			else if(children.front()->getLabel() == "array_node")
-//			{
-//
-//			}
-//			else
-//			{
-//				cout << "1D Array Broken on line: " << lineNum << endl;
-//				cout << "Front: " children.front()->getLabel() << endl;
-//				return "ARRAY BROKEN"
-//			}
-//		}
-//	}
+
+	if(!children.empty())
+	{
+		if(children.size() == 1)
+		{
+			if(children.front()->getLabel() == "INT_CONSTANT")
+			{
+				string ticket0 = "$t" + to_string(ticketCounter++);
+				string ticket1 = "$t" + to_string(ticketCounter++);
+				string ticket2 = "$t" + to_string(ticketCounter++);
+
+				cout << "li\t" << ticket0 + "\t" << returnValues[0] << endl;
+				cout << "mul\t" << ticket1 + "\t" << ticket0 + "\t" << typeToByteSize(type) << endl;
+				cout << "addiu\t" << ticket2 + "\t" << ticket1 + "\t" << offset << endl;
+				return ticket2;
+			}
+			else if(children.front()->getLabel() == "IDENTIFIER")
+			{
+				string ticket0 = "$t" + to_string(ticketCounter++);
+				string ticket1 = "$t" + to_string(ticketCounter++);
+				string ticket2 = "$t" + to_string(ticketCounter++);
+				string ticket3 = "$t" + to_string(ticketCounter++);
+				string ticket4 = "$t" + to_string(ticketCounter++);
+
+				cout << "addiu\t" << ticket0 +"\t" << "$sp\t" << "FS" << endl;
+				cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << children.front()->getOffset()
+					 << " ## " << ((ASTIdNode*)children.front()) -> getId() << endl;
+				cout << "lw\t" << ticket2 + "\t" << "0(" + ticket1 + ")" << endl;
+				cout << "mul\t" << ticket3 + "\t" << ticket2 + "\t" << typeToByteSize(type) << endl;
+				cout << "addiu\t" << ticket4 + "\t" << ticket3 + "\t" << offset << endl;
+				return ticket4;
+			}
+			else if(children.front()->getLabel() == "array_node")
+			{
+				string ticket0 = "$t" + to_string(ticketCounter++);
+				string ticket1 = "$t" + to_string(ticketCounter++);
+				string ticket2 = "$t" + to_string(ticketCounter++);
+				string ticket3 = "$t" + to_string(ticketCounter++);
+				string ticket4 = "$t" + to_string(ticketCounter++);
+
+				cout << "addiu\t" << ticket0 +"\t" << "$sp\t" << "FS" << endl;
+				cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << returnValues[0] << endl;
+				cout << "lw\t" << ticket2 + "\t" << "0(" + ticket1 + ")" << endl;
+				cout << "mul\t" << ticket3 + "\t" << ticket2 + "\t" << typeToByteSize(type) << endl;
+				cout << "addiu\t" << ticket4 + "\t" << ticket3 + "\t" << offset << endl;
+				return ticket4;
+			}
+			else
+			{
+				cout << "1D Array Broken on line: " << lineNum << endl;
+				cout << "Front: " << children.front()->getLabel() << endl;
+				return "ARRAY BROKEN";
+			}
+		}
+	}
 
 
 //			if(children.front()->getLabel() == "INT_CONSTANT" or
