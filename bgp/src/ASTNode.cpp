@@ -1662,7 +1662,7 @@ string ASTAssignNode::walk()
 		cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << children.front()->getOffset() << endl;;
 		//cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << children.front()->getOffset() << endl;
 		cout << "li\t" << ticket1 + "\t" << returnValues[2] << endl;
-		cout << "sw\t" << ticket1 + '\t' << "0(" + ticket1 + ")" << endl;
+		cout << "sw\t" << ticket1 + '\t' << "0(" + ticket0 + ")" << endl;
 	}
 	else if(children.front()->getLabel() == "IDENTIFIER" and
 			children.back()->getLabel() == "array_node")
@@ -1784,57 +1784,57 @@ string ASTConstNode::walk()
 string ASTIterationNode::walk()
 {
 	//cout << "ASTIterationNode: " << endl;
-	for(auto it: children)
-	{
-		it->walk();
-	}
+//	for(auto it: children)
+//	{
+//		it->walk();
+//	}
 
-//    auto name = children.begin();
-//    auto expr1 = next(name, 1); // for loop init, while/do-while nothing
-//    auto expr2 = next(name, 2); // condition in all three
-//    auto expr3 = next(name, 3); // for loop do after iteration, while/do-while nothing
-//    auto body = next(name, 4); // body in all three
-//
-//    string iterLabel = "l_" + to_string(labelCounter++);
-//    string condLabel = "l_" + to_string(labelCounter++);
-//    string exitLabel = "l_" + to_string(labelCounter++);
-//
-//
-//    // walk(expr1)
-//    (*expr1)->walk();
-//
-//    // do-while requires body to walk at least once
-//    if ((*name)->getLabel() == "DO")
-//    {
-//        (*body)->walk();
-//    }
-//
-//    // LABEL    L0
-//    cout << "LABEL" << "\t" << iterLabel << endl;
-//
-//    // walk(expr2)
-//    auto condVec = (*expr2)->walk();
-//    string condReg = condVec[0];
-//
-//    // BEQ      R2
-//    cout << "BEQ" << "\t" << condReg << "\t" << "1" << "\t" << condLabel << endl;
-//
-//    // B        L2
-//    cout << "B" << "\t" << exitLabel << endl;
-//
-//    // LABEL    L1
-//    cout << "LABEL" << "\t" << condLabel << endl;
-//
-//    // walk(body)
-//    (*body)->walk();
-//
-//    // walk(expr3)
-//    (*expr3)->walk();
-//    // B        L0
-//    cout << "B" << "\t" << iterLabel << endl;
-//
-//    // LABEL    L2
-//    cout << "LABEL" << "\t" << exitLabel << endl;
+    auto name = children.begin();
+    auto expr1 = next(name, 1); // for loop init, while/do-while nothing
+    auto expr2 = next(name, 2); // condition in all three
+    auto expr3 = next(name, 3); // for loop do after iteration, while/do-while nothing
+    auto body = next(name, 4); // body in all three
+
+    string iterLabel = "$l" + to_string(labelCounter++);
+    string condLabel = "$l" + to_string(labelCounter++);
+    string exitLabel = "$l" + to_string(labelCounter++);
+
+
+    // walk(expr1)
+    (*expr1)->walk();
+
+    // do-while requires body to walk at least once
+    if ((*name)->getLabel() == "DO")
+    {
+        (*body)->walk();
+    }
+
+    // LABEL    L0
+    cout << "LABEL" << "\t" << iterLabel << endl;
+
+    // walk(expr2)
+    auto condVec = (*expr2)->walk();
+    string condReg = condVec;
+
+    // BEQ      R2
+    cout << "BEQ" << "\t" << condReg << "\t" << "1" << "\t" << condLabel << endl;
+
+    // B        L2
+    cout << "B" << "\t" << exitLabel << endl;
+
+    // LABEL    L1
+    cout << "LABEL" << "\t" << condLabel << endl;
+
+    // walk(body)
+    (*body)->walk();
+
+    // walk(expr3)
+    (*expr3)->walk();
+    // B        L0
+    cout << "B" << "\t" << iterLabel << endl;
+
+    // LABEL    L2
+    cout << "LABEL" << "\t" << exitLabel << endl;
 
 	return {};
 }
@@ -1842,38 +1842,44 @@ string ASTIterationNode::walk()
 string ASTSelectionNode::walk()
 {
 	string selectionRegister = "NAHHHH";
-	//if()
-	auto falseNode = prev(children.end(), 1);
+	if((*next(children.begin()))->getLabel() == "IDENTIFIER")
+	{
+		string ticket0 = "$t" + to_string(ticketCounter++);
+		string ticket1 = "$t" + to_string(ticketCounter++);
 
+		cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << (*next(children.begin()))->getOffset() << endl;
+		cout << "lw\t" << ticket1 + "\t" << "0("+ticket0+")" << endl;
+		selectionRegister.assign(ticket1);
+	}
+	else if((*next(children.begin()))->getLabel() == "INT_CONSTANT")
+	{
+		string ticket0 = "$t" + to_string(ticketCounter++);
 
-//	//cout << "ASTSelectionNode: " << endl;
-//	for(auto it: children)
-//	{
-//		it->walk();
-//	}
-//
-//    // TODO: Edge case, if (1)
-//    auto relExprNode = next(children.begin(), 1);
-//    auto relExprVec = (*relExprNode)->walk();
-//
-//    string returnedTicket = relExprVec;
-//    string trueLabel = "l_" + to_string(labelCounter++);
-//    string endLabel = "l_" + to_string(labelCounter++);
-//
-//    cout << "BEQ" << "\t" << returnedTicket << "\t" << "1" << "\t" << trueLabel << endl;
-//
-//    auto falseNode = prev(children.end(), 1);
-//    auto falseNodeVec = (*falseNode)->walk();
-//
-//    cout << "B" << "\t" << endLabel << endl;
-//    cout << "LABEL" << "\t" << trueLabel << endl;
-//
-//    auto trueNode = next(relExprNode, 1);
-//    auto trueNodeVec = (*trueNode)->walk();
-//
-//    cout << "LABEL" << "\t" << endLabel << endl;
-//
-//	return {};
+		cout << "li\t" << ticket0 + "\t" << (*next(children.begin()))->walk() << endl;
+		selectionRegister.assign(ticket0);
+	}
+	else if((*next(children.begin()))->getLabel() == "array_node")
+	{
+		string ticket0 = "$t" + to_string(ticketCounter++);
+
+		cout << "lw\t" << ticket0 + "\t" << "0(" << (*next(children.begin()))->walk() << ")" << endl;
+		selectionRegister.assign(ticket0);
+	}
+	else
+	{
+		selectionRegister.assign((*next(children.begin()))->walk());
+	}
+	string label0 = "$l" + to_string(labelCounter++);
+	string label1 = "$l" + to_string(labelCounter++);
+
+	cout << "bne\t" << selectionRegister + "\t" << 0 << "\t" << label0 << endl;
+	(*next(children.begin(), 4))->walk();
+	cout << "j\t" << label1 << endl;
+	cout << "LABEL\t" << label0 << endl;
+	(*next(children.begin(), 2))->walk();
+	cout << "LABEL\t" << label1 << endl;
+
+	return {};
 }
 
 
@@ -2584,11 +2590,55 @@ string ASTUnaryNode::walk()
 string ASTFunctionNode::walk()
 {
 	//cout << "ASTFunctionNode: " << this->getLabel() << endl;
+    cout << "func\t" << ((ASTIdNode*)children.front())->getId() << "\t" << activationFrameSize << endl;
 	for(auto it : children)
 	{
 		it->walk();
 	}
 	return {};
+}
+
+string ASTReturnNode::walk()
+{
+	if(children.front()->getLabel() == "IDENTIFIER")
+	{
+		string ticket0 = "$t" + to_string(ticketCounter++);
+		string ticket1 = "$t" + to_string(ticketCounter++);
+
+		cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << children.front()->getOffset() << endl;
+		cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
+		cout << "ret\t" << ticket1 << endl;
+        cout << "end\t" << activationFrameSize << endl;
+
+		return {};
+	}
+	else if(children.front()->getLabel() == "array_node")
+	{
+		string ticket0 = "$t" + to_string(ticketCounter++);
+
+		cout << "lw\t" << ticket0 + "\t" << "0(" << children.front()->walk() << ")" << endl;
+		cout << "ret\t" << ticket0 << endl;
+        cout << "end\t" << activationFrameSize << endl;
+
+		return {};
+	}
+	else if(children.front()->getLabel() == "INT_CONSTANT")
+	{
+		string ticket0 = "$t" + to_string(ticketCounter++);
+
+		cout << "li\t" << ticket0 + "\t" << children.front()->walk() << endl;
+		cout << "ret\t" << ticket0 << endl;
+        cout << "end\t" << activationFrameSize << endl;
+
+		return {};
+	}
+	else
+	{
+		cout << "ret\t" << children.front()->walk() << endl;
+        cout << "end\t" << activationFrameSize << endl;
+
+		return {};
+	}
 }
 
 ASTDeclListNode::ASTDeclListNode(string node_label, ASTNode *inputChild) : ASTNode(move(node_label))

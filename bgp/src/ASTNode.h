@@ -1048,6 +1048,7 @@ class ASTReturnNode : public ASTNode
         ASTReturnNode( string node_label );
         ASTReturnNode( string node_label, ASTNode* childNode );
         void printNode(ostream& treeOutFile = cout) override;
+        string walk() override;
 };
 
 int typeToByteSize( int type );
