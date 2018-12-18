@@ -1289,7 +1289,7 @@ string ASTMathNode::walk()
 		cout << "li\t" << ticket0 + "\t" << returnValues[0] << endl;
 		cout << "li\t" << ticket1 + "\t" << returnValues[2] << endl;
 		cout << (*next(children.begin()))->getLabel() + "\t" << ticket2 + "\t"
-			 << ticket1 + "\t" << ticket2 << endl;
+			 << ticket1 + "\t" << ticket0 << endl;
 		return ticket2;
 	}
 	else if(children.front()->getLabel() == "INT_CONSTANT" and
