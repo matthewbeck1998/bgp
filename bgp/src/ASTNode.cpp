@@ -1652,8 +1652,20 @@ string ASTAssignNode::walk()
 //		cout << i++ << " : " << rt << endl;
 //	}
 
+	if(children.front()->getLabel() == "array_node" and
+	   children.back()->getLabel() == "array_initializer")
+	{
+		if(children.front()->getDimensions().front() < ((ASTArrayInitializerNode*)children.back())->getValues().size())
+		{
+			cout << "Array initializer too big" << endl;
+			exit(EXIT_FAILURE);
+		}
+		for(auto dim: ((ASTArrayInitializerNode*)children.back())->getValues())
+		{
 
-	if(children.front()->getLabel() == "IDENTIFIER" and
+		}
+	}
+	else if(children.front()->getLabel() == "IDENTIFIER" and
 		children.back()->getLabel() == "INT_CONSTANT")
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
@@ -1796,7 +1808,7 @@ string ASTIterationNode::walk()
 		string label0 = "$l" + to_string(labelCounter++);
 		string label1 = "$l" + to_string(labelCounter++);
 
-		cout << "LABEL\t" << label0 << endl;
+		cout << "label\t" << label0 << endl;
 		body->walk();
 
 		if(expr->getLabel() == "INT_CONSTANT")
@@ -1832,7 +1844,7 @@ string ASTIterationNode::walk()
 			cout << "bne\t" << expr->walk() + "\t" << 0 << "\t" << label0 << endl;
 			cout << "j\t" << label1 << endl;
 		}
-		cout << "LABEL\t" << label1 << endl;
+		cout << "label\t" << label1 << endl;
 	}
     else
 	{
@@ -1842,7 +1854,7 @@ string ASTIterationNode::walk()
 
 		(*next(children.begin(), 1))->walk();
 
-		cout << "LABEL\t" << label1 << endl;
+		cout << "label\t" << label1 << endl;
 		if(expr->getLabel() == "INT_CONSTANT")
 		{
 			string ticket0 = "$t" + to_string(ticketCounter++);
