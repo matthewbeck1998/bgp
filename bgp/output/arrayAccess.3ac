@@ -1,0 +1,97 @@
+func	main	48
+addiu	$t0	$sp	4
+li	$t1	0
+sw	$t1	0($t0)
+label	$l1
+addiu	$t2	$sp	4
+lw	$t3	0($t2)
+li	$t4	5
+blt	$t3	$t4	$l3
+li	$s7	0
+j	$l4
+label	$l3
+li	$s7	1
+label	$l4
+bne	$s7	$0	$l0
+j	$l2
+label	$l0
+addiu	$t5	$sp	44
+lw	$t7	0($t6)
+mul	$t8	$t7	4
+addiu	$t9	$t8	24
+addiu	$t10	$sp	4
+addiu	$t11	$sp	$t9
+lw	$t13	0($t10)
+sw	$t130($t11)
+addiu	$t14	$sp	4
+lw	$t15	0($t14)
+li	$t16	1
+add	$t17	$t15	$t16
+addiu	$t18	$sp	4
+sw	$t17	0($t18)
+j	$l1
+label	$l2
+addiu	$t19	$sp	4
+li	$t20	0
+sw	$t20	0($t19)
+label	$l6
+addiu	$t21	$sp	4
+lw	$t22	0($t21)
+li	$t23	2
+blt	$t22	$t23	$l8
+li	$s7	0
+j	$l9
+label	$l8
+li	$s7	1
+label	$l9
+bne	$s7	$0	$l5
+j	$l7
+label	$l5
+addiu	$t24	$sp	0
+li	$t25	0
+sw	$t25	0($t24)
+label	$l11
+addiu	$t26	$sp	0
+lw	$t27	0($t26)
+li	$t28	2
+blt	$t27	$t28	$l13
+li	$s7	0
+j	$l14
+label	$l13
+li	$s7	1
+label	$l14
+bne	$s7	$0	$l10
+j	$l12
+label	$l10
+addiu	$t29	$sp	
+lw	$t31	0($t30)
+mul	$t32	$t31	2
+addiu	$t33	$sp	
+lw	$t35	0($t34)
+add	$t36	$t35	$t32
+addiu	$t37	$sp	4
+addiu	$t38	$sp	0
+lw	$t39	0($t37)
+lw	$t40	0($t38)
+add	$t41	$t39	$t40
+addiu	$t42	$sp	$t36
+sw	$t41	0($t42)
+addiu	$t43	$sp	0
+lw	$t44	0($t43)
+li	$t45	1
+add	$t46	$t44	$t45
+addiu	$t47	$sp	0
+sw	$t46	0($t47)
+j	$l11
+label	$l12
+addiu	$t48	$sp	4
+lw	$t49	0($t48)
+li	$t50	1
+add	$t51	$t49	$t50
+addiu	$t52	$sp	4
+sw	$t51	0($t52)
+j	$l6
+label	$l7
+li	$t53	0
+ret	$t53
+end	48
