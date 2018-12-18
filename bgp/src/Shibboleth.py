@@ -90,6 +90,9 @@ def handleBranch(inst):
     inst[2] = searchTemp(inst[2]) if isTemp(inst[2]) else inst[2]
     return inst
 
+def handleLabel(inst):
+    return [inst[1] + ":"]
+
 def translate(inst):
     kjv = {
         "func": handleFunction,
@@ -120,6 +123,8 @@ def translate(inst):
         "bge": handleBranch,
         "blt": handleBranch,
         "ble": handleBranch,
+
+        "label": handleLabel,
     }
 
     cmd = inst[0]
