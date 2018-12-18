@@ -1096,7 +1096,7 @@ additive_expression
 
 multiplicative_expression
 	: cast_expression { $$ = $1; parserOutput("multiplicative_expression -> cast_expression"); }
-	| multiplicative_expression STAR cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("mult"), $3);
+	| multiplicative_expression STAR cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("mul"), $3);
                                                        parserOutput("multiplicative_expression -> multiplicative_expression STAR cast_expression"); }
 	| multiplicative_expression DIV cast_expression { $$ = new ASTMathNode("multiplicative_expression", $1, new ASTNode("div"), $3);
 													   parserOutput("multiplicative_expression -> multiplicative_expression DIV cast_expression"); }
