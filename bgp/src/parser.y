@@ -583,14 +583,14 @@ parameter_list
                                     auto symbolPair = st.searchAll( ( (ASTIdNode*) $1 )->getId()  ).second;
                                     handleOffsetType( ( (ASTIdNode*) $1 )->getType() );
                                     currentOffset += $1->getActivationFrameSize();
-                                    symbolPair->second.offset = $1->getOffset();
+                                    symbolPair->second.offset = currentOffset;
                                     //currentOffset += ( (ASTIdNode*) $1 )->getActivationFrameSize();
                                 } else //if it is an array node;
                                 {
                                     auto symbolPair = st.searchAll( ( (ASTArrayNode*) $1 )->getId()  ).second;
                                     handleOffsetType( ( (ASTArrayNode*) $1 )->getType() );
                                     currentOffset += $1->getActivationFrameSize();
-                                    symbolPair->second.offset = $1->getOffset();//( (ASTArrayNode*) $1 )->getOffset();
+                                    symbolPair->second.offset = currentOffset;//( (ASTArrayNode*) $1 )->getOffset();
                                     //currentOffset += ( (ASTArrayNode*) $1 )->getActivationFrameSize();
                                 }
                                 $1->setOffset( currentOffset );
