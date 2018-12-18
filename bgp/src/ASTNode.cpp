@@ -2690,12 +2690,14 @@ string ASTUnaryNode::walk()
 string ASTFunctionNode::walk()
 {
 	//cout << "ASTFunctionNode: " << this->getLabel() << endl;
-    cout << "func\t" << ((ASTIdNode*)children.front())->getId() << "\t" << activationFrameSize << endl;
+    string funcId = ((ASTIdNode*)children.front())->getId()
+    cout << "func\t" << funcId << "\t" << activationFrameSize << endl;
 	for(auto it : children)
 	{
 		it->walk();
 	}
-    cout << "end\t" << activationFrameSize << endl;
+    cout << "label\t" << ticketLabel << endl;
+    cout << "end\t" << funcId << activationFrameSize << endl;
 	return {};
 }
 
@@ -2709,6 +2711,7 @@ string ASTReturnNode::walk()
 		cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << children.front()->getOffset() << endl;
 		cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
 		cout << "ret\t" << ticket1 << endl;
+        cout << "j\t" << ticketLabel << endl;
 
 		return {};
 	}
@@ -2718,6 +2721,7 @@ string ASTReturnNode::walk()
 
 		cout << "lw\t" << ticket0 + "\t" << "0(" << children.front()->walk() << ")" << endl;
 		cout << "ret\t" << ticket0 << endl;
+        cout << "j\t" << ticketLabel << endl;
 
 		return {};
 	}
@@ -2727,12 +2731,14 @@ string ASTReturnNode::walk()
 
 		cout << "li\t" << ticket0 + "\t" << children.front()->walk() << endl;
 		cout << "ret\t" << ticket0 << endl;
+        cout << "j\t" << ticketLabel << endl;
 
 		return {};
 	}
 	else
 	{
 		cout << "ret\t" << children.front()->walk() << endl;
+        cout << "j\t" << ticketLabel << endl;
 
 		return {};
 	}
