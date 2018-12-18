@@ -2712,14 +2712,14 @@ string ASTUnaryNode::walk()
 string ASTFunctionNode::walk()
 {
 	//cout << "ASTFunctionNode: " << this->getLabel() << endl;
-    string funcId = ((ASTIdNode*)children.front())->getId()
+    string funcId = ((ASTIdNode*)children.front())->getId();
     cout << "func\t" << funcId << "\t" << activationFrameSize << endl;
 	for(auto it : children)
 	{
 		it->walk();
 	}
     cout << "label\t" << ticketLabel << endl;
-    cout << "end\t" << funcId << activationFrameSize << endl;
+    cout << "end\t" << funcId << "\t" << activationFrameSize << endl;
 	return {};
 }
 
