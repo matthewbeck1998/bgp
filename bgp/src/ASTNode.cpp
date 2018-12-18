@@ -1202,7 +1202,21 @@ void ASTNode::giveReturnNodeMyActivationFrameSize( int functionActivationSize )
             child->giveReturnNodeMyActivationFrameSize( functionActivationSize );
         }
     }
+}
 
+void ASTNode::reverseTheOffsetSize(int functionActivationFrameSize)
+{
+    if( label == "IDENTIFIER" or
+        label == "array_node")
+    {
+        offset = functionActivationFrameSize - offset;
+    } else
+    {
+        for( ASTNode* child : children )
+        {
+            child->reverseTheOffsetSize(functionActivationFrameSize);
+        }
+    }
 }
 
 ASTReturnNode::ASTReturnNode(string node_label) : ASTNode(move(node_label))
@@ -2279,14 +2293,14 @@ string ASTFunctionNode::walk()
 
 ASTDeclListNode::ASTDeclListNode(string node_label, ASTNode *inputChild) : ASTNode(move(node_label))
 {
-    ( (ASTDeclarationNode*) inputChild ) -> setOffset(activationFrameSize);
+    //( (ASTDeclarationNode*) inputChild ) -> setOffset(activationFrameSize);
     addChild(inputChild);
 }
 
 ASTDeclListNode::ASTDeclListNode(string node_label, ASTNode* leftChild, ASTNode* rightChild) : ASTNode(move(node_label))
 {
     addChild(leftChild);
-    ( (ASTDeclarationNode*) rightChild ) -> setOffset(activationFrameSize);
+    //( (ASTDeclarationNode*) rightChild ) -> setOffset(activationFrameSize);
     addChild(rightChild);
 }
 void ASTDeclListNode::printNode(ostream &treeOutFile)
