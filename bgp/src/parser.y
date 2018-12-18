@@ -218,7 +218,7 @@ declaration_list
                         symbolPair->second.offset = ( (ASTArrayNode*) $1->getChildren().front() )->getOffset();
                     } else if ($1->getChildren().front()->getLabel() == "init_declarator_list")
                     {
-                        currentOffset -= $1->getActivationFrameSize(); // Subtract for the plus. The recursive function handles it
+                        //currentOffset -= $1->getActivationFrameSize(); // Subtract for the plus. The recursive function handles it
                         recursiveOffsetInitDeclList( $1 );
                         temp->setActivationFrameSize( currentOffset );
                     } else
@@ -1461,6 +1461,7 @@ void recursiveOffsetInitDeclList( ASTNode* currentNode )
     } else if( currentNode->getLabel() == "array_node")
     {
         auto symbolPair = st.searchAll( ( (ASTArrayNode*) currentNode )->getId()  ).second;
+        handleOffsetType( ( (ASTArrayNode*) currentNode )->getType() );
         currentOffset += currentNode -> getActivationFrameSize();
         currentNode->setOffset( currentOffset );
         symbolPair->second.offset = currentOffset;
@@ -1468,6 +1469,7 @@ void recursiveOffsetInitDeclList( ASTNode* currentNode )
     } else if ( currentNode->getLabel() == "IDENTIFIER" )
     {
         auto symbolPair = st.searchAll( ( (ASTIdNode*) currentNode )->getId()  ).second;
+        handleOffsetType( ( (ASTIdNode*) currentNode )->getType() );
         currentOffset += currentNode -> getActivationFrameSize();
         currentNode->setOffset( currentOffset );
         symbolPair->second.offset = currentOffset;
