@@ -1,0 +1,50 @@
+func	main	16
+addiu	$t0	$sp	8
+li	$t1	0
+sw	$t1	0($t0)
+label	$l1
+addiu	$t2	$sp	8
+lw	$t3	0($t2)
+li	$t4	3
+blt	$t3	$t4	$l3
+li	$s7	0
+j	$l4
+label	$l3
+li	$s7	1
+label	$l4
+bne	$s7	$0	$l0
+j	$l2
+label	$l0
+addiu	$t5	$sp	4
+li	$t6	0
+sw	$t6	0($t5)
+label	$l6
+addiu	$t7	$sp	4
+lw	$t8	0($t7)
+li	$t9	3
+blt	$t8	$t9	$l8
+li	$s7	0
+j	$l9
+label	$l8
+li	$s7	1
+label	$l9
+bne	$s7	$0	$l5
+j	$l7
+label	$l5
+addiu	$t10	$sp	8
+lw	$t11	0($t10)
+li	$t12	1
+add	$t13	$t11	$t12
+addiu	$t14	$sp	8
+sw	$t13	0($t14)
+j	$l6
+label	$l7
+addiu	$t15	$sp	8
+lw	$t16	0($t15)
+li	$t17	1
+add	$t18	$t16	$t17
+addiu	$t19	$sp	8
+sw	$t18	0($t19)
+j	$l1
+label	$l2
+end	16
