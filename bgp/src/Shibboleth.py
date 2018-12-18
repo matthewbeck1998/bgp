@@ -38,9 +38,9 @@ def handleReturn(inst):
     return ["move", "$v0", reg]
 
 def handleEnd(inst):
-    raOffset = str(int(inst[1]) - 4) + "($sp)"
+    raOffset = str(int(inst[2]) - 4) + "($sp)"
     loadReturn = ["lw", "$ra", raOffset]
-    deallocate = ["addiu", "$sp", "$sp", inst[1]]
+    deallocate = ["addiu", "$sp", "$sp", inst[2]]
     jump = ["jr", "$ra"]
     return [loadReturn, deallocate, jump]
 
@@ -94,6 +94,7 @@ def handleLabel(inst):
     return [inst[1] + ":"]
 
 def translate(inst):
+    print(inst)
     kjv = {
         "func": handleFunction,
         "end": handleEnd,
