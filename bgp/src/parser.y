@@ -122,22 +122,32 @@ function_definition
                                       temp -> addChild($1);
                                       temp -> addChild($2);
                                       $$ = temp;
-                                      if( temp->getActivationFrameSize() % 8 != 0 )
-                                        temp->setActivationFrameSize( (temp->getActivationFrameSize() + 4) + 8 - ( (temp->getActivationFrameSize() + 4) % 8) );
+                                      if( currentOffset % 4 != 0 )
+                                        temp->setActivationFrameSize( (currentOffset + 4) + 4 - ( (currentOffset + 4) % 4) );
+                                      else
+                                      {
+                                        temp->setActivationFrameSize( currentOffset );
+                                      }
+                                      temp->giveReturnNodeMyActivationFrameSize( currentOffset );
+                                      temp->reverseTheOffsetSize( currentOffset );
                                       currentOffset = 4;
-                                      temp->giveReturnNodeMyActivationFrameSize( temp->getActivationFrameSize() );
                                       parserOutput("function_definition -> declarator compound_statement");
                                       st.popLevel(); }
-	| declarator declaration_list compound_statement { ASTFunctionNode* temp = new ASTFunctionNode("function_definition", ( ( ASTTypeNode* )$1 )-> getType() );
+	| declarator declaration_list compound_statement {   ASTFunctionNode* temp = new ASTFunctionNode("function_definition", ( ( ASTTypeNode* )$1 )-> getType() );
 	                                                     $2->setType( $1->getType() );
                                                          //temp -> addChild($1);
                                                          temp -> addChild($2);
                                                          temp -> addChild($3);
                                                          $$ = temp;
-                                                         if( temp->getActivationFrameSize() % 8 != 0 )
-                                                            temp->setActivationFrameSize( (temp->getActivationFrameSize() + 4) + 8 - ( (temp->getActivationFrameSize() + 4) % 8) );
+                                                         if( currentOffset % 4 != 0 )
+                                                            temp->setActivationFrameSize( (currentOffset + 4) + 4 - ( (currentOffset + 4) % 4) );
+                                                         else
+                                                         {
+                                                            temp->setActivationFrameSize( currentOffset );
+                                                         }
+                                                         temp->giveReturnNodeMyActivationFrameSize( currentOffset );
+                                                         temp->reverseTheOffsetSize( currentOffset );
                                                          currentOffset = 4;
-                                                         temp->giveReturnNodeMyActivationFrameSize( temp->getActivationFrameSize() );
                                                          parserOutput("function_definition -> declarator declaration_list compound_statement");
                                                          st.popLevel(); }
 	| declaration_specifiers declarator compound_statement {
@@ -145,25 +155,17 @@ function_definition
                                                             //$2->setType( $1->getType() ); //Might not need??
                                                             //temp -> addChild($1);
                                                             temp -> addChild($2);
-	                                                        temp->addChild($3);
+	                                                        temp -> addChild($3);
 	                                                        $$ = temp;
-                                                            if( temp->getActivationFrameSize() % 8 != 0 )
-                                                                temp->setActivationFrameSize( (temp->getActivationFrameSize() + 4) + 8 - ( (temp->getActivationFrameSize() + 4) % 8) );
-	                                                        if($2->getLabel() == "direct_declarator")
+                                                            if( currentOffset % 4 != 0 )
+                                                                temp->setActivationFrameSize( (currentOffset + 4) + 4 - ( (currentOffset + 4) % 4) );
+                                                            else
                                                             {
-                                                                auto symbolPair = st.searchAll( ( (ASTIdNode*) $2 -> getChildren().front() )-> getId()  ).second;
-                                                                handleOffsetType( ( (ASTIdNode*) $2 -> getChildren().front() )->getType() );
-                                                                currentOffset += $2->getActivationFrameSize();
-                                                                symbolPair->second.offset = currentOffset;
-                                                            } else
-                                                            {
-                                                                auto symbolPair = st.searchAll( ( (ASTIdNode*) $2 ) -> getId()  ).second;
-                                                                handleOffsetType( ( (ASTIdNode*) $2)->getType() );
-                                                                currentOffset += $2->getActivationFrameSize();
-                                                                symbolPair->second.offset = currentOffset;
+                                                                temp->setActivationFrameSize( currentOffset );
                                                             }
+                                                            temp->giveReturnNodeMyActivationFrameSize( currentOffset );
+                                                            temp->reverseTheOffsetSize( currentOffset );
                                                             currentOffset = 4;
-                                                            temp->giveReturnNodeMyActivationFrameSize( temp->getActivationFrameSize() );
 	                                                        parserOutput("function_definition -> declaration_specifiers declarator compound_statement");
 	                                                        st.popLevel(); }
 	| declaration_specifiers declarator declaration_list compound_statement {
@@ -174,10 +176,15 @@ function_definition
                                                                                temp -> addChild($3);
                                                                                temp -> addChild($4);
                                                                                $$ = temp;
-                                                                               if( temp->getActivationFrameSize() % 8 != 0 ) // The activation frame of functions is a multiple of 8
-                                                                                   temp->setActivationFrameSize( (temp->getActivationFrameSize() + 8) + 8 - ( (temp->getActivationFrameSize() + 8) % 8) );
+                                                                               if( currentOffset % 4 != 0 ) // The activation frame of functions is a multiple of 4
+                                                                                   temp->setActivationFrameSize( (currentOffset + 4) + 4 - ( (currentOffset + 4) % 4) );
+                                                                               else
+                                                                               {
+                                                                                   temp->setActivationFrameSize( currentOffset );
+                                                                               }
+                                                                               temp->giveReturnNodeMyActivationFrameSize( currentOffset );
+                                                                               temp->reverseTheOffsetSize( currentOffset );
                                                                                currentOffset = 4;
-                                                                               temp->giveReturnNodeMyActivationFrameSize( temp->getActivationFrameSize() );
                                                                                parserOutput("function_definition -> declaration_specifiers declarator declaration_list compound_statement");
                                                                                st.popLevel(); }
 	;
@@ -197,28 +204,29 @@ declaration
 
 declaration_list
 	: declaration { ASTDeclListNode* temp = new ASTDeclListNode("declaration_list", $1);
-	                temp->setOffset(currentOffset); // This shouldn't do anything.
+	                //temp->setOffset(currentOffset); // This shouldn't do anything.
+	                /*
                     if ($1->getChildren().front()->getLabel() == "IDENTIFIER")
                     {
                         auto symbolPair = st.searchAll( ( (ASTIdNode*) $1->getChildren().front() )->getId()  ).second;
                         handleOffsetType( ( (ASTIdNode*) $1->getChildren().front() )->getType() );
-                        currentOffset += $1->getActivationFrameSize();
-                        $1->setOffset( currentOffset );
+                        currentOffset += $1->getChildren().front()->getActivationFrameSize();
+                        $1->getChildren().front()->setOffset( currentOffset );
                         symbolPair->second.offset = ( (ASTIdNode*) $1->getChildren().front() )->getOffset();
                     } else if($1->getChildren().front()->getLabel() == "init_declarator") //Need nested if to handle array nodes
                     {
                         auto symbolPair = st.searchAll( ( (ASTIdNode*) $1->getChildren().front()->getChildren().front() )->getId()  ).second;
                         $1->setOffset( currentOffset ); // Probably don't need?
                         handleOffsetType( ( (ASTIdNode*) $1->getChildren().front()->getChildren().front() )->getType() );
-                        currentOffset += $1->getActivationFrameSize();
+                        currentOffset += $1->getChildren().front()->getActivationFrameSize();
                         $1->getChildren().front()->setOffset( currentOffset );
                         symbolPair->second.offset = $1->getOffset(); // Need the line two line previous if you do it this way.
                     } else if($1->getChildren().front()->getLabel() == "array_node")//if it is an array node;
                     {
                         auto symbolPair = st.searchAll( ( (ASTArrayNode*) $1->getChildren().front() )->getId()  ).second;
                         handleOffsetType( ( (ASTArrayNode*) $1->getChildren().front() )->getType() );
-                        currentOffset += $1->getActivationFrameSize();
-                        $1->setOffset( currentOffset );
+                        currentOffset += $1->getChildren().front()->getActivationFrameSize();
+                        $1->getChildren().front()->setOffset( currentOffset );
                         symbolPair->second.offset = ( (ASTArrayNode*) $1->getChildren().front() )->getOffset();
                     } else if ($1->getChildren().front()->getLabel() == "init_declarator_list")
                     {
@@ -228,12 +236,12 @@ declaration_list
                     } else
                     {
                         cerr << "Something wrong in declaration_list -> declaration. " << endl << "Label is: " << $1->getChildren().front()->getLabel() << endl;
-                    }
+                    }*/
 	                $$ = temp;
 	                parserOutput("declaration_list -> declaration"); st.setInsertMode(false); }
 	| declaration_list declaration {    ASTDeclListNode* temp = new ASTDeclListNode("declaration_list", $1, $2);
 	                                    $$ = temp;
-                                        if ($2->getChildren().front()->getLabel() == "IDENTIFIER")
+                                        /*if ($2->getChildren().front()->getLabel() == "IDENTIFIER")
                                         {
                                             auto symbolPair = st.searchAll( ( (ASTIdNode*) $2->getChildren().front() )->getId()  ).second;
                                             handleOffsetType( ( (ASTIdNode*) $2->getChildren().front() )->getType() );
@@ -258,7 +266,7 @@ declaration_list
                                         } else
                                         {
                                             cerr << "Something went wrong in declaration_list -> declaration_list declaration" << endl << "Label: " << $2->getChildren().front()->getLabel() << endl;
-                                        }
+                                        }*/
                                        	parserOutput("declaration_list -> declaration_list declaration"); st.setInsertMode(false); }
 	;
 
@@ -355,14 +363,42 @@ init_declarator_list
 	;
 
 init_declarator
-	: declarator {$$ = $1; parserOutput("init_declarator -> declarator"); }
+	: declarator {
+                    if( $1->getLabel() == "IDENTIFIER" )
+                    {
+                        ( (ASTIdNode*) $1)->setType( nodeTypeSpecifier ); // Very fragile.. help.
+                        auto symbolPair = st.searchAll( ( (ASTIdNode*) $1)->getId()  ).second;
+                        handleOffsetType( ( (ASTIdNode*) $1)->getType() );
+                        currentOffset += ( (ASTIdNode*) $1)->getActivationFrameSize();
+                        ( (ASTIdNode*) $1)->setOffset( currentOffset );
+                        symbolPair->second.offset = ( (ASTIdNode*) $1)->getOffset();
+                    } else if( $1->getLabel() == "array_node" )
+                    {
+                        ( (ASTArrayNode*) $1)->setType( nodeTypeSpecifier );// Very fragile.. help.
+                        auto symbolPair = st.searchAll( ( (ASTArrayNode*) $1)->getId()  ).second;
+                        handleOffsetType( ( (ASTArrayNode*) $1)->getType() );
+                        currentOffset += ( (ASTArrayNode*) $1)->getActivationFrameSize();
+                        ( (ASTArrayNode*) $1)->setOffset( currentOffset );
+                        symbolPair->second.offset = ( (ASTArrayNode*) $1)->getOffset();
+                    }
+    $$ = $1; parserOutput("init_declarator -> declarator"); }
 	| declarator ASSIGN initializer {
                                         if( $1->getLabel() == "IDENTIFIER" )
                                         {
                                             ( (ASTIdNode*) $1)->setType( nodeTypeSpecifier ); // Very fragile.. help.
+                                            auto symbolPair = st.searchAll( ( (ASTIdNode*) $1)->getId()  ).second;
+                                            handleOffsetType( ( (ASTIdNode*) $1)->getType() );
+                                            currentOffset += ( (ASTIdNode*) $1)->getActivationFrameSize();
+                                            ( (ASTIdNode*) $1)->setOffset( currentOffset );
+                                            symbolPair->second.offset = ( (ASTIdNode*) $1)->getOffset();
                                         } else if( $1->getLabel() == "array_node" )
                                         {
-                                            ( (ASTArrayNode*) $1)->setType( nodeTypeSpecifier );
+                                            ( (ASTArrayNode*) $1)->setType( nodeTypeSpecifier );// Very fragile.. help.
+                                            auto symbolPair = st.searchAll( ( (ASTArrayNode*) $1)->getId()  ).second;
+                                            handleOffsetType( ( (ASTArrayNode*) $1)->getType() );
+                                            currentOffset += ( (ASTArrayNode*) $1)->getActivationFrameSize();
+                                            ( (ASTArrayNode*) $1)->setOffset( currentOffset );
+                                            symbolPair->second.offset = ( (ASTArrayNode*) $1)->getOffset();
                                         }
                                         $3->setType( nodeTypeSpecifier );
                                         $$ = new ASTAssignNode("init_declarator", $1, new ASTNode("ASSIGN"), $3);
@@ -1031,13 +1067,13 @@ equality_expression
 	: relational_expression { $$ = $1; parserOutput("equality_expression -> relational_expression"); }
 	| equality_expression EQ_OP relational_expression { ASTRelExprNode* temp = new ASTRelExprNode("equality_expression");
                                                          temp -> addChild($1);
-                                                         temp -> addChild(new ASTNode("EQ_OP"));
+                                                         temp -> addChild(new ASTNode("BEQ"));
                                                          temp -> addChild($3);
                                                          $$ = temp;
                                                          parserOutput("equality_expression -> equality_expression EQ_OP relational_expression"); }
 	| equality_expression NE_OP relational_expression { ASTRelExprNode* temp = new ASTRelExprNode("equality_expression");
                                                          temp -> addChild($1);
-                                                         temp -> addChild(new ASTNode("NE_OP"));
+                                                         temp -> addChild(new ASTNode("BNE"));
                                                          temp -> addChild($3);
                                                          $$ = temp;
                                                          parserOutput("equality_expression -> equality_expression NE_OP relational_expression"); }
@@ -1047,25 +1083,25 @@ relational_expression
 	: shift_expression { $$ = $1; parserOutput("relational_expression -> shift_expression"); }
 	| relational_expression LT_OP shift_expression { ASTRelExprNode* temp = new ASTRelExprNode("relational_expression");
                                                       temp -> addChild($1);
-                                                      temp -> addChild(new ASTNode("LT_OP"));
+                                                      temp -> addChild(new ASTNode("BLT"));
                                                       temp -> addChild($3);
                                                       $$ = temp;
                                                       parserOutput("relational_expression -> relational_expression LT_OP shift_expression"); }
 	| relational_expression GT_OP shift_expression { ASTRelExprNode* temp = new ASTRelExprNode("relational_expression");
                                                        temp -> addChild($1);
-                                                       temp -> addChild(new ASTNode("GT_OP"));
+                                                       temp -> addChild(new ASTNode("BGT"));
                                                        temp -> addChild($3);
                                                        $$ = temp;
                                                        parserOutput("relational_expression -> relational_expression GT_OP shift_expression"); }
 	| relational_expression LE_OP shift_expression { ASTRelExprNode* temp = new ASTRelExprNode("relational_expression");
                                                        temp -> addChild($1);
-                                                       temp -> addChild(new ASTNode("LE_OP"));
+                                                       temp -> addChild(new ASTNode("BLE"));
                                                        temp -> addChild($3);
                                                        $$ = temp;
                                                        parserOutput("relational_expression -> relational_expression LE_OP shift_expression"); }
 	| relational_expression GE_OP shift_expression { ASTRelExprNode* temp = new ASTRelExprNode("relational_expression");
                                                        temp -> addChild($1);
-                                                       temp -> addChild(new ASTNode("GE_OP"));
+                                                       temp -> addChild(new ASTNode("BGE"));
                                                        temp -> addChild($3);
                                                        $$ = temp;
                                                        parserOutput("relational_expression -> relational_expression GE_OP shift_expression"); }
@@ -1446,7 +1482,7 @@ int parseCommandLine(int argc, char** argv)
 	return outputIndex; 
 }
 
-
+/*
 void recursiveOffsetInitDeclList( ASTNode* currentNode )
 {
     if( currentNode->getLabel() == "init_declarator" )
@@ -1481,9 +1517,10 @@ void recursiveOffsetInitDeclList( ASTNode* currentNode )
     }
 
 }
-
+*/
 void handleOffsetType( int inputType )
 {
+    cout << inputType << endl;
     switch (inputType)
     {
         case Char:

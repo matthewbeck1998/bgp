@@ -69,6 +69,8 @@ class ASTNode
 
         void giveReturnNodeMyActivationFrameSize( int functionActivationFrameSize );
 
+        void reverseTheOffsetSize( int functionActivationFrameSize );
+
         void propegateActivation(int inputActivationSize);
 
         /*!
