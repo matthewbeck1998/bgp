@@ -1942,22 +1942,33 @@ string ASTArrayNode::walk()
 		}
 		else
 		{
-			int currentReturnIndex = 0, usedTickets = 0;
+			int prevTicketNum = 0;
+			int currentReturnIndex = 0;
+			int startingDim = 1;
+			string returnTicket = "SOMETHING ARRAY WRONG";
 			for(auto child: children)
 			{
-				string currentTicket;
+				string currentTicket = "AHHHHH";
+				prevTicketNum = ticketCounter - 1;
 				if(child->getLabel() == "INT_CONSTANT")
 				{
 					string ticket0 = "$t" + to_string(ticketCounter++);
 
 					cout << "li\t" << ticket0 + "\t" << returnValues[currentReturnIndex] << endl;
 
-					currentTicket = ticket0;
-					usedTickets++;
+					currentTicket.assign(ticket0);
 				}
 				else if(child->getLabel() == "IDENTIFIER")
 				{
+					string ticket0 = "$t" + to_string(ticketCounter++);
+					string ticket1 = "$t" + to_string(ticketCounter++);
+					string ticket2 = "$t" + to_string(ticketCounter++);
 
+					cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << "FS" << endl;
+					cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << returnValues[currentReturnIndex] << endl;
+					cout << "lw\t" << ticket2 + "\t" << "0(" + ticket1 + ")" << endl;
+
+					currentTicket.assign(ticket2);
 				}
 				else if(child->getLabel() == "array_node")
 				{
@@ -1969,61 +1980,30 @@ string ASTArrayNode::walk()
 					cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << returnValues[currentReturnIndex];
 					cout << "lw\t" << ticket2 + "\t" << "0(" + ticket1 + ")" << endl;
 
-					currentTicket = ticket2;
-					usedTickets += 3;
+					currentTicket.assign(ticket2);
 				}
-				int startingDim = 1;
+
+
 				for(auto dim = next(dimensions.rbegin(), startingDim); dim != dimensions.rend(); dim++)
 				{
-					if(children.front()->getLabel() == "INT_CONSTANT")
-					{
-						string ticket0 = "$t" + to_string(ticketCounter++);
-						string ticket1 = "$t" + to_string(ticketCounter++);
-						string ticket2 = "$t" + to_string(ticketCounter++);
-
-
-						cout << "mul\t" << ticket1 + "\t" << ticket0 + "\t" << (*dim) << endl;
-
-					}
-					else if(children.front()->getLabel() == "IDENTIFIER")
-					{
-						string ticket0 = "$t" + to_string(ticketCounter++);
-						string ticket1 = "$t" + to_string(ticketCounter++);
-						string ticket2 = "$t" + to_string(ticketCounter++);
-						string ticket3 = "$t" + to_string(ticketCounter++);
-						string ticket4 = "$t" + to_string(ticketCounter++);
-
-						cout << "addiu\t" << ticket0 +"\t" << "$sp\t" << "FS" << endl;
-						cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << children.front()->getOffset() << endl;
-						cout << "lw\t" << ticket2 + "\t" << "0(" + ticket1 + ")" << endl;
-						cout << "mul\t" << ticket3 + "\t" << ticket2 + "\t" << typeToByteSize(type) << endl;
-						cout << "addiu\t" << ticket4 + "\t" << ticket3 + "\t" << offset << endl;
-						return ticket4;
-					}
-					else if(children.front()->getLabel() == "array_node")
-					{
-						string ticket0 = "$t" + to_string(ticketCounter++);
-						string ticket1 = "$t" + to_string(ticketCounter++);
-						string ticket2 = "$t" + to_string(ticketCounter++);
-						string ticket3 = "$t" + to_string(ticketCounter++);
-						string ticket4 = "$t" + to_string(ticketCounter++);
-
-						cout << "addiu\t" << ticket0 +"\t" << "$sp\t" << "FS" << endl;
-						cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << returnValues[0] << endl;
-						cout << "lw\t" << ticket2 + "\t" << "0(" + ticket1 + ")" << endl;
-						cout << "mul\t" << ticket3 + "\t" << ticket2 + "\t" << typeToByteSize(type) << endl;
-						cout << "addiu\t" << ticket4 + "\t" << ticket3 + "\t" << offset << endl;
-						return ticket4;
-					}
-					else
-					{
-						cout << "ND Array Broken on line: " << lineNum << endl;
-						cout << "Front: " << children.front()->getLabel() << endl;
-						return "ARRAY BROKEN";
-					}
-					startingDim++;
+					string ticket0 = "$t" + to_string(ticketCounter++);
+					cout << "mul\t" << ticket0 + "\t" << currentTicket + "\t" << *dim << endl;
+					currentTicket.assign(ticket0);
 				}
+				if(child != children.front())
+				{
+					string previousTicket1 = "$t" + to_string(ticketCounter - 1);
+					string previousTicket2 = "$t" + to_string(prevTicketNum);
+					string ticket0 = "$t" + to_string(ticketCounter++);
+					cout << "add\t" << ticket0 + "\t" << previousTicket1 + "\t" << previousTicket2 << endl;
+					returnTicket.assign(ticket0);
+				}
+
+
+				currentReturnIndex++;
+				startingDim++;
 			}
+			return returnTicket;
 		}
 	}
 
