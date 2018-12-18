@@ -1801,6 +1801,20 @@ string ASTSelectionNode::walk()
 		cout << "lw\t" << ticket1 + "\t" << "0("+ticket0+")" << endl;
 		selectionRegister.assign(ticket1);
 	}
+	else if((*next(children.begin()))->getLabel() == "INT_CONSTANT")
+	{
+		string ticket0 = "$t" + to_string(ticketCounter++);
+
+		cout << "li\t" << ticket0 + "\t" << (*next(children.begin()))->walk() << endl;
+		selectionRegister.assign(ticket0);
+	}
+	else if((*next(children.begin()))->getLabel() == "array_node")
+	{
+		string ticket0 = "$t" + to_string(ticketCounter++);
+
+		cout << "lw\t" << ticket0 + "\t" << "0(" << (*next(children.begin()))->walk() << ")" << endl;
+		selectionRegister.assign(ticket0);
+	}
 	else
 	{
 		selectionRegister.assign((*next(children.begin()))->walk());
@@ -2562,7 +2576,7 @@ string ASTReturnNode::walk()
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 
-		cout << "lw\t" << ticket0 + "\t" << children.front()->walk() << endl;
+		cout << "li\t" << ticket0 + "\t" << children.front()->walk() << endl;
 		cout << "ret\t" << ticket0 << endl;
         cout << "end\t" << activationFrameSize << endl;
 
