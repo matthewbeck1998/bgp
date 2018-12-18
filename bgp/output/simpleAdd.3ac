@@ -24,6 +24,6 @@ div	$t18	$t15	$t17
 sub	$t19	$t12	$t18
 addiu	$t20	$sp	0
 sw	$t19	0($t20)
-lw	$t21	0
+li	$t21	0
 ret	$t21
 end	16

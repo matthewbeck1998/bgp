@@ -30,7 +30,7 @@ mflo	$t0
 sub	$t1, $t2, $t0
 addiu	$t0, $sp, 0
 sw	$t1, 0($t0)
-lw	$t0, 0
+li	$t0, 0
 move	$v0, $t0
 lw	$ra, 12($sp)
 addiu	$sp, $sp, 16
