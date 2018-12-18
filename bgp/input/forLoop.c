@@ -1,4 +1,4 @@
-float main()
+int main()
 {
     int i;
     i = 5;
@@ -7,4 +7,5 @@ float main()
     {
         i = i - 1;
     }
+    return 0;
 }
