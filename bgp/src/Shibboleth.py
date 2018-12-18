@@ -173,7 +173,7 @@ with open(inputFile, 'r') as fp:
 outputFile = sys.argv[2]
 with open(outputFile, 'w') as fp:
     startASM = [
-        ["start:"]
+        ["start:"],
         ["jal", "main"],
         ["li", "$v0", "10"],
         ["syscall"]
