@@ -1689,9 +1689,22 @@ string ASTAssignNode::walk()
 			cout << "Array initializer too big" << endl;
 			exit(EXIT_FAILURE);
 		}
-		for(auto dim: ((ASTArrayInitializerNode*)children.back())->getValues())
+		int currentDim = 0;
+		for(auto intialValue: ((ASTArrayInitializerNode*)children.back())->getValues())
 		{
+			string ticket0 = "$t" + to_string(ticketCounter++);
+			string ticket1 = "$t" + to_string(ticketCounter++);
+			string ticket2 = "$t" + to_string(ticketCounter++);
+			string ticket3 = "$t" + to_string(ticketCounter++);
+			string ticket4 = "$t" + to_string(ticketCounter++);
 
+			cout << "li\t" << ticket0 + "\t" << currentDim << endl;
+			cout << "mul\t" << ticket1 + "\t" << ticket0 + "\t" << typeToByteSize(children.front()->getType()) << endl;
+			cout << "addiu\t" << ticket2 + "\t" << ticket1 + "\t" << children.front()->getOffset() << endl;
+			cout << "addiu\t" << ticket3 + "\t" << "$sp\t" << ticket2 << endl;
+			cout << "li\t" << ticket4 + "\t" << intialValue << endl;
+			cout << "lw\t" << ticket4 + "\t" << "0(" + ticket3 + ")" << endl;
+			currentDim++;
 		}
 	}
 	else if(children.front()->getLabel() == "IDENTIFIER" and
@@ -1870,7 +1883,8 @@ string ASTIterationNode::walk()
 		}
 		else
 		{
-			cout << "bne\t" << expr->walk() + "\t" << 0 << "\t" << label0 << endl;
+			string reg = expr->walk();
+			cout << "bne\t" << reg + "\t" << 0 << "\t" << label0 << endl;
 			cout << "j\t" << label1 << endl;
 		}
 		cout << "label\t" << label1 << endl;
@@ -1888,7 +1902,8 @@ string ASTIterationNode::walk()
 		{
 			string ticket0 = "$t" + to_string(ticketCounter++);
 
-			cout << "li\t" << ticket0 + "\t" << expr->walk() << endl;
+			string reg = expr->walk();
+			cout << "li\t" << ticket0 + "\t" << reg  << endl;
 			cout << "bne\t" << ticket0 + "\t" << 0 << "\t" << label0 << endl;
 			cout << "j\t" << label2 << endl;
 		}
@@ -1914,7 +1929,8 @@ string ASTIterationNode::walk()
 		}
 		else
 		{
-			cout << "bne\t" << expr->walk() + "\t" << 0 << "\t" << label0 << endl;
+			string reg = expr->walk();
+			cout << "bne\t" << reg  + "\t" << 0 << "\t" << label0 << endl;
 			cout << "j\t" << label2 << endl;
 		}
 		cout << "label\t" << label0 << endl;
