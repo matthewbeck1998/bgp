@@ -53,7 +53,7 @@ string currentFunctionNode = "";
 bool inFunctionPrototype = false;
 bool sameArray = false;
 list<array<int, 3>> matchedParameters;
-int currentOffset = 4;
+int currentOffset = 0; // Set in the lexer to 4
 
 ASTNode* root;
 %}

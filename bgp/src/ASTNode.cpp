@@ -1052,7 +1052,7 @@ void ASTDeclarationNode::constructorTypeSet( ASTNode* node, int inputType )
 
 void ASTDeclarationNode::setOffset(int inputOffset)
 {
-   children.front() -> setOffset( inputOffset );
+   // children.front() -> setOffset( inputOffset ); NONONOO
 }
 
 ASTFunctionNode::ASTFunctionNode(string node_label, int inputType) : ASTNode(move(node_label)), type(inputType)

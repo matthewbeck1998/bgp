@@ -37,6 +37,8 @@ extern bool inFunctionPrototype;
 
 extern bool sameArray;
 
+extern int currentOffset;
+bool globals = true;
 //Functions to handle incrementing of globals.
 /*
  *@name handleNewLine
@@ -408,6 +410,11 @@ productions_off         [@][p][-]
 "("                     {
                             scannerOutput(yytext, "OPAREN");
 							incrementColumn(yyleng);
+							if(globals)
+                            {
+                                currentOffset = 4;
+                                globals = false;
+                            }
                             if (st.getInsertMode())
                             {
                                 inFunctionParameters = true;
