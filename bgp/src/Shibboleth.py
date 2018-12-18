@@ -142,7 +142,7 @@ with open(inputFile, 'r') as fp:
         translated = translate(inst)
 
         if inst[0] == "func":
-            insts = handleFunc(inst)
+            insts = handleFunction(inst)
             for inst in insts:
                 instStr = stringify(inst)
                 output.append(instStr)
