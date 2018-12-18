@@ -2755,14 +2755,14 @@ void ASTDeclListNode::printNode(ostream &treeOutFile)
 ASTFunctionCallNode::ASTFunctionCallNode(string node_label, ASTNode *inputChild) : ASTNode(move(node_label))
 {
     addChild(inputChild);
-    activationFrameSize = inputChild->getOffset();
+    //activationFrameSize = inputChild->getOffset();
 }
 
 ASTFunctionCallNode::ASTFunctionCallNode(string node_label, ASTNode* leftChild, ASTNode* rightChild) : ASTNode(move(node_label))
 {
     addChild(leftChild);
     addChild(rightChild);
-    activationFrameSize = leftChild->getOffset();
+    //activationFrameSize = leftChild->getOffset();
 }
 
 void ASTFunctionCallNode::printNode(ostream &treeOutFile)
@@ -2822,7 +2822,7 @@ int typeToByteSize( int type )
     switch( type )
     {
         case Char:
-            return 1;
+            return 4;
 
         case Short:
             return 4;

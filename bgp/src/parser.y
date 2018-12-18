@@ -1527,7 +1527,6 @@ void handleOffsetType( int inputType )
     switch (inputType)
     {
         case Char:
-            break;
         case Short:
         case Int:
         case Long:
