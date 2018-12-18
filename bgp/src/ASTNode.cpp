@@ -1289,7 +1289,7 @@ string ASTMathNode::walk()
 		cout << "li\t" << ticket0 + "\t" << returnValues[0] << endl;
 		cout << "li\t" << ticket1 + "\t" << returnValues[2] << endl;
 		cout << (*next(children.begin()))->getLabel() + "\t" << ticket2 + "\t"
-			 << ticket1 + "\t" << ticket2 << endl;
+			 << ticket1 + "\t" << ticket0 << endl;
 		return ticket2;
 	}
 	else if(children.front()->getLabel() == "INT_CONSTANT" and
@@ -1476,6 +1476,17 @@ string ASTMathNode::walk()
 		cout << (*next(children.begin()))->getLabel() + "\t" << ticket3 + "\t" << ticket2 + "\t"
 			 << returnValues[2] << endl;
 		return ticket3;
+	}
+	else if((children.front()->getLabel() == "additive_expression"
+			 or children.front()->getLabel() == "multiplicative_expression") and
+			(children.back()->getLabel() == "additive_expression"
+			 or children.back()->getLabel() == "multiplicative_expression"))
+	{
+		string ticket0 = "$t" + to_string(ticketCounter++);
+
+		cout << (*next(children.begin()))->getLabel() + "\t" << ticket0 + "\t" << returnValues[0] + "\t"
+			 << returnValues[2] << endl;
+		return ticket0;
 	}
 	else
 	{
@@ -1869,6 +1880,70 @@ string ASTArrayNode::walk()
 				cout << "1D Array Broken on line: " << lineNum << endl;
 				cout << "Front: " << children.front()->getLabel() << endl;
 				return "ARRAY BROKEN";
+			}
+		}
+		else
+		{
+			int currentReturnIndex = 0;
+			for(auto child: children)
+			{
+				if(children.front()->getLabel() == "INT_CONSTANT")
+				{
+					string ticket0 = "$t" + to_string(ticketCounter++);
+					cout << "li\t" << ticket0 + "\t" << returnValues[currentReturnIndex] << endl;
+				}
+				int startingDim = 1;
+				for(auto dim = next(dimensions.rbegin(), startingDim); dim != dimensions.rend(); dim++)
+				{
+					if(children.front()->getLabel() == "INT_CONSTANT")
+					{
+						string ticket0 = "$t" + to_string(ticketCounter++);
+						string ticket1 = "$t" + to_string(ticketCounter++);
+						string ticket2 = "$t" + to_string(ticketCounter++);
+
+
+						cout << "mul\t" << ticket1 + "\t" << ticket0 + "\t" << (*dim) << endl;
+
+					}
+					else if(children.front()->getLabel() == "IDENTIFIER")
+					{
+						string ticket0 = "$t" + to_string(ticketCounter++);
+						string ticket1 = "$t" + to_string(ticketCounter++);
+						string ticket2 = "$t" + to_string(ticketCounter++);
+						string ticket3 = "$t" + to_string(ticketCounter++);
+						string ticket4 = "$t" + to_string(ticketCounter++);
+
+						cout << "addiu\t" << ticket0 +"\t" << "$sp\t" << "FS" << endl;
+						cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << children.front()->getOffset()
+							 << " ## " << ((ASTIdNode*)children.front()) -> getId() << endl;
+						cout << "lw\t" << ticket2 + "\t" << "0(" + ticket1 + ")" << endl;
+						cout << "mul\t" << ticket3 + "\t" << ticket2 + "\t" << typeToByteSize(type) << endl;
+						cout << "addiu\t" << ticket4 + "\t" << ticket3 + "\t" << offset << endl;
+						return ticket4;
+					}
+					else if(children.front()->getLabel() == "array_node")
+					{
+						string ticket0 = "$t" + to_string(ticketCounter++);
+						string ticket1 = "$t" + to_string(ticketCounter++);
+						string ticket2 = "$t" + to_string(ticketCounter++);
+						string ticket3 = "$t" + to_string(ticketCounter++);
+						string ticket4 = "$t" + to_string(ticketCounter++);
+
+						cout << "addiu\t" << ticket0 +"\t" << "$sp\t" << "FS" << endl;
+						cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << returnValues[0] << endl;
+						cout << "lw\t" << ticket2 + "\t" << "0(" + ticket1 + ")" << endl;
+						cout << "mul\t" << ticket3 + "\t" << ticket2 + "\t" << typeToByteSize(type) << endl;
+						cout << "addiu\t" << ticket4 + "\t" << ticket3 + "\t" << offset << endl;
+						return ticket4;
+					}
+					else
+					{
+						cout << "ND Array Broken on line: " << lineNum << endl;
+						cout << "Front: " << children.front()->getLabel() << endl;
+						return "ARRAY BROKEN";
+					}
+					startingDim++;
+				}
 			}
 		}
 	}
