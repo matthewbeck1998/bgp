@@ -1,4 +1,4 @@
-# "I am the Alpha and Omega, the first and the last, the beginning and the end." - Revelation 22:13
+# "I am the Alpha and the Omega, the First and the Last, the Beginning and the End." - Revelation 22:13
 
 import sys
 
