@@ -5,6 +5,9 @@ syscall
 main:	
 subiu	$sp, $sp, 16
 sw	$ra, 12($sp)
+addiu	$t0, $sp, 0
+li	$t1, 0
+sw	$t1, 0($t0)
 addiu	$t0, $sp, 8
 li	$t1, 0
 sw	$t1, 0($t0)
@@ -37,6 +40,12 @@ $l9:
 bne	$s7, $0, $l5
 j	$l7
 $l5:	
+addiu	$t0, $sp, 0
+lw	$t1, 0($t0)
+li	$t0, 1
+add	$t2, $t1, $t0
+addiu	$t0, $sp, 0
+sw	$t2, 0($t0)
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
 li	$t0, 1

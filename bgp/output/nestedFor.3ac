@@ -1,12 +1,15 @@
 func	main	16
-addiu	$t0	$sp	8
+addiu	$t0	$sp	0
 li	$t1	0
 sw	$t1	0($t0)
-label	$l1
 addiu	$t2	$sp	8
-lw	$t3	0($t2)
-li	$t4	3
-blt	$t3	$t4	$l3
+li	$t3	0
+sw	$t3	0($t2)
+label	$l1
+addiu	$t4	$sp	8
+lw	$t5	0($t4)
+li	$t6	3
+blt	$t5	$t6	$l3
 li	$s7	0
 j	$l4
 label	$l3
@@ -15,14 +18,14 @@ label	$l4
 bne	$s7	$0	$l0
 j	$l2
 label	$l0
-addiu	$t5	$sp	4
-li	$t6	0
-sw	$t6	0($t5)
-label	$l6
 addiu	$t7	$sp	4
-lw	$t8	0($t7)
-li	$t9	3
-blt	$t8	$t9	$l8
+li	$t8	0
+sw	$t8	0($t7)
+label	$l6
+addiu	$t9	$sp	4
+lw	$t10	0($t9)
+li	$t11	3
+blt	$t10	$t11	$l8
 li	$s7	0
 j	$l9
 label	$l8
@@ -31,20 +34,26 @@ label	$l9
 bne	$s7	$0	$l5
 j	$l7
 label	$l5
-addiu	$t10	$sp	8
-lw	$t11	0($t10)
-li	$t12	1
-add	$t13	$t11	$t12
-addiu	$t14	$sp	8
-sw	$t13	0($t14)
+addiu	$t12	$sp	0
+lw	$t13	0($t12)
+li	$t14	1
+add	$t15	$t13	$t14
+addiu	$t16	$sp	0
+sw	$t15	0($t16)
+addiu	$t17	$sp	8
+lw	$t18	0($t17)
+li	$t19	1
+add	$t20	$t18	$t19
+addiu	$t21	$sp	8
+sw	$t20	0($t21)
 j	$l6
 label	$l7
-addiu	$t15	$sp	8
-lw	$t16	0($t15)
-li	$t17	1
-add	$t18	$t16	$t17
-addiu	$t19	$sp	8
-sw	$t18	0($t19)
+addiu	$t22	$sp	8
+lw	$t23	0($t22)
+li	$t24	1
+add	$t25	$t23	$t24
+addiu	$t26	$sp	8
+sw	$t25	0($t26)
 j	$l1
 label	$l2
 end	16
