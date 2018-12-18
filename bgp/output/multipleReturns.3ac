@@ -1,0 +1,47 @@
+func	main	8
+addiu	$t0	$sp	0
+li	$t1	1
+sw	$t1	0($t0)
+addiu	$t2	$sp	0
+lw	$t3	0($t2)
+li	$t4	1
+beq	$t3	$t4	$l1
+li	$s7	0
+j	$l2
+label	$l1
+li	$s7	1
+label	$l2
+bne	$s7	$0	$l3
+addiu	$t5	$sp	0
+lw	$t6	0($t5)
+li	$t7	2
+beq	$t6	$t7	$l5
+li	$s7	0
+j	$l6
+label	$l5
+li	$s7	1
+label	$l6
+bne	$s7	$0	$l7
+j	$l8
+label	$l7
+addiu	$t8	$sp	0
+li	$t9	3
+sw	$t9	0($t8)
+li	$t10	0
+ret	$t10
+j	$l0
+label	$l8
+j	$l4
+label	$l3
+addiu	$t11	$sp	0
+li	$t12	2
+sw	$t12	0($t11)
+li	$t13	0
+ret	$t13
+j	$l0
+label	$l4
+li	$t14	0
+ret	$t14
+j	$l0
+label	$l0
+end	main	8
