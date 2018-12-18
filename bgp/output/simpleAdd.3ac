@@ -1,3 +1,4 @@
+func	main	16
 addiu	$t0	$sp	8
 li	$t1	1
 sw	$t1	0($t0)
@@ -23,3 +24,6 @@ div	$t18	$t15	$t17
 sub	$t19	$t12	$t18
 addiu	$t20	$sp	0
 sw	$t19	0($t20)
+lw	$t21	0
+ret	$t21
+end	16

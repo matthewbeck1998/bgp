@@ -2526,6 +2526,7 @@ string ASTUnaryNode::walk()
 string ASTFunctionNode::walk()
 {
 	//cout << "ASTFunctionNode: " << this->getLabel() << endl;
+    cout << "func\t" << ((ASTIdNode*)children.front())->getId() << "\t" << activationFrameSize << endl;
 	for(auto it : children)
 	{
 		it->walk();
@@ -2543,6 +2544,8 @@ string ASTReturnNode::walk()
 		cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << children.front()->getOffset() << endl;
 		cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
 		cout << "ret\t" << ticket1 << endl;
+        cout << "end\t" << activationFrameSize << endl;
+
 		return {};
 	}
 	else if(children.front()->getLabel() == "array_node")
@@ -2551,6 +2554,7 @@ string ASTReturnNode::walk()
 
 		cout << "lw\t" << ticket0 + "\t" << "0(" << children.front()->walk() << ")" << endl;
 		cout << "ret\t" << ticket0 << endl;
+        cout << "end\t" << activationFrameSize << endl;
 
 		return {};
 	}
@@ -2560,12 +2564,14 @@ string ASTReturnNode::walk()
 
 		cout << "lw\t" << ticket0 + "\t" << children.front()->walk() << endl;
 		cout << "ret\t" << ticket0 << endl;
+        cout << "end\t" << activationFrameSize << endl;
 
 		return {};
 	}
 	else
 	{
 		cout << "ret\t" << children.front()->walk() << endl;
+        cout << "end\t" << activationFrameSize << endl;
 
 		return {};
 	}
