@@ -1751,7 +1751,7 @@ string ASTAssignNode::walk()
 		cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << returnValues[0] << endl;
 		//cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << returnValues[0] << endl;
 		cout << "li\t" << ticket1 + "\t" << returnValues[2] << endl;
-		cout << "sw\t" << ticket1 << "0(" + ticket0 + ")" << endl;
+		cout << "sw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
 	}
 	else if(children.front()->getLabel() == "array_node" and
 			children.back()->getLabel() == "IDENTIFIER")
@@ -1766,7 +1766,7 @@ string ASTAssignNode::walk()
 		cout << "addiu\t" << ticket1 + "\t" << "$sp\t" << returnValues[0] << endl;
 		//cout << "subiu\t" << ticket3 + "\t" << ticket2 + "\t" << returnValues[0] << endl;
 		cout << "lw\t" << ticket3 + "\t" << "0(" + ticket0 + ")" << endl;
-		cout << "sw\t" << ticket3 << "0(" + ticket1 + ")" << endl;
+		cout << "sw\t" << ticket3 + "\t" << "0(" + ticket1 + ")" << endl;
 	}
 	else if(children.front()->getLabel() == "array_node" and
 			(children.back()->getLabel() == "additive_expression"
@@ -2073,14 +2073,13 @@ string ASTArrayNode::walk()
 				string ticket1 = "$t" + to_string(ticketCounter++);
 				string ticket2 = "$t" + to_string(ticketCounter++);
 				string ticket3 = "$t" + to_string(ticketCounter++);
-				string ticket4 = "$t" + to_string(ticketCounter++);
 
 				cout << "addiu\t" << ticket0 +"\t" << "$sp\t" << children.front()->getOffset() << endl;
 				//cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << children.front()->getOffset() << endl;
-				cout << "lw\t" << ticket2 + "\t" << "0(" + ticket1 + ")" << endl;
-				cout << "mul\t" << ticket3 + "\t" << ticket2 + "\t" << typeToByteSize(type) << endl;
-				cout << "addiu\t" << ticket4 + "\t" << ticket3 + "\t" << offset << endl;
-				return ticket4;
+				cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
+				cout << "mul\t" << ticket2 + "\t" << ticket1 + "\t" << typeToByteSize(type) << endl;
+				cout << "addiu\t" << ticket3 + "\t" << ticket2 + "\t" << offset << endl;
+				return ticket3;
 			}
 			else if(children.front()->getLabel() == "array_node")
 			{
@@ -2088,14 +2087,13 @@ string ASTArrayNode::walk()
 				string ticket1 = "$t" + to_string(ticketCounter++);
 				string ticket2 = "$t" + to_string(ticketCounter++);
 				string ticket3 = "$t" + to_string(ticketCounter++);
-				string ticket4 = "$t" + to_string(ticketCounter++);
 
 				cout << "addiu\t" << ticket0 +"\t" << "$sp\t" << returnValues[0] << endl;
 				//cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << returnValues[0] << endl;
-				cout << "lw\t" << ticket2 + "\t" << "0(" + ticket1 + ")" << endl;
-				cout << "mul\t" << ticket3 + "\t" << ticket2 + "\t" << typeToByteSize(type) << endl;
-				cout << "addiu\t" << ticket4 + "\t" << ticket3 + "\t" << offset << endl;
-				return ticket4;
+				cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
+				cout << "mul\t" << ticket2 + "\t" << ticket1 + "\t" << typeToByteSize(type) << endl;
+				cout << "addiu\t" << ticket3 + "\t" << ticket2+ "\t" << offset << endl;
+				return ticket3;
 			}
 			else
 			{
@@ -2126,31 +2124,30 @@ string ASTArrayNode::walk()
 				{
 					string ticket0 = "$t" + to_string(ticketCounter++);
 					string ticket1 = "$t" + to_string(ticketCounter++);
-					string ticket2 = "$t" + to_string(ticketCounter++);
 
 					cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << returnValues[currentReturnIndex] << endl;
 					//cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << returnValues[currentReturnIndex] << endl;
-					cout << "lw\t" << ticket2 + "\t" << "0(" + ticket1 + ")" << endl;
+					cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
 
-					currentTicket.assign(ticket2);
+					currentTicket.assign(ticket1);
 				}
 				else if(child->getLabel() == "array_node")
 				{
 					string ticket0 = "$t" + to_string(ticketCounter++);
 					string ticket1 = "$t" + to_string(ticketCounter++);
-					string ticket2 = "$t" + to_string(ticketCounter++);
 
 					cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << returnValues[currentReturnIndex] << endl;
 					//cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << returnValues[currentReturnIndex] << endl;
-					cout << "lw\t" << ticket2 + "\t" << "0(" + ticket1 + ")" << endl;
+					cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
 
-					currentTicket.assign(ticket2);
+					currentTicket.assign(ticket1);
 				}
 
 
 				for(auto dim = next(dimensions.rbegin(), startingDim); dim != dimensions.rend(); dim++)
 				{
 					string ticket0 = "$t" + to_string(ticketCounter++);
+
 					cout << "mul\t" << ticket0 + "\t" << currentTicket + "\t" << *dim << endl;
 					currentTicket.assign(ticket0);
 				}
