@@ -30,11 +30,19 @@ def handleFunction(inst):
     label = [inst[0] + ":"]
     allocate = ["subiu", "$sp", "$sp", inst[2]]
     raOffset = str(int(inst[2]) - 4) + "($sp)"
-    saveReturn = ["sw", "$ra", raOffset]
-    return [label, allocate, saveReturn]
+    storeReturn = ["sw", "$ra", raOffset]
+    return [label, allocate, storeReturn]
 
 def handleReturn(inst):
-    return inst
+    reg = searchTemp(inst[1]) if isTemp(inst[1]) else inst[1]
+    return ["move", "$v0", reg]
+
+def handleEnd(inst):
+    raOffset = str(int(inst[2]) - 4) + "($sp)"
+    loadReturn = ["lw", "$ra", raOffset]
+    deallocate = ["addiu", "$sp", "$sp", inst[2]]
+    jump = ["j", "$ra"]
+    return [loadReturn, deallocate, jump]
 
 def handleLoad(inst):
     if isTemp(inst[1]):
@@ -85,6 +93,7 @@ def handleBranch(inst):
 def translate(inst):
     kjv = {
         "func": handleFunction,
+        "end": handleEnd,
         "ret": handleReturn,
 
         "add": handleMath,
