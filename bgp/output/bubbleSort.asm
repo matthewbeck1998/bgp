@@ -42,6 +42,8 @@ sw	$ra, 116($sp)
 addiu	$t0, $sp, 12
 li	$t1, 0
 sw	$t1, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
 $l5:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
@@ -63,19 +65,28 @@ addiu	$t0, $sp, 12
 lw	$t2, 0($t0)
 li	$t0, 24
 sub	$t3, $t0, $t2
+move	$s6, $t1
+move	$t0, $s6
+move	$t1, $s6
+addu	$t2, $sp, $t0
+sw	$t3, 0($t2)
 addu	$t0, $sp, $t1
-sw	$t3, 0($t0)
+lw	$t1, 0($t0)
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 12
 sw	$t2, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
 j	$l5
 $l6:	
 addiu	$t0, $sp, 12
 li	$t1, 0
 sw	$t1, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
 $l10:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
@@ -104,6 +115,8 @@ li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 12
 sw	$t2, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
 j	$l10
 $l11:	
 jal	printNewline
@@ -111,6 +124,8 @@ jal	printNewline
 addiu	$t0, $sp, 12
 li	$t1, 0
 sw	$t1, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
 $l15:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
@@ -127,6 +142,8 @@ $l14:
 addiu	$t0, $sp, 8
 li	$t1, 0
 sw	$t1, 0($t0)
+addiu	$t0, $sp, 8
+lw	$t1, 0($t0)
 $l20:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
@@ -176,30 +193,42 @@ addu	$t0, $sp, $t1
 addiu	$t1, $sp, 4
 lw	$t2, 0($t0)
 sw	$t2, 0($t1)
-addiu	$t0, $sp, 8
+addiu	$t0, $sp, 4
 lw	$t1, 0($t0)
-mul	$t0, $t1, 4
-addiu	$t1, $t0, 16
 addiu	$t0, $sp, 8
 lw	$t2, 0($t0)
-li	$t0, 1
-add	$t3, $t2, $t0
-mul	$t0, $t3, 4
+mul	$t0, $t2, 4
 addiu	$t2, $t0, 16
+addiu	$t0, $sp, 8
+lw	$t3, 0($t0)
+li	$t0, 1
+add	$t4, $t3, $t0
+mul	$t0, $t4, 4
+addiu	$t3, $t0, 16
+move	$s6, $t2
+move	$t0, $s6
+move	$t2, $s6
+addu	$t4, $sp, $t3
+addu	$t3, $sp, $t0
+lw	$t0, 0($t4)
+sw	$t0, 0($t3)
 addu	$t0, $sp, $t2
-addu	$t2, $sp, $t1
-lw	$t1, 0($t0)
-sw	$t1, 0($t2)
+lw	$t2, 0($t0)
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 mul	$t0, $t2, 4
 addiu	$t1, $t0, 16
-addiu	$t0, $sp, 4
-addu	$t2, $sp, $t1
+move	$s6, $t1
+move	$t0, $s6
+move	$t1, $s6
+addiu	$t2, $sp, 4
+addu	$t3, $sp, $t0
+lw	$t0, 0($t2)
+sw	$t0, 0($t3)
+addu	$t0, $sp, $t1
 lw	$t1, 0($t0)
-sw	$t1, 0($t2)
 $l27:	
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
@@ -207,6 +236,8 @@ li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 8
 sw	$t2, 0($t0)
+addiu	$t0, $sp, 8
+lw	$t1, 0($t0)
 j	$l20
 $l21:	
 addiu	$t0, $sp, 12
@@ -215,11 +246,15 @@ li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 12
 sw	$t2, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
 j	$l15
 $l16:	
 addiu	$t0, $sp, 12
 li	$t1, 0
 sw	$t1, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
 $l29:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
@@ -248,6 +283,8 @@ li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 12
 sw	$t2, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
 j	$l29
 $l30:	
 li	$t0, 0
