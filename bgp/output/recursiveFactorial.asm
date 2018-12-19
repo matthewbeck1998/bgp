@@ -73,29 +73,23 @@ lw	$ra, 4($sp)
 addiu	$sp, $sp, 8
 jr	$ra
 main:	
-subiu	$sp, $sp, 16
-sw	$ra, 12($sp)
-addiu	$t0, $sp, 8
+subiu	$sp, $sp, 8
+sw	$ra, 4($sp)
+addiu	$t0, $sp, 0
 li	$t1, 5
 sw	$t1, 0($t0)
-addiu	$t0, $sp, 8
+addiu	$t0, $sp, 0
 lw	$t1, 0($t0)
-addiu	$t0, $sp, 8
+addiu	$t0, $sp, 0
 lw	$t1, 0($t0)
 move	$a0, $t1
 jal	factorial
-addiu	$t0, $sp, 4
-sw	$v0, 0($t0)
-addiu	$t0, $sp, 4
-lw	$t1, 0($t0)
-addiu	$t0, $sp, 4
-lw	$t2, 0($t0)
-move	$a0, $t2
+move	$a0, $v0
 jal	printInt
 li	$t0, 0
 move	$v0, $t0
 j	$l4
 $l4:	
-lw	$ra, 12($sp)
-addiu	$sp, $sp, 16
+lw	$ra, 4($sp)
+addiu	$sp, $sp, 8
 jr	$ra
