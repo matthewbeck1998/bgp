@@ -110,10 +110,12 @@ def translate(inst):
         "add": handleMath,
         "addi": handleMath,
         "addiu": handleMath,
+        "addu": handleMath,
 
         "sub": handleMath,
         "subi": handleMath,
         "subiu": handleMath,
+        "subu": handleMath,
 
         "mul": handleMath,
         "div": handleMath,
