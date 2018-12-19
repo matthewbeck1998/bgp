@@ -1117,6 +1117,23 @@ string ASTFunctionNode::getTicketLabel() const
     return ticketLabel;
 }
 
+void ASTFunctionNode::suckUpChildren(ASTNode *childNode)
+{
+    for( ASTNode* child : childNode->getChildren() )
+    {
+        if(child->getLabel() != "parameter_list")
+        {
+            addChild( child );
+        } else
+        {
+            for( ASTNode* childsChild : child->getChildren() )
+            {
+                addChild( childsChild );
+            }
+        }
+    }
+}
+
 void ASTNode::sendTheReturnNodeTheTicketLabel( string inputTicketLabel )
 {
     if( label == "RETURN" )
