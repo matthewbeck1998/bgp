@@ -67,7 +67,11 @@ $l11:
 bne	$s7, $0, $l7
 j	$l9
 $l7:	
-addiu	$t0, $sp, 4
+addiu	$t0, $sp, 24
+lw	$t1, 0($t0)
+mul	$t0, $t1, 4
+addiu	$t1, $t0, 4
+addiu	$t0, $sp, $t1
 lw	$t1, 0($t0)
 move	$a0, $t1
 jal	printInt

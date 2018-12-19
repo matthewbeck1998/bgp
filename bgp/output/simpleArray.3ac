@@ -57,16 +57,20 @@ label	$l11
 bne	$s7	$0	$l7
 j	$l9
 label	$l7
-addiu	$t26	$sp	4
+addiu	$t26	$sp	24
 lw	$t27	0($t26)
-move	$a0	$t27
+mul	$t28	$t27	4
+addiu	$t29	$t28	4
+addiu	$t30	$sp	$t29
+lw	$t31	0($t30)
+move	$a0	$t31
 jal	printInt
-addiu	$t28	$sp	24
-lw	$t29	0($t28)
-li	$t30	1
-add	$t31	$t29	$t30
 addiu	$t32	$sp	24
-sw	$t31	0($t32)
+lw	$t33	0($t32)
+li	$t34	1
+add	$t35	$t33	$t34
+addiu	$t36	$sp	24
+sw	$t35	0($t36)
 j	$l8
 label	$l9
 label	$l1
