@@ -228,7 +228,7 @@ addu	$t0, $t2, 16
 addu	$t2, $sp, $t0
 lw	$t0, 0($t2)
 li	$t2, 3
-mod	$t0, $t2
+div	$t0, $t2
 mfhi	$t3
 li	$t0, 0
 bne	$t3, $t0, $l30
