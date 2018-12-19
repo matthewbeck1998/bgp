@@ -68,9 +68,9 @@ def handleStore(inst):
     return inst
 
 def handleMove(inst):
-    if inst[1] != inst[2]:
-        inst[1] = assignTemp(inst[1]) if isTemp(inst[1]) else inst[1]
+    inst[1] = assignTemp(inst[1]) if isTemp(inst[1]) else inst[1]
     inst[2] = searchTemp(inst[2]) if isTemp(inst[2]) else inst[2]
+
     return inst
 
 def handleMath(inst):
@@ -102,6 +102,10 @@ def handleLabel(inst):
 
 def handleSyscall(inst):
     return inst
+
+def handleFree(inst):
+    searchTemp(inst[1])
+    return []
 
 def translate(inst):
     #print("Before:", inst)
@@ -142,7 +146,8 @@ def translate(inst):
         "ble": handleBranch,
 
         "label": handleLabel,
-        "syscall": handleSyscall
+        "syscall": handleSyscall,
+        "free": handleFree
     }
 
     cmd = inst[0]
