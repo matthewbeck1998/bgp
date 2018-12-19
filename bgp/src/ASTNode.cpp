@@ -1318,13 +1318,13 @@ void ASTNode::reverseTheOffsetSize(int functionActivationFrameSize)
         label == "array_node")
     {
         offset = functionActivationFrameSize - offset;
-    } else
-    {
-        for( ASTNode* child : children )
-        {
-            child->reverseTheOffsetSize(functionActivationFrameSize);
-        }
     }
+
+	for( ASTNode* child : children )
+	{
+		child->reverseTheOffsetSize(functionActivationFrameSize);
+	}
+
 }
 
 ASTReturnNode::ASTReturnNode(string node_label) : ASTNode(move(node_label))
@@ -2066,6 +2066,12 @@ string ASTArrayNode::walk()
 //		cout << i++ << " : " << rt << endl;
 //	}
 //
+//	for(auto child: children)
+//	{
+//		cout << child->getLabel() << endl;
+//	}
+
+//
 //
 //	for(auto dim = dimensions.rbegin() ; dim != dimensions.rend() ; dim++ )
 //	{
@@ -2096,6 +2102,7 @@ string ASTArrayNode::walk()
 				string ticket2 = "$t" + to_string(ticketCounter++);
 				string ticket3 = "$t" + to_string(ticketCounter++);
 
+				//cout << "ID SIZE 1" << endl;
 				cout << "addiu\t" << ticket0 +"\t" << "$sp\t" << children.front()->getOffset() << endl;
 				//cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << children.front()->getOffset() << endl;
 				cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
@@ -2110,6 +2117,7 @@ string ASTArrayNode::walk()
 				string ticket2 = "$t" + to_string(ticketCounter++);
 				string ticket3 = "$t" + to_string(ticketCounter++);
 
+				//cout << "SIZE 1: array node" << endl;
 				cout << "addiu\t" << ticket0 +"\t" << "$sp\t" << returnValues[0] << endl;
 				//cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << returnValues[0] << endl;
 				cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
@@ -2147,7 +2155,8 @@ string ASTArrayNode::walk()
 					string ticket0 = "$t" + to_string(ticketCounter++);
 					string ticket1 = "$t" + to_string(ticketCounter++);
 
-					cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << returnValues[currentReturnIndex] << endl;
+					//cout << "SIZE N: ID" << endl;
+					cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << child->getOffset() << endl;
 					//cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << returnValues[currentReturnIndex] << endl;
 					cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
 
@@ -2158,6 +2167,7 @@ string ASTArrayNode::walk()
 					string ticket0 = "$t" + to_string(ticketCounter++);
 					string ticket1 = "$t" + to_string(ticketCounter++);
 
+					//cout << "SIZE N: array_node" << endl;
 					cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << returnValues[currentReturnIndex] << endl;
 					//cout << "subiu\t" << ticket1 + "\t" << ticket0 + "\t" << returnValues[currentReturnIndex] << endl;
 					cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
@@ -2178,6 +2188,7 @@ string ASTArrayNode::walk()
 					string previousTicket1 = "$t" + to_string(ticketCounter - 1);
 					string previousTicket2 = "$t" + to_string(prevTicketNum);
 					string ticket0 = "$t" + to_string(ticketCounter++);
+
 					cout << "add\t" << ticket0 + "\t" << previousTicket1 + "\t" << previousTicket2 << endl;
 					returnTicket.assign(ticket0);
 				}
