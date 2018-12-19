@@ -2031,7 +2031,14 @@ string ASTIterationNode::walk()
 		string label1 = "$l" + to_string(labelCounter++);
 
 		cout << "label\t" << label0 << endl;
-		body->walk();
+		string garbage;
+		if(body->getLabel() != "INT_CONSTANT")
+			garbage = body->walk();
+		else
+			body->walk();
+
+		if(!garbage.empty())
+			cout << "move\t" << garbage + "\t" << garbage << endl;
 
 		if(expr->getLabel() == "INT_CONSTANT")
 		{
@@ -2075,8 +2082,14 @@ string ASTIterationNode::walk()
 		string label1 = "$l" + to_string(labelCounter++);
 		string label2 = "$l" + to_string(labelCounter++);
 
-		string garbage = (*next(children.begin(), 1))->walk();
-		cout << "move\t" << garbage + "\t" << garbage << endl;
+		string garbage;
+		if((*next(children.begin(), 1))->getLabel() != "INT_CONSTANT")
+			garbage = (*next(children.begin(), 1))->walk();
+		else
+			(*next(children.begin(), 1))->walk();
+
+		if(!garbage.empty())
+			cout << "move\t" << garbage + "\t" << garbage << endl;
 
 		cout << "label\t" << label1 << endl;
 		if(expr->getLabel() == "INT_CONSTANT")
@@ -2115,8 +2128,25 @@ string ASTIterationNode::walk()
 			cout << "j\t" << label2 << endl;
 		}
 		cout << "label\t" << label0 << endl;
-		body->walk();
-		(*next(children.begin(), 3))->walk();
+
+		string thisGarbage;
+		if(body->getLabel() != "INT_CONSTANT")
+			thisGarbage = body->walk();
+		else
+			body->walk();
+
+		if(!thisGarbage.empty())
+			cout << "move\t" << thisGarbage + "\t" << thisGarbage << endl;
+
+		string alsoGarbage;
+		if((*next(children.begin(), 3))->getLabel() != "INT_CONSTANT")
+			alsoGarbage = (*next(children.begin(), 3))->walk();
+		else
+			(*next(children.begin(), 3))->walk();
+
+		if(!alsoGarbage.empty())
+			cout << "move\t" << alsoGarbage + "\t" << alsoGarbage << endl;
+
 		cout << "j\t" << label1 << endl;
 		cout << "label\t" << label2 << endl;
 	}
