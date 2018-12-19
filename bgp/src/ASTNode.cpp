@@ -2508,7 +2508,7 @@ string ASTFunctionCallNode::walk()
 			string ticket1 = "$t" + to_string(ticketCounter++);
 			string paramReg = "$a" + to_string(i);
 
-			cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << ((ASTIdNode*)*it)->getOffset();
+			cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << ((ASTIdNode*)*it)->getOffset() << endl;
 			cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
 			cout << "move\t" << paramReg + "\t" << ticket1 << endl;
 		}
@@ -2524,7 +2524,7 @@ string ASTFunctionCallNode::walk()
 			string ticket1 = "$t" + to_string(ticketCounter++);
 			string paramReg = "$a" + to_string(i);
 
-			cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << returnValues[i + 1];
+			cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << returnValues[i + 1] << endl;
 			cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
 			cout << "move\t" << paramReg + "\t" << ticket1 << endl;
 		}
@@ -2534,7 +2534,7 @@ string ASTFunctionCallNode::walk()
 		}
 	}
 
-	cout << "jal\t" << children.front()->getId() << endl;
+	cout << "jal\t" << ((ASTIdNode*)children.front())->getId() << endl;
 	return "$v0";
 
 }
@@ -2992,61 +2992,6 @@ string ASTRelExprNode::walk()
 		return "RELATION NODE BROKEN";
 	}
 
-
-
-//	cout << "ASTRelExprNode on line: " << lineNum << endl;
-//	int i = 0;
-//	for(auto it : returnValues)
-//	{
-//		cout << "i" << i << ": " << it << endl;
-//	}
-
-
-//	string ticket = {"t_" + to_string(ticketCounter++)};
-//	string trueLabel = {"l_" + to_string(labelCounter++)};
-//	string endLabel = {"l_" + to_string(labelCounter++)};
-//	string branchFirstArg = "";
-//	string branchSecondArg = "";
-//
-//	if (children.front()->getLabel() == "INT_CONSTANT")
-//	{
-//		branchFirstArg = returnValues[0];
-//	}
-//	else if (children.front()->getLabel() == "IDENTIFIER")
-//	{
-//		string leftCommand = returnValues[1];
-//		string leftTemp = returnValues[2];
-//		string leftName = returnValues[3];
-//		branchFirstArg = "0(" + leftTemp + ")";
-//		cout << leftCommand << "\t" << leftTemp << "\t" << leftName << endl;
-//	}
-//
-//	if (children.back()->getLabel() == "INT_CONSTANT") // TODO: can only support int constant comparisons right now
-//	{
-//		branchSecondArg = returnValues[2][0];
-//	}
-//	else if (children.back()->getLabel() == "IDENTIFIER")
-//	{
-//		string rightCommand = returnValues[2][1];
-//		string rightTemp = returnValues[2][2];
-//		string rightName = returnValues[2][3];
-//		branchSecondArg = "0(" + rightTemp + ")";
-//		cout << rightCommand << "\t" << rightTemp << "\t" << rightName << endl;
-//	}
-//
-//
-//	auto it = ++(children.begin()); // get middle child (operator)
-//	string label = (*it)->getLabel();
-//	string op = label.substr(0, 2);
-//	string command = "B" + op;
-//	cout << command << "\t" << branchFirstArg << "\t" << branchSecondArg << "\t" << trueLabel << endl;
-//	cout << "LOAD" << "\t" << ticket << "\t" << "0" << endl;
-//	cout << "B" << "\t" << endLabel << endl;
-//	cout << "LABEL" << "\t" << trueLabel << endl;
-//	cout << "LOAD" << "\t" << ticket << "\t" << "1" << endl;
-//	cout << "LABEL" << "\t" << endLabel << endl;
-//
-//	return ticket;
 	return {};
 }
 
@@ -3159,7 +3104,8 @@ string ASTReturnNode::walk()
 	}
 	else
 	{
-		cout << "ret\t" << children.front()->walk() << endl;
+		string rt = children.front()->walk();
+		cout << "ret\t" << rt << endl;
         cout << "j\t" << ticketLabel << endl;
 
 		return {};
