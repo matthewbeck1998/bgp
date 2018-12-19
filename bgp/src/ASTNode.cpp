@@ -1723,9 +1723,11 @@ string ASTAssignNode::walk()
 	if(children.front()->getLabel() == "array_node" and
 	   children.back()->getLabel() == "array_initializer")
 	{
-		if(((ASTArrayNode*)children.front())->getDimensions().front() <= ((ASTArrayInitializerNode*)children.back())->getValues().size())
+		if(((ASTArrayNode*)children.front())->getDimensions().front() < ((ASTArrayInitializerNode*)children.back())->getValues().size())
 		{
 			cout << "Array initializer too big" << endl;
+			//cout << "Front: " << ((ASTArrayNode*)children.front())->getDimensions().front() << endl;
+			//cout << "Back: " << ((ASTArrayInitializerNode*)children.back())->getValues().size() << endl;
 			exit(EXIT_FAILURE);
 		}
 
