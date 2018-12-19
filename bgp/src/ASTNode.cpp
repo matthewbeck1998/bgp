@@ -1529,7 +1529,7 @@ string ASTMathNode::walk()
 		//cout << "subiu\t" << ticket3 + "\t" << ticket2 + "\t" << returnValues[2] << endl;
 
 		cout << "lw\t" << ticket2 + "\t" << "0(" + ticket0 + ")" << endl;
-		cout << "LW\t" << ticket3 + "\t" << "0(" + ticket1 + ")" << endl;
+		cout << "lw\t" << ticket3 + "\t" << "0(" + ticket1 + ")" << endl;
 
 		cout << (*next(children.begin()))->getLabel() + "\t" << ticket4 + "\t"
 			 << ticket2 + "\t" << ticket3 << endl;
@@ -2449,7 +2449,7 @@ string ASTRelExprNode::walk()
 		//cout << "subiu\t" << ticket3 + "\t" << ticket2 + "\t" << returnValues[2] << endl;
 
 		cout << "lw\t" << ticket2 + "\t" << "0(" + ticket0 + ")" << endl;
-		cout << "LW\t" << ticket3 + "\t" << "0(" + ticket1 + ")" << endl;
+		cout << "lw\t" << ticket3 + "\t" << "0(" + ticket1 + ")" << endl;
 
 		cout << (*next(children.begin()))->getLabel() + "\t" << ticket2 + "\t"
 			 << ticket3 + "\t" << label0 << endl;
