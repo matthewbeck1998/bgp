@@ -67,7 +67,8 @@ def handleStore(inst):
     return inst
 
 def handleMove(inst):
-    inst[1] = assignTemp(inst[1]) if isTemp(inst[1]) else inst[1]
+    if inst[1] != inst[2]:
+        inst[1] = assignTemp(inst[1]) if isTemp(inst[1]) else inst[1]
     inst[2] = searchTemp(inst[2]) if isTemp(inst[2]) else inst[2]
     return inst
 
@@ -102,7 +103,7 @@ def handleSyscall(inst):
     return inst
 
 def translate(inst):
-    print("Before:", inst)
+    #print("\nBefore:", inst)
     kjv = {
         "func": handleFunction,
         "end": handleEnd,
@@ -120,6 +121,7 @@ def translate(inst):
 
         "mul": handleMath,
         "div": handleMath,
+        "mod": handleMath,
 
         "li": handleLoad,
         "lw": handleLoad,
@@ -144,7 +146,7 @@ def translate(inst):
 
     cmd = inst[0]
     translatedList = kjv[cmd](inst)
-    print("After:", translatedList)
+    #print("After:", translatedList, "\n")
     return translatedList
 
 def stringify(li):
