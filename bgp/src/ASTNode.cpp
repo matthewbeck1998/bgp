@@ -1383,7 +1383,7 @@ string ASTNode::walk()
 	for(auto rt: returnValues)
 	{
 		if(!rt.empty())
-			cout << "move\t" << rt + "\t" << rt << endl;
+			cout <<  "free\t" << rt << endl;
 	}
 
 	return {};
@@ -1725,7 +1725,7 @@ string ASTIdNode::walk()
 	for(auto rt: returnValues)
 	{
 		if(!rt.empty())
-			cout << "move\t" << rt + "\t" << rt << endl;
+			cout <<  "free\t" << rt << endl;
 	}
 	//string ticket = {"t_" + to_string(ticketCounter++)};
 	//vector<string> temp = {ticket, "LOAD", ticket, to_string(this->getOffset()) + " ## " + this->getId()};
@@ -1980,7 +1980,7 @@ string ASTVariableNode::walk()
 	for(auto rt: returnValues)
 	{
 		if(!rt.empty())
-			cout << "move\t" << rt + "\t" << rt << endl;
+			cout <<  "free\t" << rt << endl;
 	}
 	return {};
 }
@@ -1998,7 +1998,7 @@ string ASTConstNode::walk()
 	for(auto rt: returnValues)
 	{
 		if(!rt.empty())
-			cout << "move\t" << rt + "\t" << rt << endl;
+			cout <<  "free\t" << rt << endl;
 	}
 
 
@@ -2038,7 +2038,7 @@ string ASTIterationNode::walk()
 			body->walk();
 
 		if(!garbage.empty())
-			cout << "move\t" << garbage + "\t" << garbage << endl;
+			cout <<  "free\t" << garbage << endl;
 
 		if(expr->getLabel() == "INT_CONSTANT")
 		{
@@ -2089,7 +2089,7 @@ string ASTIterationNode::walk()
 			(*next(children.begin(), 1))->walk();
 
 		if(!garbage.empty())
-			cout << "move\t" << garbage + "\t" << garbage << endl;
+			cout <<  "free\t" << garbage << endl;
 
 		cout << "label\t" << label1 << endl;
 		if(expr->getLabel() == "INT_CONSTANT")
@@ -2136,7 +2136,7 @@ string ASTIterationNode::walk()
 			body->walk();
 
 		if(!thisGarbage.empty())
-			cout << "move\t" << thisGarbage + "\t" << thisGarbage << endl;
+			cout <<  "free\t" << thisGarbage << endl;
 
 		string alsoGarbage;
 		if((*next(children.begin(), 3))->getLabel() != "INT_CONSTANT")
@@ -2145,7 +2145,7 @@ string ASTIterationNode::walk()
 			(*next(children.begin(), 3))->walk();
 
 		if(!alsoGarbage.empty())
-			cout << "move\t" << alsoGarbage + "\t" << alsoGarbage << endl;
+			cout <<  "free\t" << alsoGarbage << endl;
 
 		cout << "j\t" << label1 << endl;
 		cout << "label\t" << label2 << endl;
@@ -2211,7 +2211,7 @@ string ASTDeclarationNode::walk()
 	for(auto rt: returnValues)
 	{
 		if(!rt.empty())
-			cout << "move\t" << rt + "\t" << rt << endl;
+			cout <<  "free\t" << rt << endl;
 	}
 	return {};
 }
@@ -2229,7 +2229,7 @@ string ASTTypeNode::walk()
 	for(auto rt: returnValues)
 	{
 		if(!rt.empty())
-			cout << "move\t" << rt + "\t" << rt << endl;
+			cout <<  "free\t" << rt << endl;
 	}
 
 	return {};
@@ -2453,7 +2453,7 @@ string ASTDeclListNode::walk()
 	for(auto rt: returnValues)
 	{
 		if(!rt.empty())
-			cout << "move\t" << rt + "\t" << rt << endl;
+			cout <<  "free\t" << rt << endl;
 	}
 	return {};
 }
@@ -3010,7 +3010,7 @@ string ASTUnaryNode::walk()
 	for(auto rt: returnValues)
 	{
 		if(!rt.empty())
-			cout << "move\t" << rt + "\t" << rt << endl;
+			cout <<  "free\t" << rt << endl;
 	}
 	return {};
 }
