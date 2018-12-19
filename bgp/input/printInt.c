@@ -1,6 +1,6 @@
 void printInt(int i)
 {
-   i = 1; 
+    
 }
 
 
