@@ -1373,10 +1373,19 @@ void ASTReturnNode::printNode(ostream &treeOutFile)
 string ASTNode::walk()
 {
 	//cout << "ASTNode: " << this->getLabel() << endl;
+	vector<string> returnValues;
 	for(auto it : children)
 	{
-		it->walk();
+		if(it->getLabel() != "INT_CONSTANT")
+			returnValues.push_back(it->walk());
 	}
+
+	for(auto rt: returnValues)
+	{
+		if(!rt.empty())
+			cout << "move\t" << rt + "\t" << rt << endl;
+	}
+
 	return {};
 }
 
@@ -1706,9 +1715,17 @@ string ASTMathNode::walk()
 string ASTIdNode::walk()
 {
 	//cout << "ASTIdNode: " << this->getLabel() << endl;
+	vector<string> returnValues;
 	for(auto it : children)
 	{
-		it->walk();
+		if(it->getLabel() != "INT_CONSTANT")
+			returnValues.push_back(it->walk());
+	}
+
+	for(auto rt: returnValues)
+	{
+		if(!rt.empty())
+			cout << "move\t" << rt + "\t" << rt << endl;
 	}
 	//string ticket = {"t_" + to_string(ticketCounter++)};
 	//vector<string> temp = {ticket, "LOAD", ticket, to_string(this->getOffset()) + " ## " + this->getId()};
@@ -1951,10 +1968,18 @@ string ASTAssignNode::walk()
 
 string ASTVariableNode::walk()
 {
-	cout << "ASTVariable " << this->getLabel() << endl;
+	//cout << "ASTVariable " << this->getLabel() << endl;
+	vector<string> returnValues;
 	for(auto it : children)
 	{
-		it->walk();
+		if(it->getLabel() != "INT_CONSTANT")
+			returnValues.push_back(it->walk());
+	}
+
+	for(auto rt: returnValues)
+	{
+		if(!rt.empty())
+			cout << "move\t" << rt + "\t" << rt << endl;
 	}
 	return {};
 }
@@ -1962,9 +1987,17 @@ string ASTVariableNode::walk()
 string ASTConstNode::walk()
 {
 	//cout << "ASTConstNode " << this->getLabel() << endl;
+	vector<string> returnValues;
 	for(auto it : children)
 	{
-		it->walk();
+		if(it->getLabel() != "INT_CONSTANT")
+			returnValues.push_back(it->walk());
+	}
+
+	for(auto rt: returnValues)
+	{
+		if(!rt.empty())
+			cout << "move\t" << rt + "\t" << rt << endl;
 	}
 
 
@@ -2136,9 +2169,17 @@ string ASTSelectionNode::walk()
 string ASTDeclarationNode::walk()
 {
 	//cout << "ASTDeclarationNode " << this->getLabel() << endl;
+	vector<string> returnValues;
 	for(auto it : children)
 	{
-		it->walk();
+		if(it->getLabel() != "INT_CONSTANT")
+			returnValues.push_back(it->walk());
+	}
+
+	for(auto rt: returnValues)
+	{
+		if(!rt.empty())
+			cout << "move\t" << rt + "\t" << rt << endl;
 	}
 	return {};
 }
@@ -2146,9 +2187,17 @@ string ASTDeclarationNode::walk()
 string ASTTypeNode::walk()
 {
 	//cout << "ASTTypeNode " << this->getLabel() << endl;
+	vector<string> returnValues;
 	for(auto it : children)
 	{
-		it->walk();
+		if(it->getLabel() != "INT_CONSTANT")
+			returnValues.push_back(it->walk());
+	}
+
+	for(auto rt: returnValues)
+	{
+		if(!rt.empty())
+			cout << "move\t" << rt + "\t" << rt << endl;
 	}
 
 	return {};
@@ -2362,9 +2411,17 @@ string ASTArrayNode::walk()
 string ASTDeclListNode::walk()
 {
 	//cout << "ASTDeclarationListNode " << this->getLabel() << endl;
+	vector<string> returnValues;
 	for(auto it : children)
 	{
-		it->walk();
+		if(it->getLabel() != "INT_CONSTANT")
+			returnValues.push_back(it->walk());
+	}
+
+	for(auto rt: returnValues)
+	{
+		if(!rt.empty())
+			cout << "move\t" << rt + "\t" << rt << endl;
 	}
 	return {};
 }
@@ -2911,9 +2968,17 @@ string ASTRelExprNode::walk()
 string ASTUnaryNode::walk()
 {
 	//cout << "ASTUnaryNode: " << this->getLabel() << endl;
+	vector<string> returnValues;
 	for(auto it : children)
 	{
-		it->walk();
+		if(it->getLabel() != "INT_CONSTANT")
+			returnValues.push_back(it->walk());
+	}
+
+	for(auto rt: returnValues)
+	{
+		if(!rt.empty())
+			cout << "move\t" << rt + "\t" << rt << endl;
 	}
 	return {};
 }
