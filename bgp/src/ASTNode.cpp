@@ -2283,7 +2283,7 @@ string ASTFunctionCallNode::walk()
         string ticket1 = "$t" + to_string(ticketCounter++);
         string paramReg = "$a" + to_string(i);
 
-        cout << "addiu\t" << ticket0 << "\t" << "$sp" << "\t" << returnValues[i + 1] << endl;
+        cout << "addu\t" << ticket0 << "\t" << "$sp" << "\t" << returnValues[i + 1] << endl;
         cout << "lw\t" << ticket1 << "\t" << "0(" << ticket0 << ")" << endl;
         cout << "move\t" << paramReg << "\t" << ticket1 << endl;
     }
