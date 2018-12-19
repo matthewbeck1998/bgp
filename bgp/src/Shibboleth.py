@@ -66,6 +66,10 @@ def handleStore(inst):
         inst[2] = makeOffset(offset, reg)
     return inst
 
+def handleMove(inst):
+    inst[2] = searchTemp(inst[2]) if isTemp(inst[2]) else inst[2]
+    return inst
+
 def handleMath(inst):
     inst[1] = assignTemp(inst[1]) if isTemp(inst[1]) else inst[1]
     inst[2] = searchTemp(inst[2]) if isTemp(inst[2]) else inst[2]
@@ -115,6 +119,8 @@ def translate(inst):
         "lw": handleLoad,
 
         "sw": handleStore,
+
+        "move": handleMove,
 
         "j": handleJump,
         "jal": handleJump,
