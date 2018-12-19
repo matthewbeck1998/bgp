@@ -991,6 +991,7 @@ class ASTFunctionNode : public  ASTNode
     void setType( int inputType );
     int getType() const;
     string getTicketLabel() const;
+    void suckUpChildren( ASTNode* childNode );
     //void addChild(ASTNode* addNode);
 
     string walk() override;

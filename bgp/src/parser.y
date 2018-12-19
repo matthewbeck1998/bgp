@@ -152,10 +152,12 @@ function_definition
                                                             //temp -> addChild($1);
                                                             if($2->getLabel() == "direct_declarator")
                                                             {
-                                                                temp->addChild( new ASTIdNode( (ASTIdNode*) $2->getChildren().front() ) );
-                                                                $2->getChildren().pop_front();
+
+                                                                temp->suckUpChildren( $2 );
+                                                            } else
+                                                            {
+                                                                temp -> addChild($2);
                                                             }
-                                                            temp -> addChild($2);
 	                                                        temp -> addChild($3);
 	                                                        $$ = temp;
                                                             if( currentOffset % 8 != 0 )
@@ -168,15 +170,16 @@ function_definition
 	                                                        parserOutput("function_definition -> declaration_specifiers declarator compound_statement");
 	                                                        st.popLevel(); }
 	| declaration_specifiers declarator declaration_list compound_statement {
-                                                                             ASTFunctionNode* temp = new ASTFunctionNode("function_definition", ( ( ASTTypeNode* )$1 )-> getType());
-                                                                             $2->setType( $1->getType() );
-                                                                               //temp -> addChild($1);
+                                                                                ASTFunctionNode* temp = new ASTFunctionNode("function_definition", ( ( ASTTypeNode* )$1 )-> getType());
+                                                                                $2->setType( $1->getType() );
+                                                                                //temp -> addChild($1);
                                                                                 if($2->getLabel() == "direct_declarator")
                                                                                 {
-                                                                                    temp->addChild( new ASTIdNode( (ASTIdNode*) $2->getChildren().front() ) );
-                                                                                    $2->getChildren().pop_front();
+                                                                                    temp->suckUpChildren( $2 );
+                                                                                } else
+                                                                                {
+                                                                                    temp -> addChild($2);
                                                                                 }
-                                                                               temp -> addChild($2);
                                                                                temp -> addChild($3);
                                                                                temp -> addChild($4);
                                                                                $$ = temp;
