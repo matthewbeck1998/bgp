@@ -2405,7 +2405,7 @@ string ASTArrayNode::walk()
 		}
 	}
 
-	return "ARRAY WRONG";
+	return {};
 }
 
 string ASTDeclListNode::walk()
