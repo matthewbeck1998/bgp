@@ -2204,10 +2204,15 @@ string ASTDeclListNode::walk()
 string ASTFunctionCallNode::walk()
 {
 	//cout << "ASTFunctionCallNode " << this->getLabel() << endl;
+    // 1. push parameters onto the $ax registers ($a0, $a1, $a2, $a3)
+    // 2. jump with link to function being called
+    string funcId = ((ASTIdNode*)children.front())->getId();
+
 	for(auto it : children)
 	{
 		it->walk();
 	}
+    cout << "jal\t" << funcId << endl;
 	return {};
 }
 
@@ -2712,12 +2717,24 @@ string ASTUnaryNode::walk()
 string ASTFunctionNode::walk()
 {
 	//cout << "ASTFunctionNode: " << this->getLabel() << endl;
+    // 1. allocate stack frame (func name framesize)
+    // 2. store parameters from $ax registers into their respective offsets
+    // 3. continue with function body
     string funcId = ((ASTIdNode*)children.front())->getId();
     cout << "func\t" << funcId << "\t" << activationFrameSize << endl;
-	for(auto it : children)
-	{
-		it->walk();
-	}
+   
+    int numParams = children.size() - 2;
+    auto it = next(children.begin(), 1);
+
+    for (int i = 0; i < numParams; i++)
+    {
+        string ticket = "$t" + to_string(ticketCounter++);
+        string paramReg = "$a" + to_string(i);
+        cout << "addiu\t" << ticket << "\t" << "$sp" << "\t" << (*it)->getOffset() << endl;
+        cout << "sw\t" << paramReg << "\t" << "0(" << ticket << ")" << endl;
+        it++;
+    }
+	
     cout << "label\t" << ticketLabel << endl;
     cout << "end\t" << funcId << "\t" << activationFrameSize << endl;
 	return {};
