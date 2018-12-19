@@ -1576,7 +1576,8 @@ string ASTMathNode::walk()
 		return ticket4;
 	}
 	else if((children.front()->getLabel() == "additive_expression"
-			or children.front()->getLabel() == "multiplicative_expression")
+			or children.front()->getLabel() == "multiplicative_expression"
+			or children.front()->getLabel() == "function_call")
 			and children.back()->getLabel() == "INT_CONSTANT")
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
@@ -1589,7 +1590,8 @@ string ASTMathNode::walk()
 		return ticket1;
 	}
 	else if((children.front()->getLabel() == "additive_expression"
-			 or children.front()->getLabel() == "multiplicative_expression")
+			 or children.front()->getLabel() == "multiplicative_expression"
+			or children.front()->getLabel() == "function_call")
 			and children.back()->getLabel() == "IDENTIFIER")
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
@@ -1606,7 +1608,8 @@ string ASTMathNode::walk()
 		return ticket2;
 	}
 	else if((children.front()->getLabel() == "additive_expression"
-			 or children.front()->getLabel() == "multiplicative_expression")
+			 or children.front()->getLabel() == "multiplicative_expression"
+			or children.front()->getLabel() == "function_call")
 			and children.back()->getLabel() == "array_node")
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
@@ -1624,7 +1627,8 @@ string ASTMathNode::walk()
 	}
 	else if(children.front()->getLabel() == "INT_CONSTANT" and
 			(children.back()->getLabel() == "additive_expression"
-			 or children.back()->getLabel() == "multiplicative_expression"))
+			 or children.back()->getLabel() == "multiplicative_expression"
+			or children.back()->getLabel() == "function_call"))
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
@@ -1636,7 +1640,8 @@ string ASTMathNode::walk()
 	}
 	else if(children.front()->getLabel() == "IDENTIFIER" and
 			(children.back()->getLabel() == "additive_expression"
-			 or children.back()->getLabel() == "multiplicative_expression"))
+			 or children.back()->getLabel() == "multiplicative_expression"
+			or children.back()->getLabel() == "function_call"))
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
@@ -1652,7 +1657,8 @@ string ASTMathNode::walk()
 	}
 	else if(children.front()->getLabel() == "array_node" and
 			(children.back()->getLabel() == "additive_expression"
-			 or children.back()->getLabel() == "multiplicative_expression"))
+			 or children.back()->getLabel() == "multiplicative_expression"
+			or children.back()->getLabel() == "function_call"))
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
@@ -1667,9 +1673,11 @@ string ASTMathNode::walk()
 		return ticket2;
 	}
 	else if((children.front()->getLabel() == "additive_expression"
-			 or children.front()->getLabel() == "multiplicative_expression") and
+			 or children.front()->getLabel() == "multiplicative_expression"
+			or children.front()->getLabel() == "function_call") and
 			(children.back()->getLabel() == "additive_expression"
-			 or children.back()->getLabel() == "multiplicative_expression"))
+			 or children.back()->getLabel() == "multiplicative_expression"
+			or children.back()->getLabel() == "function_call"))
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 
@@ -1776,7 +1784,8 @@ string ASTAssignNode::walk()
 	}
 	else if(children.front()->getLabel() == "IDENTIFIER" and
 			(children.back()->getLabel() == "additive_expression"
-			 or children.back()->getLabel() == "multiplicative_expression"))
+			 or children.back()->getLabel() == "multiplicative_expression"
+			or children.back()->getLabel() == "function_call"))
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 
@@ -1812,7 +1821,8 @@ string ASTAssignNode::walk()
 	}
 	else if(children.front()->getLabel() == "array_node" and
 			(children.back()->getLabel() == "additive_expression"
-			 or children.back()->getLabel() == "multiplicative_expression"))
+			 or children.back()->getLabel() == "multiplicative_expression"
+			or children.back()->getLabel() == "function_call"))
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 
@@ -2053,11 +2063,8 @@ string ASTTypeNode::walk()
 string ASTCastNode::walk()
 {
 	//cout << "ASTCastNode " << this->getLabel() << endl;
-	for(auto it : children)
-	{
-		it->walk();
-	}
-	return {};
+
+	return children.front()->walk();
 }
 
 string ASTArrayNode::walk()
@@ -2146,7 +2153,8 @@ string ASTArrayNode::walk()
 				return ticket3;
 			}
 			else if(children.front()->getLabel() == "additive_expression" or
-					children.front()->getLabel() == "multiplicative_expression")
+					children.front()->getLabel() == "multiplicative_expression"
+					or children.front()->getLabel() == "function_call")
 			{
 				string ticket0 = "$t" + to_string(ticketCounter++);
 				string ticket1 = "$t" + to_string(ticketCounter++);
@@ -2206,7 +2214,8 @@ string ASTArrayNode::walk()
 					currentTicket.assign(ticket1);
 				}
 				else if(children.front()->getLabel() == "additive_expression" or
-						children.front()->getLabel() == "multiplicative_expression")
+						children.front()->getLabel() == "multiplicative_expression"
+						or children.front()->getLabel() == "function_call")
 				{
 					string ticket0 = "$t" + to_string(ticketCounter++);
 					string ticket1 = "$t" + to_string(ticketCounter++);
@@ -2556,7 +2565,8 @@ string ASTRelExprNode::walk()
 		return ticket4;
 	}
 	else if((children.front()->getLabel() == "additive_expression"
-			 or children.front()->getLabel() == "multiplicative_expression")
+			 or children.front()->getLabel() == "multiplicative_expression"
+			or children.front()->getLabel() == "function_call")
 			and children.back()->getLabel() == "INT_CONSTANT")
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
@@ -2577,7 +2587,8 @@ string ASTRelExprNode::walk()
 		return ticket1;
 	}
 	else if((children.front()->getLabel() == "additive_expression"
-			 or children.front()->getLabel() == "multiplicative_expression")
+			 or children.front()->getLabel() == "multiplicative_expression"
+			or children.front()->getLabel() == "function_call")
 			and children.back()->getLabel() == "IDENTIFIER")
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
@@ -2602,7 +2613,8 @@ string ASTRelExprNode::walk()
 		return ticket2;
 	}
 	else if((children.front()->getLabel() == "additive_expression"
-			 or children.front()->getLabel() == "multiplicative_expression")
+			 or children.front()->getLabel() == "multiplicative_expression"
+			or children.front()->getLabel() == "function_call")
 			and children.back()->getLabel() == "array_node")
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
@@ -2628,7 +2640,8 @@ string ASTRelExprNode::walk()
 	}
 	else if(children.front()->getLabel() == "INT_CONSTANT" and
 			(children.back()->getLabel() == "additive_expression"
-			 or children.back()->getLabel() == "multiplicative_expression"))
+			 or children.back()->getLabel() == "multiplicative_expression"
+			or children.back()->getLabel() == "function_call"))
 	{
 //		cout << "Front int, Back math" << endl;
 //		cout << "Front: " << returnValues[0] << endl;
@@ -2652,7 +2665,8 @@ string ASTRelExprNode::walk()
 	}
 	else if(children.front()->getLabel() == "IDENTIFIER" and
 			(children.back()->getLabel() == "additive_expression"
-			 or children.back()->getLabel() == "multiplicative_expression"))
+			 or children.back()->getLabel() == "multiplicative_expression"
+			or children.back()->getLabel() == "function_call"))
 	{
 //		cout << "Front ID, Back math" << endl;
 //		cout << "Front: " << returnValues[0] << endl;
@@ -2680,7 +2694,8 @@ string ASTRelExprNode::walk()
 	}
 	else if(children.front()->getLabel() == "array_node" and
 			(children.back()->getLabel() == "additive_expression"
-			 or children.back()->getLabel() == "multiplicative_expression"))
+			 or children.back()->getLabel() == "multiplicative_expression"
+			or children.back()->getLabel() == "function_call"))
 	{
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
@@ -2703,9 +2718,11 @@ string ASTRelExprNode::walk()
 		return ticket2;
 	}
 	else if((children.front()->getLabel() == "additive_expression"
-			 or children.front()->getLabel() == "multiplicative_expression") and
+			 or children.front()->getLabel() == "multiplicative_expression"
+			or children.front()->getLabel() == "function_call") and
 			(children.back()->getLabel() == "additive_expression"
-			 or children.back()->getLabel() == "multiplicative_expression"))
+			 or children.back()->getLabel() == "multiplicative_expression"
+			or children.back()->getLabel() == "function_call"))
 	{
 		string ticket0 = "$s7";
 
