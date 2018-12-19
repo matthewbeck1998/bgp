@@ -422,7 +422,7 @@ init_declarator
                                             symbolPair->second.offset = ( (ASTArrayNode*) $1)->getOffset();
                                         }
                                         $3->setType( nodeTypeSpecifier );
-                                        $$ = new ASTAssignNode("init_declarator", $1, new ASTNode("ASSIGN"), $3);
+                                        $$ = new ASTAssignNode("assign", $1, new ASTNode("ASSIGN"), $3);
                                         parserOutput("init_declarator -> declarator ASSIGN initializer"); }
 	;
 
@@ -493,7 +493,7 @@ enumerator_list
 enumerator
 	: identifier {  $$ = $1;
                     parserOutput("enumerator -> identifier"); }
-	| identifier ASSIGN constant_expression { $$ = new ASTAssignNode("enumerator", $1, new ASTNode("ASSIGN"), $3);
+	| identifier ASSIGN constant_expression { $$ = new ASTAssignNode("assign", $1, new ASTNode("ASSIGN"), $3);
                                               parserOutput("enumerator -> identifier ASSIGN constant_expression"); }
 	;
 
@@ -999,7 +999,7 @@ expression
 
 assignment_expression
 	: conditional_expression { $$ = $1; parserOutput("assignment_expression -> conditional_expression"); }
-	| unary_expression assignment_operator assignment_expression { $$ = new ASTAssignNode("enumerator", $1, $2, $3);
+	| unary_expression assignment_operator assignment_expression { $$ = new ASTAssignNode("assign", $1, $2, $3);
                                                                     parserOutput("assignment_expression -> unary_expression assignment_operator assignment_expression"); }
 	;
 
@@ -1182,10 +1182,10 @@ unary_expression
                                    $$ = temp;*/
                                     if($2->getLabel() == "IDENTIFIER")
                                     {
-                                        $$ = new ASTAssignNode("pre_dec", (ASTIdNode*) $2, new ASTNode("add"));
+                                        $$ = new ASTAssignNode("assign", (ASTIdNode*) $2, new ASTNode("add"));
                                     } else if ($2->getLabel() == "array_node")
                                     {
-                                        $$ = new ASTAssignNode("pre_dec", (ASTArrayNode*) $2, new ASTNode("add"));
+                                        $$ = new ASTAssignNode("assign", (ASTArrayNode*) $2, new ASTNode("add"));
                                     }
                                    parserOutput("unary_expression -> INC_OP unary_expression"); }
 	| DEC_OP unary_expression { /*ASTAssignNode* temp = new ASTAssignNode("pre_dec", $2, new ASTNode("sub"));
@@ -1194,10 +1194,10 @@ unary_expression
                                    $$ = temp;*/
 	                                if($2->getLabel() == "IDENTIFIER")
                                     {
-                                        $$ = new ASTAssignNode("pre_dec", (ASTIdNode*) $2, new ASTNode("sub"));
+                                        $$ = new ASTAssignNode("assign", (ASTIdNode*) $2, new ASTNode("sub"));
                                     } else if ($2->getLabel() == "array_node")
                                     {
-                                        $$ = new ASTAssignNode("pre_dec", (ASTArrayNode*) $2, new ASTNode("sub"));
+                                        $$ = new ASTAssignNode("assign", (ASTArrayNode*) $2, new ASTNode("sub"));
                                     }
                                    parserOutput("unary_expression -> DEC_OP unary_expression"); }
     | unary_operator cast_expression { ASTUnaryNode* temp = new ASTUnaryNode("unary_expression");
