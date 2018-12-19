@@ -2235,11 +2235,18 @@ string ASTFunctionCallNode::walk()
     // 1. push parameters onto the $ax registers ($a0, $a1, $a2, $a3)
     // 2. jump with link to function being called
     string funcId = ((ASTIdNode*)children.front())->getId();
+    auto it = next(children.begin());
+    for (int i = 0; it != children.end(); i++, it++)
+    {
+        string ticket0 = "$t" + to_string(ticketCounter++);
+        string ticket1 = "$t" + to_string(ticketCounter++);
+        string paramReg = "$a" + to_string(i);
 
-	for(auto it : children)
-	{
-		it->walk();
-	}
+        cout << "addiu\t" << ticket0 << "\t" << "$sp" << "\t" << (*it)->getOffset() << endl;
+        cout << "lw\t" << ticket1 << "\t" << "0(" << ticket0 << ")" << endl;
+        cout << "move\t" << paramReg << "\t" << ticket1 << endl;
+    }
+
     cout << "jal\t" << funcId << endl;
 	return {};
 }
