@@ -51,14 +51,16 @@ void AST::printTreeHelper (ASTNode *nodePtr, ofstream& treeOutFile)
 	}
 }
 
-void AST::walk() const
+void AST::walk(string outputFile) const
 {
 	//cout << "walk" << endl;
 	if(root != NULL)
 	{
 		//cout << "INSIDE IF" << endl;
 		//cout << root->getLabel() << endl;
-		root->walk();
+		ofstream IrOutputFile;
+		IrOutputFile.open(outputFile);
+		root->walk(IrOutputFile);
 	}
 	else
 		cout << "NOOOOO" << endl;

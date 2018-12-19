@@ -1390,7 +1390,7 @@ int main(int argc, char** argv)
     AST tree(root);
 	yyparse();
 	tree.printTree();
-	tree.walk();
+	tree.walk(argv[2]);
 
     outputFile.open( outputIndex ? argv[outputIndex] : "output/defaultOutput.txt");
     if (outputFile.good())

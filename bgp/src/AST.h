@@ -23,7 +23,7 @@ class AST
         //bool walkTree() const;
         void printTree();
         void printTreeHelper(ASTNode* nodePtr, ofstream& treeOutFile);
-        void walk() const;
+        void walk(string outputFile) const;
 
 
     private:

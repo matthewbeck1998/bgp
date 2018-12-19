@@ -83,7 +83,7 @@ class ASTNode
          * @name walk()
          * @return true or false if the table was correctly walked
          */
-        virtual string walk();
+        virtual string walk(ofstream &fout);
 
         /*!
          * @name getChildren
@@ -259,7 +259,7 @@ class ASTMathNode : public ASTNode
          * @name walk
          * @return returns true or false based on whether the tree was walked correctly
          */
-		string walk();
+		string walk(ofstream &fout);
 
         /*!
          * @name printNode
@@ -350,7 +350,7 @@ class ASTVariableNode : public ASTNode
          * @name walk
          * @return returns an bool based on if the tree was successfully walked or not
          */
-		string walk() override;
+		string walk(ofstream &fout) override;
 
         /*!
          * @name getType
@@ -460,7 +460,7 @@ class ASTConstNode : public ASTNode
      */
     void printNode(ostream &treeOutFile = cout) override;
 
-    string walk() override;
+    string walk(ofstream &fout) override;
 
     private:
     /*!
@@ -498,7 +498,7 @@ class ASTSelectionNode : public ASTNode
          * @name walk
          * @return Walks the AST. Returns true if it succeeds and false if it does now
          */
-		string walk() override;
+		string walk(ofstream &fout) override;
 
         /*!
          * @name printNode
@@ -526,7 +526,7 @@ class ASTIterationNode : public ASTNode
          * @name walk
          * @return returns true of false based on if the tree was successfully walked
          */
-		string walk() override;
+		string walk(ofstream &fout) override;
 
         /*!
          * @name printNode
@@ -565,7 +565,7 @@ class ASTIdNode : public ASTNode
          * @name walk
          * @return returns true or false based on if the tree was successfully walked ot not.
          */
-		string walk() override;
+		string walk(ofstream &fout) override;
 
         /*!
          * @name printNode
@@ -646,7 +646,7 @@ class ASTTypeNode : public  ASTNode
          * @name walk
          * @return returns a bool corresponding to whether the tree was successfully walked or not.
          */
-		string walk() override;
+		string walk(ofstream &fout) override;
 
         /*!
          * @name printNode
@@ -720,7 +720,7 @@ class ASTCastNode : public ASTNode
          */
         void setType( int inputType );
 
-        string walk() override;
+        string walk(ofstream &fout) override;
     private:
         /*!
          * @name printType
@@ -816,7 +816,7 @@ public:
 	void addDimensions(list<int> inputDimensions);
 
 
-	string walk() override;
+	string walk(ofstream &fout) override;
 
 	void setOffset(int inputOffset);
 
@@ -871,7 +871,7 @@ public:
      * @name walk
      * @return returns true or false based on if the walk was successful
      */
-    string walk();
+	string walk(ofstream &fout);
 
     /*!
      * @name printNode
@@ -964,7 +964,7 @@ class ASTDeclarationNode : public ASTNode
 		 * @return returns the type of the node
 		 */
 		int getType() const;
-		string walk() override;
+		string walk(ofstream &fout) override;
 
 		void setOffset(int inputOffset);
 
@@ -994,7 +994,7 @@ class ASTFunctionNode : public  ASTNode
     void suckUpChildren( ASTNode* childNode );
     //void addChild(ASTNode* addNode);
 
-    string walk() override;
+    string walk(ofstream &fout) override;
 private:
     int type;
 
@@ -1006,7 +1006,7 @@ class ASTDeclListNode : public ASTNode
     ASTDeclListNode(string node_label, ASTNode* inputChild);
     ASTDeclListNode(string node_label, ASTNode* leftChild, ASTNode* rightChild);
     void printNode(ostream &treeOutFile = cout) override;
-    string walk() override;
+    string walk(ofstream &fout) override;
 };
 
 class ASTFunctionCallNode : public ASTNode
@@ -1015,7 +1015,7 @@ class ASTFunctionCallNode : public ASTNode
     ASTFunctionCallNode(string node_label, ASTNode* inputChild);
     ASTFunctionCallNode(string node_label, ASTNode* leftChild, ASTNode* rightChild);
     void printNode(ostream &treeOutFile = cout) override;
-    string walk() override;
+    string walk(ofstream &fout) override;
     void setType( int inputType );
     int getType() const;
     void suckUpChildrenFromBackChild();
@@ -1028,7 +1028,7 @@ class ASTRelExprNode : public ASTNode
     public:
         ASTRelExprNode(string node_label);
         void printNode(ostream& treeOutFile = cout) override;
-        string walk() override;
+        string walk(ofstream &fout) override;
 };
 
 class ASTUnaryNode : public ASTNode
@@ -1036,7 +1036,7 @@ class ASTUnaryNode : public ASTNode
     public:
         ASTUnaryNode(string node_label);
         void printNode(ostream& treeOutFile = cout) override;
-        string walk() override;
+        string walk(ofstream &fout) override;
 };
 
 class ASTArrayInitializerNode : public ASTNode
@@ -1059,7 +1059,7 @@ class ASTReturnNode : public ASTNode
         ASTReturnNode( string node_label );
         ASTReturnNode( string node_label, ASTNode* childNode );
         void printNode(ostream& treeOutFile = cout) override;
-        string walk() override;
+        string walk(ofstream &fout) override;
 };
 
 int typeToByteSize( int type );
