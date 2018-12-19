@@ -2775,7 +2775,7 @@ string ASTFunctionNode::walk()
         string ticket0 = "$t" + to_string(ticketCounter++);
         string ticket1 = "$t" + to_string(ticketCounter++);
         cout << "addiu\t" << ticket0 << "\t" << "$sp" << "\t" << "0" << endl;
-        cout << "sw\t" << ticket1 << "\t" << "0(" << ticket0 << ")" << endl;
+        cout << "lw\t" << ticket1 << "\t" << "0(" << ticket0 << ")" << endl;
         cout << "move\t" << "$a0\t" << ticket1 << endl;
         cout << "li\t" << "$v0\t" << "1" << endl;
         cout << "syscall\t" << endl;
