@@ -2475,6 +2475,19 @@ string ASTDeclListNode::walk()
 	return {};
 }
 
+void ASTFunctionCallNode::suckUpChildrenFromBackChild()
+{
+    ASTNode* temp = children.back();
+    if(temp->getLabel() == "argument_expression_list")
+    {
+        children.pop_back();
+        for( ASTNode* childsChild : temp->getChildren() )
+        {
+            addChild( childsChild );
+        }
+    }
+}
+
 string ASTFunctionCallNode::walk()
 {
 	//cout << "ASTFunctionCallNode " << this->getLabel() << endl;

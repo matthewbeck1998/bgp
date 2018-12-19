@@ -1018,6 +1018,7 @@ class ASTFunctionCallNode : public ASTNode
     string walk() override;
     void setType( int inputType );
     int getType() const;
+    void suckUpChildrenFromBackChild();
     private:
     int type;
 };
