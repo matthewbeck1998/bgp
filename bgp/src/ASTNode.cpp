@@ -2188,10 +2188,27 @@ string ASTSelectionNode::walk()
 	string label1 = "$l" + to_string(labelCounter++);
 
 	cout << "bne\t" << selectionRegister + "\t" << "$0" << "\t" << label0 << endl;//Price was here.
-	(*next(children.begin(), 4))->walk();
+
+	string garbage;
+	if((*next(children.begin(), 4))->getLabel() != "INT_CONSTANT")
+	 garbage = (*next(children.begin(), 4))->walk();
+	else
+		(*next(children.begin(), 4))->walk();
+
+	if(!garbage.empty())
+		cout << "free\t" << garbage << endl;
+
 	cout << "j\t" << label1 << endl;
 	cout << "label\t" << label0 << endl;
-	(*next(children.begin(), 2))->walk();
+
+	string garbage2;
+	if((*next(children.begin(), 2))->getLabel() != "INT_CONSTANT")
+		garbage2 = (*next(children.begin(), 2))->walk();
+	else
+		(*next(children.begin(), 2))->walk();
+
+	if(!garbage2.empty())
+		cout << "free\t" << garbage2 << endl;
 	cout << "label\t" << label1 << endl;
 
 	return {};
