@@ -2203,19 +2203,30 @@ string ASTArrayNode::walk()
 					cout << "mul\t" << ticket0 + "\t" << currentTicket + "\t" << *dim << endl;
 					currentTicket.assign(ticket0);
 				}
+
+
+
 				if(child != children.front())
 				{
 					string previousTicket1 = "$t" + to_string(ticketCounter - 1);
 					string previousTicket2 = "$t" + to_string(prevTicketNum);
 					string ticket0 = "$t" + to_string(ticketCounter++);
 
+
 					cout << "add\t" << ticket0 + "\t" << previousTicket1 + "\t" << previousTicket2 << endl;
+
 					returnTicket.assign(ticket0);
 				}
 				currentReturnIndex++;
 				startingDim++;
 			}
-			return returnTicket;
+
+			string ticket0 = "$t" + to_string(ticketCounter++);
+			string ticket1 = "$t" + to_string(ticketCounter++);
+
+			cout << "mul\t" << ticket0 + "\t" << returnTicket + "\t" << typeToByteSize(type) << endl;
+			cout << "addu\t" << ticket1 + "\t" << ticket0 + "\t" << offset << endl;
+			return ticket1;
 		}
 	}
 
