@@ -52,29 +52,22 @@ ret	$t14
 j	$l3
 label	$l3
 end	factorial	8
-func	main	16
-addiu	$t15	$sp	8
+func	main	8
+addiu	$t15	$sp	0
 li	$t16	5
 sw	$t16	0($t15)
-addiu	$t17	$sp	8
+addiu	$t17	$sp	0
 lw	$t18	0($t17)
 free	$t18
-addiu	$t19	$sp	8
+addiu	$t19	$sp	0
 lw	$t20	0($t19)
 move	$a0	$t20
 jal	factorial
-addiu	$t21	$sp	4
-sw	$v0	0($t21)
-addiu	$t22	$sp	4
-lw	$t23	0($t22)
-addiu	$t24	$sp	4
-lw	$t25	0($t24)
-move	$a0	$t25
+move	$a0	$v0
 jal	printInt
-free	$t23
-free	$v0
-li	$t26	0
-ret	$t26
+li	$t21	0
+ret	$t21
 j	$l4
+free	$v0
 label	$l4
-end	main	16
+end	main	8

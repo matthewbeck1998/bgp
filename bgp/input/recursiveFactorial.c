@@ -14,8 +14,7 @@ int factorial(int x)
 
 int main()
 {
-    int x = 5, y;
-    y = factorial(x);
-    printInt(y);
+    int x = 5;
+    printInt(factorial(x));
     return 0;
 }
