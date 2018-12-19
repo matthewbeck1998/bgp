@@ -1,7 +1,9 @@
+/*
 void printInt(int x)
 {
 
 }
+*/
 
 int main()
 {
@@ -15,7 +17,7 @@ int main()
         for (j = 0; j < 3; ++j)
         {
             A[i][j] = i + j;
-            printInt(A[i][j]);
+            //printInt(A[i][j]);
         }
     }
 
@@ -24,7 +26,7 @@ int main()
         for (j = 0; j < 3; ++j)
         {
             B[i][j] = A[i][j];
-            printInt(B[i][j]);
+            //printInt(B[i][j]);
         }
     }
 
@@ -37,7 +39,7 @@ int main()
             {
                 C[i][j] = C[i][j] + A[i][k] * B[k][j];
             }
-            printInt(C[i][j]);
+            //printInt(C[i][j]);
         }
     }
 
