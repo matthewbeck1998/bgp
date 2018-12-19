@@ -2829,6 +2829,18 @@ string ASTFunctionNode::walk()
         cout << "li\t" << "$v0\t" << "1" << endl;
         cout << "syscall\t" << endl;
     }
+    else if (funcId == "printSpace")
+    {
+        cout << "li\t" << "$a0\t" << "32" << endl;
+        cout << "li\t" << "$v0\t" << "11" << endl;
+        cout << "syscall\t" << endl;
+    }
+    else if (funcId == "printNewline")
+    {
+        cout << "li\t" << "$a0\t" << "10" << endl;
+        cout << "li\t" << "$v0\t" << "11" << endl;
+        cout << "syscall\t" << endl;
+    }
     else
     {
         auto body = prev(children.end(), 1);
