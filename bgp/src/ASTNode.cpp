@@ -2534,7 +2534,7 @@ string ASTFunctionCallNode::walk()
 		}
 	}
 
-	cout << "jal\t" << children.front()->getLabel() << endl;
+	cout << "jal\t" << children.front()->getId() << endl;
 	return "$v0";
 
 }
