@@ -1,3 +1,8 @@
+void printInt(int x)
+{
+
+}
+
 int main()
 {
     int i;
@@ -5,5 +10,10 @@ int main()
     for (i = 0; i < 5; ++i)
     {
         a[i] = i;
+    }
+
+    for (i = 0; i < 5; ++i)
+    {
+        printInt(a[i]);
     }
 }
