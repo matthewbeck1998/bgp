@@ -67,7 +67,7 @@ li	$t0, 1
 sub	$t1, $t2, $t0
 addiu	$t0, $sp, 8
 lw	$t2, 0($t0)
-blt	$t2, $l14
+blt	$t2, $t1, $l14
 li	$s7, 0
 j	$l15
 $l14:	
@@ -77,20 +77,20 @@ bne	$s7, $0, $l11
 j	$l13
 $l11:	
 addiu	$t0, $sp, 8
-lw	$t2, 0($t0)
-mul	$t0, $t2, 4
-addiu	$t2, $t0, 16
+lw	$t1, 0($t0)
+mul	$t0, $t1, 4
+addiu	$t1, $t0, 16
 addiu	$t0, $sp, 8
-lw	$t3, 0($t0)
+lw	$t2, 0($t0)
 li	$t0, 1
-add	$t4, $t3, $t0
-mul	$t0, $t4, 4
-addiu	$t3, $t0, 16
-addu	$t0, $sp, $t2
-addu	$t2, $sp, $t3
-lw	$t3, 0($t0)
-lw	$t0, 0($t2)
-bgt	$t3, $t0, $l16
+add	$t3, $t2, $t0
+mul	$t0, $t3, 4
+addiu	$t2, $t0, 16
+addu	$t0, $sp, $t1
+addu	$t1, $sp, $t2
+lw	$t2, 0($t0)
+lw	$t0, 0($t1)
+bgt	$t2, $t0, $l16
 li	$s7, 0
 j	$l17
 $l16:	
@@ -100,52 +100,52 @@ bne	$s7, $0, $l18
 j	$l19
 $l18:	
 addiu	$t0, $sp, 8
+lw	$t1, 0($t0)
+mul	$t0, $t1, 4
+addiu	$t1, $t0, 16
+addu	$t0, $sp, $t1
+addiu	$t1, $sp, 4
 lw	$t2, 0($t0)
-mul	$t0, $t2, 4
-addiu	$t2, $t0, 16
-addu	$t0, $sp, $t2
-addiu	$t2, $sp, 4
-lw	$t3, 0($t0)
-sw	$t3, 0($t2)
+sw	$t2, 0($t1)
 addiu	$t0, $sp, 8
-lw	$t2, 0($t0)
-mul	$t0, $t2, 4
-addiu	$t2, $t0, 16
-addiu	$t0, $sp, 8
-lw	$t3, 0($t0)
-li	$t0, 1
-add	$t4, $t3, $t0
-mul	$t0, $t4, 4
-addiu	$t3, $t0, 16
-addu	$t0, $sp, $t3
-addu	$t3, $sp, $t2
-lw	$t2, 0($t0)
-sw	$t2, 0($t3)
+lw	$t1, 0($t0)
+mul	$t0, $t1, 4
+addiu	$t1, $t0, 16
 addiu	$t0, $sp, 8
 lw	$t2, 0($t0)
 li	$t0, 1
 add	$t3, $t2, $t0
 mul	$t0, $t3, 4
 addiu	$t2, $t0, 16
+addu	$t0, $sp, $t2
+addu	$t2, $sp, $t1
+lw	$t1, 0($t0)
+sw	$t1, 0($t2)
+addiu	$t0, $sp, 8
+lw	$t1, 0($t0)
+li	$t0, 1
+add	$t2, $t1, $t0
+mul	$t0, $t2, 4
+addiu	$t1, $t0, 16
 addiu	$t0, $sp, 4
-addu	$t3, $sp, $t2
-lw	$t2, 0($t0)
-sw	$t2, 0($t3)
+addu	$t2, $sp, $t1
+lw	$t1, 0($t0)
+sw	$t1, 0($t2)
 $l19:	
 addiu	$t0, $sp, 8
-lw	$t2, 0($t0)
+lw	$t1, 0($t0)
 li	$t0, 1
-add	$t3, $t2, $t0
+add	$t2, $t1, $t0
 addiu	$t0, $sp, 8
-sw	$t3, 0($t0)
+sw	$t2, 0($t0)
 j	$l12
 $l13:	
 addiu	$t0, $sp, 12
-lw	$t2, 0($t0)
+lw	$t1, 0($t0)
 li	$t0, 1
-add	$t3, $t2, $t0
+add	$t2, $t1, $t0
 addiu	$t0, $sp, 12
-sw	$t3, 0($t0)
+sw	$t2, 0($t0)
 j	$l7
 $l8:	
 li	$t0, 0

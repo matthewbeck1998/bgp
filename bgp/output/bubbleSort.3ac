@@ -61,7 +61,7 @@ li	$t30	1
 sub	$t31	$t29	$t30
 addiu	$t32	$sp	8
 lw	$t33	0($t32)
-blt	$t33		$l14
+blt	$t33	$t31	$l14
 li	$s7	0
 j	$l15
 label	$l14
