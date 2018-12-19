@@ -3,7 +3,6 @@ void printInt(int i)
     
 }
 
-
 int main()
 {
     int i = 1;
