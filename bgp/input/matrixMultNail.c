@@ -26,7 +26,9 @@ int main()
         {
             A[i][j] = i + j;
             printInt(A[i][j]);
+            printSpace();
         }
+        printNewline();
     }
 
     for (i = 0; i < 3; ++i)
@@ -35,7 +37,9 @@ int main()
         {
             B[i][j] = A[i][j];
             printInt(B[i][j]);
+            printSpace();
         }
+        printNewline();
     }
 
     for (i = 0; i < 3; ++i)
@@ -48,7 +52,9 @@ int main()
                 C[i][j] = C[i][j] + A[i][k] * B[k][j];
             }
             printInt(C[i][j]);
+            printSpace();
         }
+        printNewline();
     }
 
     return 0;

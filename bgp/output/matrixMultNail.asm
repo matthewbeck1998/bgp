@@ -16,41 +16,61 @@ $l0:
 lw	$ra, 4($sp)
 addiu	$sp, $sp, 8
 jr	$ra
+printSpace:	
+subiu	$sp, $sp, 8
+sw	$ra, 4($sp)
+li	$a0, 32
+li	$v0, 11
+syscall	
+$l1:	
+lw	$ra, 4($sp)
+addiu	$sp, $sp, 8
+jr	$ra
+printNewline:	
+subiu	$sp, $sp, 8
+sw	$ra, 4($sp)
+li	$a0, 10
+li	$v0, 11
+syscall	
+$l2:	
+lw	$ra, 4($sp)
+addiu	$sp, $sp, 8
+jr	$ra
 main:	
 subiu	$sp, $sp, 128
 sw	$ra, 124($sp)
 addiu	$t0, $sp, 12
 li	$t1, 0
 sw	$t1, 0($t0)
-$l3:	
+$l5:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 li	$t0, 3
-blt	$t1, $t0, $l5
+blt	$t1, $t0, $l7
 li	$s7, 0
-j	$l6
-$l5:	
+j	$l8
+$l7:	
 li	$s7, 1
-$l6:	
-bne	$s7, $0, $l2
-j	$l4
-$l2:	
+$l8:	
+bne	$s7, $0, $l4
+j	$l6
+$l4:	
 addiu	$t0, $sp, 8
 li	$t1, 0
 sw	$t1, 0($t0)
-$l8:	
+$l10:	
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
 li	$t0, 3
-blt	$t1, $t0, $l10
+blt	$t1, $t0, $l12
 li	$s7, 0
-j	$l11
-$l10:	
+j	$l13
+$l12:	
 li	$s7, 1
-$l11:	
-bne	$s7, $0, $l7
-j	$l9
-$l7:	
+$l13:	
+bne	$s7, $0, $l9
+j	$l11
+$l9:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 mul	$t0, $t1, 3
@@ -78,54 +98,56 @@ addu	$t0, $sp, $t1
 lw	$t1, 0($t0)
 move	$a0, $t1
 jal	printInt
+jal	printSpace
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 8
 sw	$t2, 0($t0)
-j	$l8
-$l9:	
+j	$l10
+$l11:	
+jal	printNewline
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 12
 sw	$t2, 0($t0)
-j	$l3
-$l4:	
+j	$l5
+$l6:	
 addiu	$t0, $sp, 12
 li	$t1, 0
 sw	$t1, 0($t0)
-$l13:	
-addiu	$t0, $sp, 12
-lw	$t1, 0($t0)
-li	$t0, 3
-blt	$t1, $t0, $l15
-li	$s7, 0
-j	$l16
 $l15:	
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
+li	$t0, 3
+blt	$t1, $t0, $l17
+li	$s7, 0
+j	$l18
+$l17:	
 li	$s7, 1
-$l16:	
-bne	$s7, $0, $l12
-j	$l14
-$l12:	
+$l18:	
+bne	$s7, $0, $l14
+j	$l16
+$l14:	
 addiu	$t0, $sp, 8
 li	$t1, 0
 sw	$t1, 0($t0)
-$l18:	
+$l20:	
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
 li	$t0, 3
-blt	$t1, $t0, $l20
+blt	$t1, $t0, $l22
 li	$s7, 0
-j	$l21
-$l20:	
+j	$l23
+$l22:	
 li	$s7, 1
-$l21:	
-bne	$s7, $0, $l17
-j	$l19
-$l17:	
+$l23:	
+bne	$s7, $0, $l19
+j	$l21
+$l19:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 mul	$t0, $t1, 3
@@ -158,54 +180,56 @@ addu	$t0, $sp, $t1
 lw	$t1, 0($t0)
 move	$a0, $t1
 jal	printInt
+jal	printSpace
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 8
 sw	$t2, 0($t0)
-j	$l18
-$l19:	
+j	$l20
+$l21:	
+jal	printNewline
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 12
 sw	$t2, 0($t0)
-j	$l13
-$l14:	
+j	$l15
+$l16:	
 addiu	$t0, $sp, 12
 li	$t1, 0
 sw	$t1, 0($t0)
-$l23:	
-addiu	$t0, $sp, 12
-lw	$t1, 0($t0)
-li	$t0, 3
-blt	$t1, $t0, $l25
-li	$s7, 0
-j	$l26
 $l25:	
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
+li	$t0, 3
+blt	$t1, $t0, $l27
+li	$s7, 0
+j	$l28
+$l27:	
 li	$s7, 1
-$l26:	
-bne	$s7, $0, $l22
-j	$l24
-$l22:	
+$l28:	
+bne	$s7, $0, $l24
+j	$l26
+$l24:	
 addiu	$t0, $sp, 8
 li	$t1, 0
 sw	$t1, 0($t0)
-$l28:	
+$l30:	
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
 li	$t0, 3
-blt	$t1, $t0, $l30
+blt	$t1, $t0, $l32
 li	$s7, 0
-j	$l31
-$l30:	
+j	$l33
+$l32:	
 li	$s7, 1
-$l31:	
-bne	$s7, $0, $l27
-j	$l29
-$l27:	
+$l33:	
+bne	$s7, $0, $l29
+j	$l31
+$l29:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 mul	$t0, $t1, 3
@@ -220,19 +244,19 @@ sw	$t1, 0($t0)
 addiu	$t0, $sp, 4
 li	$t1, 0
 sw	$t1, 0($t0)
-$l33:	
+$l35:	
 addiu	$t0, $sp, 4
 lw	$t1, 0($t0)
 li	$t0, 3
-blt	$t1, $t0, $l35
+blt	$t1, $t0, $l37
 li	$s7, 0
-j	$l36
-$l35:	
+j	$l38
+$l37:	
 li	$s7, 1
-$l36:	
-bne	$s7, $0, $l32
-j	$l34
-$l32:	
+$l38:	
+bne	$s7, $0, $l34
+j	$l36
+$l34:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 mul	$t0, $t1, 3
@@ -281,8 +305,8 @@ li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 4
 sw	$t2, 0($t0)
-j	$l33
-$l34:	
+j	$l35
+$l36:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 mul	$t0, $t1, 3
@@ -295,26 +319,28 @@ addu	$t0, $sp, $t1
 lw	$t1, 0($t0)
 move	$a0, $t1
 jal	printInt
+jal	printSpace
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 8
 sw	$t2, 0($t0)
-j	$l28
-$l29:	
+j	$l30
+$l31:	
+jal	printNewline
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 12
 sw	$t2, 0($t0)
-j	$l23
-$l24:	
+j	$l25
+$l26:	
 li	$t0, 0
 move	$v0, $t0
-j	$l1
-$l1:	
+j	$l3
+$l3:	
 lw	$ra, 124($sp)
 addiu	$sp, $sp, 128
 jr	$ra
