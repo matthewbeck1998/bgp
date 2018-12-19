@@ -1,284 +1,262 @@
-func	printInt	8
-addiu	$t0	$sp	0
-sw	$a0	0($t0)
-addiu	$t1	$sp	0
-lw	$t2	0($t1)
-move	$a0	$t2
-li	$v0	1
-syscall	
-label	$l0
-end	printInt	8
 func	main	128
-addiu	$t3	$sp	12
-li	$t4	0
-sw	$t4	0($t3)
-label	$l3
-addiu	$t5	$sp	12
-lw	$t6	0($t5)
-li	$t7	3
-blt	$t6	$t7	$l5
-li	$s7	0
-j	$l6
-label	$l5
-li	$s7	1
-label	$l6
-bne	$s7	$0	$l2
-j	$l4
+addiu	$t0	$sp	12
+li	$t1	0
+sw	$t1	0($t0)
 label	$l2
-addiu	$t8	$sp	8
-li	$t9	0
-sw	$t9	0($t8)
-label	$l8
-addiu	$t10	$sp	8
-lw	$t11	0($t10)
-li	$t12	3
-blt	$t11	$t12	$l10
+addiu	$t2	$sp	12
+lw	$t3	0($t2)
+li	$t4	3
+blt	$t3	$t4	$l4
 li	$s7	0
-j	$l11
-label	$l10
+j	$l5
+label	$l4
 li	$s7	1
-label	$l11
-bne	$s7	$0	$l7
-j	$l9
+label	$l5
+bne	$s7	$0	$l1
+j	$l3
+label	$l1
+addiu	$t5	$sp	8
+li	$t6	0
+sw	$t6	0($t5)
 label	$l7
-addiu	$t13	$sp	12
+addiu	$t7	$sp	8
+lw	$t8	0($t7)
+li	$t9	3
+blt	$t8	$t9	$l9
+li	$s7	0
+j	$l10
+label	$l9
+li	$s7	1
+label	$l10
+bne	$s7	$0	$l6
+j	$l8
+label	$l6
+addiu	$t10	$sp	12
+lw	$t11	0($t10)
+mul	$t12	$t11	3
+addiu	$t13	$sp	8
 lw	$t14	0($t13)
-mul	$t15	$t14	3
-addiu	$t16	$sp	8
-lw	$t17	0($t16)
-add	$t18	$t17	$t15
-mul	$t19	$t18	4
-addu	$t20	$t19	88
-addiu	$t21	$sp	12
-addiu	$t22	$sp	8
-lw	$t23	0($t21)
-lw	$t24	0($t22)
-add	$t25	$t23	$t24
-addu	$t26	$sp	$t20
-sw	$t25	0($t26)
-addiu	$t27	$sp	88
-lw	$t28	0($t27)
-move	$a0	$t28
-jal	printInt
-addiu	$t29	$sp	8
+add	$t15	$t14	$t12
+mul	$t16	$t15	4
+addu	$t17	$t16	88
+addiu	$t18	$sp	12
+addiu	$t19	$sp	8
+lw	$t20	0($t18)
+lw	$t21	0($t19)
+add	$t22	$t20	$t21
+addu	$t23	$sp	$t17
+sw	$t22	0($t23)
+addiu	$t24	$sp	8
+lw	$t25	0($t24)
+li	$t26	1
+add	$t27	$t25	$t26
+addiu	$t28	$sp	8
+sw	$t27	0($t28)
+j	$l7
+label	$l8
+addiu	$t29	$sp	12
 lw	$t30	0($t29)
 li	$t31	1
 add	$t32	$t30	$t31
-addiu	$t33	$sp	8
+addiu	$t33	$sp	12
 sw	$t32	0($t33)
-j	$l8
-label	$l9
+j	$l2
+label	$l3
 addiu	$t34	$sp	12
-lw	$t35	0($t34)
-li	$t36	1
-add	$t37	$t35	$t36
-addiu	$t38	$sp	12
-sw	$t37	0($t38)
-j	$l3
-label	$l4
-addiu	$t39	$sp	12
+li	$t35	0
+sw	$t35	0($t34)
+label	$l12
+addiu	$t36	$sp	12
+lw	$t37	0($t36)
+li	$t38	3
+blt	$t37	$t38	$l14
+li	$s7	0
+j	$l15
+label	$l14
+li	$s7	1
+label	$l15
+bne	$s7	$0	$l11
+j	$l13
+label	$l11
+addiu	$t39	$sp	8
 li	$t40	0
 sw	$t40	0($t39)
-label	$l13
-addiu	$t41	$sp	12
+label	$l17
+addiu	$t41	$sp	8
 lw	$t42	0($t41)
 li	$t43	3
-blt	$t42	$t43	$l15
+blt	$t42	$t43	$l19
 li	$s7	0
-j	$l16
-label	$l15
-li	$s7	1
-label	$l16
-bne	$s7	$0	$l12
-j	$l14
-label	$l12
-addiu	$t44	$sp	8
-li	$t45	0
-sw	$t45	0($t44)
-label	$l18
-addiu	$t46	$sp	8
-lw	$t47	0($t46)
-li	$t48	3
-blt	$t47	$t48	$l20
-li	$s7	0
-j	$l21
-label	$l20
-li	$s7	1
-label	$l21
-bne	$s7	$0	$l17
-j	$l19
-label	$l17
-addiu	$t49	$sp	12
-lw	$t50	0($t49)
-mul	$t51	$t50	3
-addiu	$t52	$sp	8
-lw	$t53	0($t52)
-add	$t54	$t53	$t51
-mul	$t55	$t54	4
-addu	$t56	$t55	52
-addiu	$t57	$sp	12
-lw	$t58	0($t57)
-mul	$t59	$t58	3
-addiu	$t60	$sp	8
-lw	$t61	0($t60)
-add	$t62	$t61	$t59
-mul	$t63	$t62	4
-addu	$t64	$t63	88
-addu	$t65	$sp	$t64
-addu	$t66	$sp	$t56
-lw	$t67	0($t65)
-sw	$t67	0($t66)
-addiu	$t68	$sp	52
-lw	$t69	0($t68)
-move	$a0	$t69
-jal	printInt
-addiu	$t70	$sp	8
-lw	$t71	0($t70)
-li	$t72	1
-add	$t73	$t71	$t72
-addiu	$t74	$sp	8
-sw	$t73	0($t74)
-j	$l18
+j	$l20
 label	$l19
+li	$s7	1
+label	$l20
+bne	$s7	$0	$l16
+j	$l18
+label	$l16
+addiu	$t44	$sp	12
+lw	$t45	0($t44)
+mul	$t46	$t45	3
+addiu	$t47	$sp	8
+lw	$t48	0($t47)
+add	$t49	$t48	$t46
+mul	$t50	$t49	4
+addu	$t51	$t50	52
+addiu	$t52	$sp	12
+lw	$t53	0($t52)
+mul	$t54	$t53	3
+addiu	$t55	$sp	8
+lw	$t56	0($t55)
+add	$t57	$t56	$t54
+mul	$t58	$t57	4
+addu	$t59	$t58	88
+addu	$t60	$sp	$t59
+addu	$t61	$sp	$t51
+lw	$t62	0($t60)
+sw	$t62	0($t61)
+addiu	$t63	$sp	8
+lw	$t64	0($t63)
+li	$t65	1
+add	$t66	$t64	$t65
+addiu	$t67	$sp	8
+sw	$t66	0($t67)
+j	$l17
+label	$l18
+addiu	$t68	$sp	12
+lw	$t69	0($t68)
+li	$t70	1
+add	$t71	$t69	$t70
+addiu	$t72	$sp	12
+sw	$t71	0($t72)
+j	$l12
+label	$l13
+addiu	$t73	$sp	12
+li	$t74	0
+sw	$t74	0($t73)
+label	$l22
 addiu	$t75	$sp	12
 lw	$t76	0($t75)
-li	$t77	1
-add	$t78	$t76	$t77
-addiu	$t79	$sp	12
-sw	$t78	0($t79)
-j	$l13
-label	$l14
-addiu	$t80	$sp	12
-li	$t81	0
-sw	$t81	0($t80)
-label	$l23
-addiu	$t82	$sp	12
-lw	$t83	0($t82)
-li	$t84	3
-blt	$t83	$t84	$l25
+li	$t77	3
+blt	$t76	$t77	$l24
 li	$s7	0
-j	$l26
-label	$l25
-li	$s7	1
-label	$l26
-bne	$s7	$0	$l22
-j	$l24
-label	$l22
-addiu	$t85	$sp	8
-li	$t86	0
-sw	$t86	0($t85)
-label	$l28
-addiu	$t87	$sp	8
-lw	$t88	0($t87)
-li	$t89	3
-blt	$t88	$t89	$l30
-li	$s7	0
-j	$l31
-label	$l30
-li	$s7	1
-label	$l31
-bne	$s7	$0	$l27
-j	$l29
-label	$l27
-addiu	$t90	$sp	12
-lw	$t91	0($t90)
-mul	$t92	$t91	3
-addiu	$t93	$sp	8
-lw	$t94	0($t93)
-add	$t95	$t94	$t92
-mul	$t96	$t95	4
-addu	$t97	$t96	16
-addu	$t98	$sp	$t97
-li	$t99	0
-sw	$t99	0($t98)
-addiu	$t100	$sp	4
-li	$t101	0
-sw	$t101	0($t100)
-label	$l33
-addiu	$t102	$sp	4
-lw	$t103	0($t102)
-li	$t104	3
-blt	$t103	$t104	$l35
-li	$s7	0
-j	$l36
-label	$l35
-li	$s7	1
-label	$l36
-bne	$s7	$0	$l32
-j	$l34
-label	$l32
-addiu	$t105	$sp	12
-lw	$t106	0($t105)
-mul	$t107	$t106	3
-addiu	$t108	$sp	8
-lw	$t109	0($t108)
-add	$t110	$t109	$t107
-mul	$t111	$t110	4
-addu	$t112	$t111	16
-addiu	$t113	$sp	12
-lw	$t114	0($t113)
-mul	$t115	$t114	3
-addiu	$t116	$sp	8
-lw	$t117	0($t116)
-add	$t118	$t117	$t115
-mul	$t119	$t118	4
-addu	$t120	$t119	16
-addiu	$t121	$sp	12
-lw	$t122	0($t121)
-mul	$t123	$t122	3
-addiu	$t124	$sp	4
-lw	$t125	0($t124)
-add	$t126	$t125	$t123
-mul	$t127	$t126	4
-addu	$t128	$t127	88
-addiu	$t129	$sp	4
-lw	$t130	0($t129)
-mul	$t131	$t130	3
-addiu	$t132	$sp	8
-lw	$t133	0($t132)
-add	$t134	$t133	$t131
-mul	$t135	$t134	4
-addu	$t136	$t135	52
-addu	$t137	$sp	$t128
-addu	$t138	$sp	$t136
-lw	$t139	0($t137)
-lw	$t140	0($t138)
-mul	$t141	$t139	$t140
-addu	$t142	$sp	$t120
-lw	$t143	0($t142)
-add	$t144	$t143	$t141
-addu	$t145	$sp	$t112
-sw	$t144	0($t145)
-addiu	$t146	$sp	4
-lw	$t147	0($t146)
-li	$t148	1
-add	$t149	$t147	$t148
-addiu	$t150	$sp	4
-sw	$t149	0($t150)
-j	$l33
-label	$l34
-addiu	$t151	$sp	16
-lw	$t152	0($t151)
-move	$a0	$t152
-jal	printInt
-addiu	$t153	$sp	8
-lw	$t154	0($t153)
-li	$t155	1
-add	$t156	$t154	$t155
-addiu	$t157	$sp	8
-sw	$t156	0($t157)
-j	$l28
-label	$l29
-addiu	$t158	$sp	12
-lw	$t159	0($t158)
-li	$t160	1
-add	$t161	$t159	$t160
-addiu	$t162	$sp	12
-sw	$t161	0($t162)
-j	$l23
+j	$l25
 label	$l24
-li	$t163	0
-ret	$t163
-j	$l1
-label	$l1
+li	$s7	1
+label	$l25
+bne	$s7	$0	$l21
+j	$l23
+label	$l21
+addiu	$t78	$sp	8
+li	$t79	0
+sw	$t79	0($t78)
+label	$l27
+addiu	$t80	$sp	8
+lw	$t81	0($t80)
+li	$t82	3
+blt	$t81	$t82	$l29
+li	$s7	0
+j	$l30
+label	$l29
+li	$s7	1
+label	$l30
+bne	$s7	$0	$l26
+j	$l28
+label	$l26
+addiu	$t83	$sp	12
+lw	$t84	0($t83)
+mul	$t85	$t84	3
+addiu	$t86	$sp	8
+lw	$t87	0($t86)
+add	$t88	$t87	$t85
+mul	$t89	$t88	4
+addu	$t90	$t89	16
+addu	$t91	$sp	$t90
+li	$t92	0
+sw	$t92	0($t91)
+addiu	$t93	$sp	4
+li	$t94	0
+sw	$t94	0($t93)
+label	$l32
+addiu	$t95	$sp	4
+lw	$t96	0($t95)
+li	$t97	3
+blt	$t96	$t97	$l34
+li	$s7	0
+j	$l35
+label	$l34
+li	$s7	1
+label	$l35
+bne	$s7	$0	$l31
+j	$l33
+label	$l31
+addiu	$t98	$sp	12
+lw	$t99	0($t98)
+mul	$t100	$t99	3
+addiu	$t101	$sp	8
+lw	$t102	0($t101)
+add	$t103	$t102	$t100
+mul	$t104	$t103	4
+addu	$t105	$t104	16
+addiu	$t106	$sp	12
+lw	$t107	0($t106)
+mul	$t108	$t107	3
+addiu	$t109	$sp	8
+lw	$t110	0($t109)
+add	$t111	$t110	$t108
+mul	$t112	$t111	4
+addu	$t113	$t112	16
+addiu	$t114	$sp	12
+lw	$t115	0($t114)
+mul	$t116	$t115	3
+addiu	$t117	$sp	4
+lw	$t118	0($t117)
+add	$t119	$t118	$t116
+mul	$t120	$t119	4
+addu	$t121	$t120	88
+addiu	$t122	$sp	4
+lw	$t123	0($t122)
+mul	$t124	$t123	3
+addiu	$t125	$sp	8
+lw	$t126	0($t125)
+add	$t127	$t126	$t124
+mul	$t128	$t127	4
+addu	$t129	$t128	52
+addu	$t130	$sp	$t121
+addu	$t131	$sp	$t129
+lw	$t132	0($t130)
+lw	$t133	0($t131)
+mul	$t134	$t132	$t133
+addu	$t135	$sp	$t113
+lw	$t136	0($t135)
+add	$t137	$t136	$t134
+addu	$t138	$sp	$t105
+sw	$t137	0($t138)
+addiu	$t139	$sp	4
+lw	$t140	0($t139)
+li	$t141	1
+add	$t142	$t140	$t141
+addiu	$t143	$sp	4
+sw	$t142	0($t143)
+j	$l32
+label	$l33
+addiu	$t144	$sp	8
+lw	$t145	0($t144)
+li	$t146	1
+add	$t147	$t145	$t146
+addiu	$t148	$sp	8
+sw	$t147	0($t148)
+j	$l27
+label	$l28
+addiu	$t149	$sp	12
+lw	$t150	0($t149)
+li	$t151	1
+add	$t152	$t150	$t151
+addiu	$t153	$sp	12
+sw	$t152	0($t153)
+j	$l22
+label	$l23
+li	$t154	0
+ret	$t154
+j	$l0
+label	$l0
 end	main	128
