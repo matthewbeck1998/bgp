@@ -189,6 +189,8 @@ with open(inputFile, 'r') as fp:
             for inst in insts:
                 instStr = stringify(inst)
                 output.append(instStr)
+        elif inst[0] == "free":
+            pass
         elif inst:
             translatedStr = stringify(translated)
             output.append(translatedStr)
