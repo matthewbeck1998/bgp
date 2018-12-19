@@ -117,6 +117,7 @@ def translate(inst):
         "sw": handleStore,
 
         "j": handleJump,
+        "jal": handleJump,
 
         "beq": handleBranch,
         "bne": handleBranch,
