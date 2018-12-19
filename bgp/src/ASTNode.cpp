@@ -2289,7 +2289,7 @@ string ASTFunctionCallNode::walk()
     }
 
     cout << "jal\t" << funcId << endl;
-	return {};
+	return "$v0";
 }
 
 string ASTRelExprNode::walk()
