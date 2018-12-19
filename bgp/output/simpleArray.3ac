@@ -61,7 +61,7 @@ addiu	$t26	$sp	24
 lw	$t27	0($t26)
 mul	$t28	$t27	4
 addiu	$t29	$t28	4
-addiu	$t30	$sp	$t29
+addu	$t30	$sp	$t29
 lw	$t31	0($t30)
 move	$a0	$t31
 jal	printInt
