@@ -2191,7 +2191,7 @@ string ASTSelectionNode::walk()
 
 	string garbage;
 	if((*next(children.begin(), 4))->getLabel() != "INT_CONSTANT")
-	 garbage = (*next(children.begin(), 4))->walk();
+		garbage = (*next(children.begin(), 4))->walk();
 	else
 		(*next(children.begin(), 4))->walk();
 
@@ -2486,21 +2486,44 @@ string ASTFunctionCallNode::walk()
         returnValues.push_back(it->walk());
     }
 
-    string funcId = ((ASTIdNode*)children.front())->getId();
-    auto it = next(children.begin());
-    for (int i = 0; it != children.end(); i++, it++)
-    {
-        string ticket0 = "$t" + to_string(ticketCounter++);
-        string ticket1 = "$t" + to_string(ticketCounter++);
-        string paramReg = "$a" + to_string(i);
+	auto it = next(children.begin());
+	for(int i = 0; it != children.end(); i++, it++)
+	{
+		if((*it)->getLabel() == "IDENTIFIER")
+		{
+			string ticket0 = "$t" + to_string(ticketCounter++);
+			string ticket1 = "$t" + to_string(ticketCounter++);
+			string paramReg = "$a" + to_string(i);
 
-        cout << "addu\t" << ticket0 << "\t" << "$sp" << "\t" << returnValues[i + 1] << endl;
-        cout << "lw\t" << ticket1 << "\t" << "0(" << ticket0 << ")" << endl;
-        cout << "move\t" << paramReg << "\t" << ticket1 << endl;
-    }
+			cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << ((ASTIdNode*)*it)->getOffset();
+			cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
+			cout << "move\t" << paramReg + "\t" << ticket1 << endl;
+		}
+		else if((*it)->getLabel() == "INT_CONSTANT")
+		{
+			string paramReg = "$a" + to_string(i);
 
-    cout << "jal\t" << funcId << endl;
+			cout << "li\t" << paramReg + "\t" << returnValues[i + 1] << endl;
+		}
+		else if((*it)->getLabel() == "array_node")
+		{
+			string ticket0 = "$t" + to_string(ticketCounter++);
+			string ticket1 = "$t" + to_string(ticketCounter++);
+			string paramReg = "$a" + to_string(i);
+
+			cout << "addiu\t" << ticket0 + "\t" << "$sp\t" << returnValues[i + 1];
+			cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
+			cout << "move\t" << paramReg + "\t" << ticket1 << endl;
+		}
+		else
+		{	string paramReg = "$a" + to_string(i);
+			cout << "move\t" << paramReg + "\t" << returnValues[i + 1] << endl;
+		}
+	}
+
+	cout << "jal\t" << children.front()->getLabel() << endl;
 	return "$v0";
+
 }
 
 string ASTRelExprNode::walk()
