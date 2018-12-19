@@ -43,6 +43,8 @@ mul	$t0, $t1, 3
 addiu	$t1, $sp, 8
 lw	$t2, 0($t1)
 add	$t1, $t2, $t0
+mul	$t0, $t1, 4
+addu	$t1, $t0, 88
 addiu	$t0, $sp, 12
 addiu	$t2, $sp, 8
 lw	$t3, 0($t0)
@@ -104,12 +106,16 @@ mul	$t0, $t1, 3
 addiu	$t1, $sp, 8
 lw	$t2, 0($t1)
 add	$t1, $t2, $t0
+mul	$t0, $t1, 4
+addu	$t1, $t0, 52
 addiu	$t0, $sp, 12
 lw	$t2, 0($t0)
 mul	$t0, $t2, 3
 addiu	$t2, $sp, 8
 lw	$t3, 0($t2)
 add	$t2, $t3, $t0
+mul	$t0, $t2, 4
+addu	$t2, $t0, 88
 addu	$t0, $sp, $t2
 addu	$t2, $sp, $t1
 lw	$t1, 0($t0)
@@ -168,6 +174,8 @@ mul	$t0, $t1, 3
 addiu	$t1, $sp, 8
 lw	$t2, 0($t1)
 add	$t1, $t2, $t0
+mul	$t0, $t1, 4
+addu	$t1, $t0, 16
 addu	$t0, $sp, $t1
 li	$t1, 0
 sw	$t1, 0($t0)
@@ -193,24 +201,32 @@ mul	$t0, $t1, 3
 addiu	$t1, $sp, 8
 lw	$t2, 0($t1)
 add	$t1, $t2, $t0
+mul	$t0, $t1, 4
+addu	$t1, $t0, 16
 addiu	$t0, $sp, 12
 lw	$t2, 0($t0)
 mul	$t0, $t2, 3
 addiu	$t2, $sp, 8
 lw	$t3, 0($t2)
 add	$t2, $t3, $t0
+mul	$t0, $t2, 4
+addu	$t2, $t0, 16
 addiu	$t0, $sp, 12
 lw	$t3, 0($t0)
 mul	$t0, $t3, 3
 addiu	$t3, $sp, 4
 lw	$t4, 0($t3)
 add	$t3, $t4, $t0
+mul	$t0, $t3, 4
+addu	$t3, $t0, 88
 addiu	$t0, $sp, 4
 lw	$t4, 0($t0)
 mul	$t0, $t4, 3
 addiu	$t4, $sp, 8
 lw	$t5, 0($t4)
 add	$t4, $t5, $t0
+mul	$t0, $t4, 4
+addu	$t4, $t0, 52
 addu	$t0, $sp, $t3
 addu	$t3, $sp, $t4
 lw	$t4, 0($t0)
