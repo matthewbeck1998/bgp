@@ -150,6 +150,11 @@ function_definition
 	                                                        ASTFunctionNode* temp = new ASTFunctionNode("function_definition", ( ( ASTTypeNode* )$1 )-> getType() );
                                                             //$2->setType( $1->getType() ); //Might not need??
                                                             //temp -> addChild($1);
+                                                            if($2->getLabel() == "direct_declarator")
+                                                            {
+                                                                temp->addChild( new ASTIdNode( (ASTIdNode*) $2->getChildren().front() ) );
+                                                                $2->getChildren().pop_front();
+                                                            }
                                                             temp -> addChild($2);
 	                                                        temp -> addChild($3);
 	                                                        $$ = temp;
@@ -166,6 +171,11 @@ function_definition
                                                                              ASTFunctionNode* temp = new ASTFunctionNode("function_definition", ( ( ASTTypeNode* )$1 )-> getType());
                                                                              $2->setType( $1->getType() );
                                                                                //temp -> addChild($1);
+                                                                                if($2->getLabel() == "direct_declarator")
+                                                                                {
+                                                                                    temp->addChild( new ASTIdNode( (ASTIdNode*) $2->getChildren().front() ) );
+                                                                                    $2->getChildren().pop_front();
+                                                                                }
                                                                                temp -> addChild($2);
                                                                                temp -> addChild($3);
                                                                                temp -> addChild($4);

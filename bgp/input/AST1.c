@@ -1,3 +1,8 @@
+int test(int i)
+{
+
+}
+
 int main()
 {
     int nono[2], yesyes[4] = {1, 2, 3};
