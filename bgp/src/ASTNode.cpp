@@ -1723,11 +1723,12 @@ string ASTAssignNode::walk()
 	if(children.front()->getLabel() == "array_node" and
 	   children.back()->getLabel() == "array_initializer")
 	{
-		if(children.front()->getDimensions().front() < ((ASTArrayInitializerNode*)children.back())->getValues().size())
+		if(((ASTArrayNode*)children.front())->getDimensions().front() <= ((ASTArrayInitializerNode*)children.back())->getValues().size())
 		{
 			cout << "Array initializer too big" << endl;
 			exit(EXIT_FAILURE);
 		}
+
 		int currentDim = 0;
 		for(auto intialValue: ((ASTArrayInitializerNode*)children.back())->getValues())
 		{
@@ -1742,7 +1743,7 @@ string ASTAssignNode::walk()
 			cout << "addiu\t" << ticket2 + "\t" << ticket1 + "\t" << children.front()->getOffset() << endl;
 			cout << "addiu\t" << ticket3 + "\t" << "$sp\t" << ticket2 << endl;
 			cout << "li\t" << ticket4 + "\t" << intialValue << endl;
-			cout << "lw\t" << ticket4 + "\t" << "0(" + ticket3 + ")" << endl;
+			cout << "sw\t" << ticket4 + "\t" << "0(" + ticket3 + ")" << endl;
 			currentDim++;
 		}
 	}
