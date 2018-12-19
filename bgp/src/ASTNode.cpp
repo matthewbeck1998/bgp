@@ -2941,14 +2941,28 @@ void ASTDeclListNode::printNode(ostream &treeOutFile)
 ASTFunctionCallNode::ASTFunctionCallNode(string node_label, ASTNode *inputChild) : ASTNode(move(node_label))
 {
     addChild(inputChild);
+    type = 3;
     //activationFrameSize = inputChild->getOffset();
 }
+
+
 
 ASTFunctionCallNode::ASTFunctionCallNode(string node_label, ASTNode* leftChild, ASTNode* rightChild) : ASTNode(move(node_label))
 {
     addChild(leftChild);
     addChild(rightChild);
+    type = 3;
     //activationFrameSize = leftChild->getOffset();
+}
+
+int ASTFunctionCallNode::getType() const
+{
+    return type;
+}
+
+void ASTFunctionCallNode::setType(int inputType)
+{
+    type = inputType;
 }
 
 void ASTFunctionCallNode::printNode(ostream &treeOutFile)

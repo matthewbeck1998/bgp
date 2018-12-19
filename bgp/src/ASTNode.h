@@ -1016,6 +1016,10 @@ class ASTFunctionCallNode : public ASTNode
     ASTFunctionCallNode(string node_label, ASTNode* leftChild, ASTNode* rightChild);
     void printNode(ostream &treeOutFile = cout) override;
     string walk() override;
+    void setType( int inputType );
+    int getType() const;
+    private:
+    int type;
 };
 
 class ASTRelExprNode : public ASTNode
