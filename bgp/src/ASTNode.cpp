@@ -2269,6 +2269,12 @@ string ASTFunctionCallNode::walk()
 	//cout << "ASTFunctionCallNode " << this->getLabel() << endl;
     // 1. push parameters onto the $ax registers ($a0, $a1, $a2, $a3)
     // 2. jump with link to function being called
+    vector<string> returnValues;
+    for (auto it : children)
+    {
+        returnValues.push_back(it->walk());
+    }
+
     string funcId = ((ASTIdNode*)children.front())->getId();
     auto it = next(children.begin());
     for (int i = 0; it != children.end(); i++, it++)
@@ -2277,7 +2283,7 @@ string ASTFunctionCallNode::walk()
         string ticket1 = "$t" + to_string(ticketCounter++);
         string paramReg = "$a" + to_string(i);
 
-        cout << "addiu\t" << ticket0 << "\t" << "$sp" << "\t" << (*it)->getOffset() << endl;
+        cout << "addiu\t" << ticket0 << "\t" << "$sp" << "\t" << returnValues[i + 1] << endl;
         cout << "lw\t" << ticket1 << "\t" << "0(" << ticket0 << ")" << endl;
         cout << "move\t" << paramReg << "\t" << ticket1 << endl;
     }
