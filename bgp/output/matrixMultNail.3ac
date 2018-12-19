@@ -26,7 +26,7 @@ li	$t4	0
 sw	$t4	0($t3)
 addiu	$t5	$sp	12
 lw	$t6	0($t5)
-move	$t6	$t6
+free	$t6
 label	$l5
 addiu	$t7	$sp	12
 lw	$t8	0($t7)
@@ -45,7 +45,7 @@ li	$t11	0
 sw	$t11	0($t10)
 addiu	$t12	$sp	8
 lw	$t13	0($t12)
-move	$t13	$t13
+free	$t13
 label	$l10
 addiu	$t14	$sp	8
 lw	$t15	0($t14)
@@ -91,10 +91,10 @@ addu	$t43	$sp	$t42
 lw	$t44	0($t43)
 move	$a0	$t44
 jal	printInt
-move	$t34	$t34
-move	$v0	$v0
+free	$t34
+free	$v0
 jal	printSpace
-move	$v0	$v0
+free	$v0
 addiu	$t45	$sp	8
 lw	$t46	0($t45)
 li	$t47	1
@@ -103,11 +103,11 @@ addiu	$t49	$sp	8
 sw	$t48	0($t49)
 addiu	$t50	$sp	8
 lw	$t51	0($t50)
-move	$t51	$t51
+free	$t51
 j	$l10
 label	$l11
 jal	printNewline
-move	$v0	$v0
+free	$v0
 addiu	$t52	$sp	12
 lw	$t53	0($t52)
 li	$t54	1
@@ -116,17 +116,17 @@ addiu	$t56	$sp	12
 sw	$t55	0($t56)
 addiu	$t57	$sp	12
 lw	$t58	0($t57)
-move	$t58	$t58
+free	$t58
 j	$l5
 label	$l6
 jal	printNewline
-move	$v0	$v0
+free	$v0
 addiu	$t59	$sp	12
 li	$t60	0
 sw	$t60	0($t59)
 addiu	$t61	$sp	12
 lw	$t62	0($t61)
-move	$t62	$t62
+free	$t62
 label	$l15
 addiu	$t63	$sp	12
 lw	$t64	0($t63)
@@ -145,7 +145,7 @@ li	$t67	0
 sw	$t67	0($t66)
 addiu	$t68	$sp	8
 lw	$t69	0($t68)
-move	$t69	$t69
+free	$t69
 label	$l20
 addiu	$t70	$sp	8
 lw	$t71	0($t70)
@@ -196,10 +196,10 @@ addu	$t104	$sp	$t103
 lw	$t105	0($t104)
 move	$a0	$t105
 jal	printInt
-move	$t95	$t95
-move	$v0	$v0
+free	$t95
+free	$v0
 jal	printSpace
-move	$v0	$v0
+free	$v0
 addiu	$t106	$sp	8
 lw	$t107	0($t106)
 li	$t108	1
@@ -208,11 +208,11 @@ addiu	$t110	$sp	8
 sw	$t109	0($t110)
 addiu	$t111	$sp	8
 lw	$t112	0($t111)
-move	$t112	$t112
+free	$t112
 j	$l20
 label	$l21
 jal	printNewline
-move	$v0	$v0
+free	$v0
 addiu	$t113	$sp	12
 lw	$t114	0($t113)
 li	$t115	1
@@ -221,17 +221,17 @@ addiu	$t117	$sp	12
 sw	$t116	0($t117)
 addiu	$t118	$sp	12
 lw	$t119	0($t118)
-move	$t119	$t119
+free	$t119
 j	$l15
 label	$l16
 jal	printNewline
-move	$v0	$v0
+free	$v0
 addiu	$t120	$sp	12
 li	$t121	0
 sw	$t121	0($t120)
 addiu	$t122	$sp	12
 lw	$t123	0($t122)
-move	$t123	$t123
+free	$t123
 label	$l25
 addiu	$t124	$sp	12
 lw	$t125	0($t124)
@@ -250,7 +250,7 @@ li	$t128	0
 sw	$t128	0($t127)
 addiu	$t129	$sp	8
 lw	$t130	0($t129)
-move	$t130	$t130
+free	$t130
 label	$l30
 addiu	$t131	$sp	8
 lw	$t132	0($t131)
@@ -285,7 +285,7 @@ li	$t149	0
 sw	$t149	0($t148)
 addiu	$t150	$sp	4
 lw	$t151	0($t150)
-move	$t151	$t151
+free	$t151
 label	$l35
 addiu	$t152	$sp	4
 lw	$t153	0($t152)
@@ -346,7 +346,7 @@ addu	$t197	$sp	$t195
 sw	$t194	0($t197)
 addu	$t198	$sp	$t196
 lw	$t199	0($t198)
-move	$t199	$t199
+free	$t199
 addiu	$t200	$sp	4
 lw	$t201	0($t200)
 li	$t202	1
@@ -355,10 +355,10 @@ addiu	$t204	$sp	4
 sw	$t203	0($t204)
 addiu	$t205	$sp	4
 lw	$t206	0($t205)
-move	$t206	$t206
+free	$t206
 j	$l35
 label	$l36
-move	$t147	$t147
+free	$t147
 addiu	$t207	$sp	12
 lw	$t208	0($t207)
 mul	$t209	$t208	3
@@ -371,9 +371,9 @@ addu	$t215	$sp	$t214
 lw	$t216	0($t215)
 move	$a0	$t216
 jal	printInt
-move	$v0	$v0
+free	$v0
 jal	printSpace
-move	$v0	$v0
+free	$v0
 addiu	$t217	$sp	8
 lw	$t218	0($t217)
 li	$t219	1
@@ -382,11 +382,11 @@ addiu	$t221	$sp	8
 sw	$t220	0($t221)
 addiu	$t222	$sp	8
 lw	$t223	0($t222)
-move	$t223	$t223
+free	$t223
 j	$l30
 label	$l31
 jal	printNewline
-move	$v0	$v0
+free	$v0
 addiu	$t224	$sp	12
 lw	$t225	0($t224)
 li	$t226	1
@@ -395,7 +395,7 @@ addiu	$t228	$sp	12
 sw	$t227	0($t228)
 addiu	$t229	$sp	12
 lw	$t230	0($t229)
-move	$t230	$t230
+free	$t230
 j	$l25
 label	$l26
 li	$t231	0
