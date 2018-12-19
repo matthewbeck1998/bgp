@@ -43,33 +43,38 @@ addiu	$t8	$sp	0
 lw	$t9	0($t8)
 li	$t10	1
 sub	$t11	$t9	$t10
-addu	$t12	$sp	$t11
-lw	$t13	0($t12)
-move	$a0	$t13
+move	$a0	$t11
 jal	factorial
-addiu	$t14	$sp	0
-lw	$t15	0($t14)
-mul	$t16	$t15	$v0
-ret	$t16
+addiu	$t12	$sp	0
+lw	$t13	0($t12)
+mul	$t14	$t13	$v0
+ret	$t14
 j	$l3
 label	$l3
 end	factorial	8
 func	main	16
+addiu	$t15	$sp	8
+li	$t16	5
+sw	$t16	0($t15)
 addiu	$t17	$sp	8
-li	$t18	5
-sw	$t18	0($t17)
-addu	$t19	$sp	
+lw	$t18	0($t17)
+free	$t18
+addiu	$t19	$sp	8
 lw	$t20	0($t19)
 move	$a0	$t20
 jal	factorial
 addiu	$t21	$sp	4
 sw	$v0	0($t21)
-addu	$t22	$sp	
+addiu	$t22	$sp	4
 lw	$t23	0($t22)
-move	$a0	$t23
+addiu	$t24	$sp	4
+lw	$t25	0($t24)
+move	$a0	$t25
 jal	printInt
-li	$t24	0
-ret	$t24
+free	$t23
+free	$v0
+li	$t26	0
+ret	$t26
 j	$l4
 label	$l4
 end	main	16
