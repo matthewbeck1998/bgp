@@ -2762,6 +2762,9 @@ string ASTFunctionNode::walk()
         cout << "sw\t" << paramReg << "\t" << "0(" << ticket << ")" << endl;
         it++;
     }
+
+    auto body = prev(children.end(), 1);
+    (*body)->walk();
 	
     cout << "label\t" << ticketLabel << endl;
     cout << "end\t" << funcId << "\t" << activationFrameSize << endl;
