@@ -2145,6 +2145,17 @@ string ASTArrayNode::walk()
 				cout << "addiu\t" << ticket3 + "\t" << ticket2+ "\t" << offset << endl;
 				return ticket3;
 			}
+			else if(children.front()->getLabel() == "additive_expression" or
+					children.front()->getLabel() == "multiplicative_expression")
+			{
+				string ticket0 = "$t" + to_string(ticketCounter++);
+				string ticket1 = "$t" + to_string(ticketCounter++);
+
+				//cout << "li\t" << ticket0 + "\t" << returnValues[0] << endl;
+				cout << "mul\t" << ticket0 + "\t" << returnValues[0] + "\t" << typeToByteSize(type) << endl;
+				cout << "addiu\t" << ticket1 + "\t" << ticket0 + "\t" << offset << endl;
+				return ticket1;
+			}
 			else
 			{
 				cout << "1D Array Broken on line: " << lineNum << endl;
@@ -2194,7 +2205,17 @@ string ASTArrayNode::walk()
 
 					currentTicket.assign(ticket1);
 				}
+				else if(children.front()->getLabel() == "additive_expression" or
+						children.front()->getLabel() == "multiplicative_expression")
+				{
+					string ticket0 = "$t" + to_string(ticketCounter++);
+					string ticket1 = "$t" + to_string(ticketCounter++);
 
+					//cout << "li\t" << ticket0 + "\t" << returnValues[0] << endl;
+					cout << "mul\t" << ticket0 + "\t" << returnValues[currentReturnIndex] + "\t" << typeToByteSize(type) << endl;
+					cout << "addiu\t" << ticket1 + "\t" << ticket0 + "\t" << offset << endl;
+					currentTicket.assign(ticket1);
+				}
 
 				for(auto dim = next(dimensions.rbegin(), startingDim); dim != dimensions.rend(); dim++)
 				{
