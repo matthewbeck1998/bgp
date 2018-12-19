@@ -4,13 +4,9 @@ void printNewline() {}
 
 int main()
 {
-    int a[25], i, j, x;
-    for (i = 0; i < 25; ++i)
-    {
-        a[i] = 24 - i;
-    }
-
-    for (i = 0; i < 25; ++i)
+    int a[10] = {9, 8, 7, 6, 5, 4, 3, 2, 1};
+    int i, j, x;
+    for (i = 0; i < 10; ++i)
     {
         printInt(a[i]);
         printSpace();
@@ -19,9 +15,9 @@ int main()
     printNewline();
     printNewline();
 
-    for (i = 0; i < 24; ++i)
+    for (i = 0; i < 9; ++i)
     {
-        for (j = 0; j < 25 - i - 1; ++j)
+        for (j = 0; j < 10 - i - 1; ++j)
         {
             if (a[j] > a[j + 1])
             {
@@ -32,7 +28,7 @@ int main()
         }
     }
 
-    for (i = 0 ; i < 25; ++i)
+    for (i = 0 ; i < 10; ++i)
     {
         printInt(a[i]);
         printSpace();
