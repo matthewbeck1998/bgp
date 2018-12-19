@@ -55,7 +55,7 @@ sw	$t25	0($t24)
 label	$l12
 addiu	$t26	$sp	12
 lw	$t27	0($t26)
-li	$t28	24
+li	$t28	25
 sub	$t29	$t28	$t27
 li	$t30	1
 sub	$t31	$t29	$t30

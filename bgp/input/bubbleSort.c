@@ -8,7 +8,7 @@ int main()
 
     for (i = 0; i < 24; ++i)
     {
-        for (j = 0; j < 24 - i - 1; ++j)
+        for (j = 0; j < 25 - i - 1; ++j)
         {
             if (a[j] > a[j + 1])
             {

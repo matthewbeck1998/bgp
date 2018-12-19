@@ -61,7 +61,7 @@ sw	$t1, 0($t0)
 $l12:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
-li	$t0, 24
+li	$t0, 25
 sub	$t2, $t0, $t1
 li	$t0, 1
 sub	$t1, $t2, $t0
