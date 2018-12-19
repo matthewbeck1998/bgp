@@ -84,7 +84,7 @@ def handleDiv(inst):
     return [first, second]
 
 def handleMod(inst):
-    first = [inst[0], inst[2], inst[3]]
+    first = ["div", inst[2], inst[3]]
     second = ["mfhi", inst[1]]
     return [first, second]
 
