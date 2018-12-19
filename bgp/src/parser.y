@@ -118,8 +118,15 @@ external_declaration
 	;
 
 function_definition
-	: declarator compound_statement { ASTFunctionNode* temp = new ASTFunctionNode("function_definition", ( ( ASTTypeNode* )$1 )-> getType() );
-                                      temp -> addChild($1);
+	: declarator compound_statement { ASTFunctionNode* temp = new ASTFunctionNode("function_definition", 3/*( ( ASTTypeNode* )$1 )-> getType()*/ );
+                                    if($1->getLabel() == "direct_declarator")
+                                    {
+                                        temp->setType( $1->getChildren().front()->getType() );
+                                        temp->suckUpChildren( $1 );
+                                    } else
+                                    {
+                                        temp -> addChild($1);
+                                    }
                                       temp -> addChild($2);
                                       $$ = temp;
                                       if( currentOffset % 8 != 0 )
@@ -131,9 +138,16 @@ function_definition
                                       currentOffset = 4;
                                       parserOutput("function_definition -> declarator compound_statement");
                                       st.popLevel(); }
-	| declarator declaration_list compound_statement {   ASTFunctionNode* temp = new ASTFunctionNode("function_definition", ( ( ASTTypeNode* )$1 )-> getType() );
-	                                                     $2->setType( $1->getType() );
-                                                         //temp -> addChild($1);
+	| declarator declaration_list compound_statement {   ASTFunctionNode* temp = new ASTFunctionNode("function_definition", 3/*( ( ASTTypeNode* )$1 )-> getType()*/ );
+
+                                                        if($2->getLabel() == "direct_declarator")
+                                                        {
+                                                            $2->setType( $1->getChildren().front()->getType() );
+                                                            temp->suckUpChildren( $1 );
+                                                        } else
+                                                        {
+                                                            temp -> addChild($1);
+                                                        }
                                                          temp -> addChild($2);
                                                          temp -> addChild($3);
                                                          $$ = temp;
@@ -152,7 +166,6 @@ function_definition
                                                             //temp -> addChild($1);
                                                             if($2->getLabel() == "direct_declarator")
                                                             {
-
                                                                 temp->suckUpChildren( $2 );
                                                             } else
                                                             {
@@ -171,10 +184,11 @@ function_definition
 	                                                        st.popLevel(); }
 	| declaration_specifiers declarator declaration_list compound_statement {
                                                                                 ASTFunctionNode* temp = new ASTFunctionNode("function_definition", ( ( ASTTypeNode* )$1 )-> getType());
-                                                                                $2->setType( $1->getType() );
+                                                                                //$2->setType( $1->getType() );
                                                                                 //temp -> addChild($1);
                                                                                 if($2->getLabel() == "direct_declarator")
                                                                                 {
+                                                                                    $2->setType( $1->getChildren().front()->getType() );
                                                                                     temp->suckUpChildren( $2 );
                                                                                 } else
                                                                                 {
