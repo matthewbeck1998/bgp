@@ -70,7 +70,6 @@ def handleStore(inst):
 def handleMove(inst):
     inst[1] = assignTemp(inst[1]) if isTemp(inst[1]) else inst[1]
     inst[2] = searchTemp(inst[2]) if isTemp(inst[2]) else inst[2]
-
     return inst
 
 def handleMath(inst):
