@@ -2770,8 +2770,21 @@ string ASTFunctionNode::walk()
         it++;
     }
 
-    auto body = prev(children.end(), 1);
-    (*body)->walk();
+    if (funcId == "printInt")
+    {
+        string ticket0 = "$t" + to_string(ticketCounter++);
+        string ticket1 = "$t" + to_string(ticketCounter++);
+        cout << "addiu\t" << ticket0 << "\t" << "$sp" << "\t" << "0" << endl;
+        cout << "sw\t" << ticket1 << "\t" << "0(" << ticket0 << ")" << endl;
+        cout << "move\t" << "$a0\t" << ticket1 << endl;
+        cout << "li\t" << "$v0\t" << "1" << endl;
+        cout << "syscall\t" << endl;
+    }
+    else
+    {
+        auto body = prev(children.end(), 1);
+        (*body)->walk();
+    }
 	
     cout << "label\t" << ticketLabel << endl;
     cout << "end\t" << funcId << "\t" << activationFrameSize << endl;
