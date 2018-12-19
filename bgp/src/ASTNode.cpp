@@ -2624,6 +2624,10 @@ string ASTRelExprNode::walk()
 			(children.back()->getLabel() == "additive_expression"
 			 or children.back()->getLabel() == "multiplicative_expression"))
 	{
+//		cout << "Front int, Back math" << endl;
+//		cout << "Front: " << returnValues[0] << endl;
+//		cout << "Back: " << returnValues[2] << endl;
+
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$s7";
 
@@ -2644,6 +2648,10 @@ string ASTRelExprNode::walk()
 			(children.back()->getLabel() == "additive_expression"
 			 or children.back()->getLabel() == "multiplicative_expression"))
 	{
+//		cout << "Front ID, Back math" << endl;
+//		cout << "Front: " << returnValues[0] << endl;
+//		cout << "Back: " << returnValues[2] << endl;
+
 		string ticket0 = "$t" + to_string(ticketCounter++);
 		string ticket1 = "$t" + to_string(ticketCounter++);
 		string ticket2 = "$s7";
@@ -2656,7 +2664,7 @@ string ASTRelExprNode::walk()
 		cout << "lw\t" << ticket1 + "\t" << "0(" + ticket0 + ")" << endl;
 
 		cout << (*next(children.begin()))->getLabel() + "\t" << ticket1 + "\t"
-			 << returnValues[0] + "\t" << label0 << endl;
+			 << returnValues[2] + "\t" << label0 << endl;
 		cout << "li\t" << ticket2 + "\t" << 0 << endl;
 		cout << "j\t" << label1 << endl;
 		cout << "label\t" << label0 << endl;
