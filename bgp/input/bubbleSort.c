@@ -1,3 +1,7 @@
+void printInt(int x) {}
+void printSpace() {}
+void printNewline() {}
+
 int main()
 {
     int a[25], i, j, x;
@@ -5,6 +9,15 @@ int main()
     {
         a[i] = 24 - i;
     }
+
+    for (i = 0; i < 25; ++i)
+    {
+        printInt(a[i]);
+        printSpace();
+    }
+
+    printNewline();
+    printNewline();
 
     for (i = 0; i < 24; ++i)
     {
@@ -17,6 +30,12 @@ int main()
                 a[j+1] = x;
             }
         }
+    }
+
+    for (i = 0 ; i < 25; ++i)
+    {
+        printInt(a[i]);
+        printSpace();
     }
 
     return 0;
