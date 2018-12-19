@@ -42,6 +42,9 @@ sw	$ra, 124($sp)
 addiu	$t0, $sp, 12
 li	$t1, 0
 sw	$t1, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
+move	$t6, $t1
 $l5:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
@@ -58,6 +61,9 @@ $l4:
 addiu	$t0, $sp, 8
 li	$t1, 0
 sw	$t1, 0($t0)
+addiu	$t0, $sp, 8
+lw	$t1, 0($t0)
+move	$t13, $t1
 $l10:	
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
@@ -84,42 +90,61 @@ addiu	$t2, $sp, 8
 lw	$t3, 0($t0)
 lw	$t0, 0($t2)
 add	$t2, $t3, $t0
+move	$s6, $t1
+move	$t0, $s6
+move	$t1, $s6
+addu	$t3, $sp, $t0
+sw	$t2, 0($t3)
 addu	$t0, $sp, $t1
-sw	$t2, 0($t0)
+lw	$t1, 0($t0)
 addiu	$t0, $sp, 12
-lw	$t1, 0($t0)
-mul	$t0, $t1, 3
-addiu	$t1, $sp, 8
-lw	$t2, 0($t1)
-add	$t1, $t2, $t0
-mul	$t0, $t1, 4
-addu	$t1, $t0, 88
-addu	$t0, $sp, $t1
-lw	$t1, 0($t0)
-move	$a0, $t1
+lw	$t2, 0($t0)
+mul	$t0, $t2, 3
+addiu	$t2, $sp, 8
+lw	$t3, 0($t2)
+add	$t2, $t3, $t0
+mul	$t0, $t2, 4
+addu	$t2, $t0, 88
+addu	$t0, $sp, $t2
+lw	$t2, 0($t0)
+move	$a0, $t2
 jal	printInt
+move	$t34, $t1
+move	$v0, $v0
 jal	printSpace
+move	$v0, $v0
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 8
 sw	$t2, 0($t0)
+addiu	$t0, $sp, 8
+lw	$t1, 0($t0)
+move	$t51, $t1
 j	$l10
 $l11:	
 jal	printNewline
+move	$v0, $v0
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 12
 sw	$t2, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
+move	$t58, $t1
 j	$l5
 $l6:	
 jal	printNewline
+move	$v0, $v0
 addiu	$t0, $sp, 12
 li	$t1, 0
 sw	$t1, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
+move	$t62, $t1
 $l15:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
@@ -136,6 +161,9 @@ $l14:
 addiu	$t0, $sp, 8
 li	$t1, 0
 sw	$t1, 0($t0)
+addiu	$t0, $sp, 8
+lw	$t1, 0($t0)
+move	$t69, $t1
 $l20:	
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
@@ -165,44 +193,63 @@ lw	$t3, 0($t2)
 add	$t2, $t3, $t0
 mul	$t0, $t2, 4
 addu	$t2, $t0, 88
-addu	$t0, $sp, $t2
-addu	$t2, $sp, $t1
-lw	$t1, 0($t0)
-sw	$t1, 0($t2)
-addiu	$t0, $sp, 12
-lw	$t1, 0($t0)
-mul	$t0, $t1, 3
-addiu	$t1, $sp, 8
-lw	$t2, 0($t1)
-add	$t1, $t2, $t0
-mul	$t0, $t1, 4
-addu	$t1, $t0, 52
+move	$s6, $t1
+move	$t0, $s6
+move	$t1, $s6
+addu	$t3, $sp, $t2
+addu	$t2, $sp, $t0
+lw	$t0, 0($t3)
+sw	$t0, 0($t2)
 addu	$t0, $sp, $t1
 lw	$t1, 0($t0)
-move	$a0, $t1
+addiu	$t0, $sp, 12
+lw	$t2, 0($t0)
+mul	$t0, $t2, 3
+addiu	$t2, $sp, 8
+lw	$t3, 0($t2)
+add	$t2, $t3, $t0
+mul	$t0, $t2, 4
+addu	$t2, $t0, 52
+addu	$t0, $sp, $t2
+lw	$t2, 0($t0)
+move	$a0, $t2
 jal	printInt
+move	$t95, $t1
+move	$v0, $v0
 jal	printSpace
+move	$v0, $v0
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 8
 sw	$t2, 0($t0)
+addiu	$t0, $sp, 8
+lw	$t1, 0($t0)
+move	$t112, $t1
 j	$l20
 $l21:	
 jal	printNewline
+move	$v0, $v0
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 12
 sw	$t2, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
+move	$t119, $t1
 j	$l15
 $l16:	
 jal	printNewline
+move	$v0, $v0
 addiu	$t0, $sp, 12
 li	$t1, 0
 sw	$t1, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
+move	$t123, $t1
 $l25:	
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
@@ -219,6 +266,9 @@ $l24:
 addiu	$t0, $sp, 8
 li	$t1, 0
 sw	$t1, 0($t0)
+addiu	$t0, $sp, 8
+lw	$t1, 0($t0)
+move	$t130, $t1
 $l30:	
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
@@ -240,17 +290,25 @@ lw	$t2, 0($t1)
 add	$t1, $t2, $t0
 mul	$t0, $t1, 4
 addu	$t1, $t0, 16
+move	$s6, $t1
+move	$t0, $s6
+move	$t1, $s6
+addu	$t2, $sp, $t0
+li	$t0, 0
+sw	$t0, 0($t2)
 addu	$t0, $sp, $t1
-li	$t1, 0
-sw	$t1, 0($t0)
+lw	$t1, 0($t0)
 addiu	$t0, $sp, 4
-li	$t1, 0
-sw	$t1, 0($t0)
+li	$t2, 0
+sw	$t2, 0($t0)
+addiu	$t0, $sp, 4
+lw	$t2, 0($t0)
+move	$t151, $t2
 $l35:	
 addiu	$t0, $sp, 4
-lw	$t1, 0($t0)
+lw	$t2, 0($t0)
 li	$t0, 3
-blt	$t1, $t0, $l37
+blt	$t2, $t0, $l37
 li	$s7, 0
 j	$l38
 $l37:	
@@ -259,14 +317,6 @@ $l38:
 bne	$s7, $0, $l34
 j	$l36
 $l34:	
-addiu	$t0, $sp, 12
-lw	$t1, 0($t0)
-mul	$t0, $t1, 3
-addiu	$t1, $sp, 8
-lw	$t2, 0($t1)
-add	$t1, $t2, $t0
-mul	$t0, $t1, 4
-addu	$t1, $t0, 16
 addiu	$t0, $sp, 12
 lw	$t2, 0($t0)
 mul	$t0, $t2, 3
@@ -278,37 +328,55 @@ addu	$t2, $t0, 16
 addiu	$t0, $sp, 12
 lw	$t3, 0($t0)
 mul	$t0, $t3, 3
-addiu	$t3, $sp, 4
+addiu	$t3, $sp, 8
 lw	$t4, 0($t3)
 add	$t3, $t4, $t0
 mul	$t0, $t3, 4
-addu	$t3, $t0, 88
-addiu	$t0, $sp, 4
+addu	$t3, $t0, 16
+addiu	$t0, $sp, 12
 lw	$t4, 0($t0)
 mul	$t0, $t4, 3
-addiu	$t4, $sp, 8
+addiu	$t4, $sp, 4
 lw	$t5, 0($t4)
 add	$t4, $t5, $t0
 mul	$t0, $t4, 4
-addu	$t4, $t0, 52
+addu	$t4, $t0, 88
+addiu	$t0, $sp, 4
+lw	$t5, 0($t0)
+mul	$t0, $t5, 3
+addiu	$t5, $sp, 8
+lw	$t6, 0($t5)
+add	$t5, $t6, $t0
+mul	$t0, $t5, 4
+addu	$t5, $t0, 52
+addu	$t0, $sp, $t4
+addu	$t4, $sp, $t5
+lw	$t5, 0($t0)
+lw	$t0, 0($t4)
+mul	$t4, $t5, $t0
 addu	$t0, $sp, $t3
-addu	$t3, $sp, $t4
-lw	$t4, 0($t0)
-lw	$t0, 0($t3)
-mul	$t3, $t4, $t0
-addu	$t0, $sp, $t2
+lw	$t3, 0($t0)
+add	$t0, $t3, $t4
+move	$s6, $t2
+move	$t2, $s6
+move	$t3, $s6
+addu	$t4, $sp, $t2
+sw	$t0, 0($t4)
+addu	$t0, $sp, $t3
 lw	$t2, 0($t0)
-add	$t0, $t2, $t3
-addu	$t2, $sp, $t1
-sw	$t0, 0($t2)
+move	$t199, $t2
 addiu	$t0, $sp, 4
-lw	$t1, 0($t0)
+lw	$t2, 0($t0)
 li	$t0, 1
-add	$t2, $t1, $t0
+add	$t3, $t2, $t0
 addiu	$t0, $sp, 4
-sw	$t2, 0($t0)
+sw	$t3, 0($t0)
+addiu	$t0, $sp, 4
+lw	$t2, 0($t0)
+move	$t206, $t2
 j	$l35
 $l36:	
+move	$t147, $t1
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 mul	$t0, $t1, 3
@@ -321,22 +389,31 @@ addu	$t0, $sp, $t1
 lw	$t1, 0($t0)
 move	$a0, $t1
 jal	printInt
+move	$v0, $v0
 jal	printSpace
+move	$v0, $v0
 addiu	$t0, $sp, 8
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 8
 sw	$t2, 0($t0)
+addiu	$t0, $sp, 8
+lw	$t1, 0($t0)
+move	$t223, $t1
 j	$l30
 $l31:	
 jal	printNewline
+move	$v0, $v0
 addiu	$t0, $sp, 12
 lw	$t1, 0($t0)
 li	$t0, 1
 add	$t2, $t1, $t0
 addiu	$t0, $sp, 12
 sw	$t2, 0($t0)
+addiu	$t0, $sp, 12
+lw	$t1, 0($t0)
+move	$t230, $t1
 j	$l25
 $l26:	
 li	$t0, 0
