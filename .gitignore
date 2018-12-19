@@ -6,3 +6,4 @@ bgp/src/scanner.c
 *.swp
 *.swo
 *.dot
+*.txt

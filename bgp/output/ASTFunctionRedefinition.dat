@@ -1,2 +1,0 @@
-int foo(int bar, char baz, float bat) // incorrect definition!
-                                     ^ Error on line 8, column 37.
