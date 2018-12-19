@@ -23,6 +23,7 @@ def assignTemp(val):
 def searchTemp(temp):
     for reg in RAT:
         if reg["val"] == temp:
+            #print("Freed:", temp)
             reg["free"] = True
             return reg["name"]
 
@@ -103,7 +104,7 @@ def handleSyscall(inst):
     return inst
 
 def translate(inst):
-    #print("\nBefore:", inst)
+    #print("Before:", inst)
     kjv = {
         "func": handleFunction,
         "end": handleEnd,
@@ -146,7 +147,7 @@ def translate(inst):
 
     cmd = inst[0]
     translatedList = kjv[cmd](inst)
-    #print("After:", translatedList, "\n")
+    #print("After:", translatedList)
     return translatedList
 
 def stringify(li):
