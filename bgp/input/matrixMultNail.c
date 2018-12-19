@@ -1,3 +1,18 @@
+void printInt(int x)
+{
+
+}
+
+void printSpace()
+{
+
+}
+
+void printNewline()
+{
+
+}
+
 int main()
 {
     int A[3][3];
@@ -5,34 +20,43 @@ int main()
     int C[3][3];
     int i, j, k;
 
-    A[0][0] = 1;
-    A[0][1] = 2;
-    A[0][2] = 3;
-    A[1][0] = 4;
-    A[1][1] = 5;
-    A[1][2] = 6;
-    A[2][0] = 7;
-    A[2][1] = 8;
-    A[2][2] = 9;
-
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 3; ++i)
     {
-        for (j = 0; j < 3; j++)
+        for (j = 0; j < 3; ++j)
+        {
+            A[i][j] = i + j;
+            printInt(A[i][j]);
+            printSpace();
+        }
+        printNewline();
+    }
+    printNewline();
+
+    for (i = 0; i < 3; ++i)
+    {
+        for (j = 0; j < 3; ++j)
         {
             B[i][j] = A[i][j];
+            printInt(B[i][j]);
+            printSpace();
         }
+        printNewline();
     }
+    printNewline();
 
-    for (i = 0; i < 3; i++)
+    for (i = 0; i < 3; ++i)
     {
-        for (j = 0; j < 3; j++)
+        for (j = 0; j < 3; ++j)
         {
             C[i][j] = 0;
-            for (k = 0; k < 3; k++)
+            for (k = 0; k < 3; ++k)
             {
                 C[i][j] = C[i][j] + A[i][k] * B[k][j];
             }
+            printInt(C[i][j]);
+            printSpace();
         }
+        printNewline();
     }
 
     return 0;

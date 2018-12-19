@@ -1,8 +1,7 @@
 void printInt(int i)
 {
-   i = 1; 
+    
 }
-
 
 int main()
 {

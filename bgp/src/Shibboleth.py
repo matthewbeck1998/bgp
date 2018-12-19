@@ -66,6 +66,10 @@ def handleStore(inst):
         inst[2] = makeOffset(offset, reg)
     return inst
 
+def handleMove(inst):
+    inst[2] = searchTemp(inst[2]) if isTemp(inst[2]) else inst[2]
+    return inst
+
 def handleMath(inst):
     inst[1] = assignTemp(inst[1]) if isTemp(inst[1]) else inst[1]
     inst[2] = searchTemp(inst[2]) if isTemp(inst[2]) else inst[2]
@@ -93,8 +97,11 @@ def handleBranch(inst):
 def handleLabel(inst):
     return [inst[1] + ":"]
 
+def handleSyscall(inst):
+    return inst
+
 def translate(inst):
-    print(inst)
+    #print(inst)
     kjv = {
         "func": handleFunction,
         "end": handleEnd,
@@ -103,10 +110,12 @@ def translate(inst):
         "add": handleMath,
         "addi": handleMath,
         "addiu": handleMath,
+        "addu": handleMath,
 
         "sub": handleMath,
         "subi": handleMath,
         "subiu": handleMath,
+        "subu": handleMath,
 
         "mul": handleMath,
         "div": handleMath,
@@ -116,7 +125,10 @@ def translate(inst):
 
         "sw": handleStore,
 
+        "move": handleMove,
+
         "j": handleJump,
+        "jal": handleJump,
 
         "beq": handleBranch,
         "bne": handleBranch,
@@ -126,6 +138,7 @@ def translate(inst):
         "ble": handleBranch,
 
         "label": handleLabel,
+        "syscall": handleSyscall
     }
 
     cmd = inst[0]

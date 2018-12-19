@@ -1,15 +1,23 @@
 func	printInt	8
 addiu	$t0	$sp	0
-li	$t1	1
-sw	$t1	0($t0)
+sw	$a0	0($t0)
+addiu	$t1	$sp	0
+lw	$t2	0($t1)
+move	$a0	$t2
+li	$v0	1
+syscall	
 label	$l0
 end	printInt	8
 func	main	8
-addiu	$t2	$sp	0
-li	$t3	1
-sw	$t3	0($t2)
-li	$t4	0
-ret	$t4
+addiu	$t3	$sp	0
+li	$t4	1
+sw	$t4	0($t3)
+addiu	$t5	$sp	0
+lw	$t6	0($t5)
+move	$a0	$t6
+jal	printInt
+li	$t7	0
+ret	$t7
 j	$l1
 label	$l1
 end	main	8
