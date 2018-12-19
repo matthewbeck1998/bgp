@@ -1,5 +1,7 @@
-printInt(int i)
-{}
+void printInt(int i) {}
+void printSpace() {}
+void printNewline() {}
+
 int main()
 {
     int a[3][3][3];
