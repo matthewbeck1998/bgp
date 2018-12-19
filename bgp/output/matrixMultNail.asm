@@ -116,6 +116,7 @@ addiu	$t0, $sp, 12
 sw	$t2, 0($t0)
 j	$l5
 $l6:	
+jal	printNewline
 addiu	$t0, $sp, 12
 li	$t1, 0
 sw	$t1, 0($t0)
@@ -198,6 +199,7 @@ addiu	$t0, $sp, 12
 sw	$t2, 0($t0)
 j	$l15
 $l16:	
+jal	printNewline
 addiu	$t0, $sp, 12
 li	$t1, 0
 sw	$t1, 0($t0)

@@ -30,6 +30,7 @@ int main()
         }
         printNewline();
     }
+    printNewline();
 
     for (i = 0; i < 3; ++i)
     {
@@ -41,6 +42,7 @@ int main()
         }
         printNewline();
     }
+    printNewline();
 
     for (i = 0; i < 3; ++i)
     {

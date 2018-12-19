@@ -98,6 +98,7 @@ addiu	$t46	$sp	12
 sw	$t45	0($t46)
 j	$l5
 label	$l6
+jal	printNewline
 addiu	$t47	$sp	12
 li	$t48	0
 sw	$t48	0($t47)
@@ -180,6 +181,7 @@ addiu	$t95	$sp	12
 sw	$t94	0($t95)
 j	$l15
 label	$l16
+jal	printNewline
 addiu	$t96	$sp	12
 li	$t97	0
 sw	$t97	0($t96)
