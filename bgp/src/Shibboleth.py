@@ -97,8 +97,11 @@ def handleBranch(inst):
 def handleLabel(inst):
     return [inst[1] + ":"]
 
+def handleSyscall(inst):
+    return inst
+
 def translate(inst):
-    print(inst)
+    #print(inst)
     kjv = {
         "func": handleFunction,
         "end": handleEnd,
@@ -133,6 +136,7 @@ def translate(inst):
         "ble": handleBranch,
 
         "label": handleLabel,
+        "syscall": handleSyscall
     }
 
     cmd = inst[0]
