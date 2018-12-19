@@ -3,6 +3,16 @@ void printInt(int x)
 
 }
 
+void printSpace()
+{
+
+}
+
+void printNewline()
+{
+
+}
+
 int main()
 {
     int A[3][3];
