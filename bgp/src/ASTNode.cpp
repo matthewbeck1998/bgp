@@ -1802,6 +1802,7 @@ string ASTAssignNode::walk()
 
 		cout << "addiu\t" << ticket2 + "\t" << "$sp\t" << children.front()->getOffset() << endl;
 		cout << "lw\t" << ticket3 + "\t" << "0(" + ticket2 + ")" << endl;
+		//cout << "AHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\t" << lineNum << endl;
 
 		return ticket3;
 	}
@@ -2074,7 +2075,8 @@ string ASTIterationNode::walk()
 		string label1 = "$l" + to_string(labelCounter++);
 		string label2 = "$l" + to_string(labelCounter++);
 
-		(*next(children.begin(), 1))->walk();
+		string garbage = (*next(children.begin(), 1))->walk();
+		cout << "move\t" << garbage + "\t" << garbage << endl;
 
 		cout << "label\t" << label1 << endl;
 		if(expr->getLabel() == "INT_CONSTANT")
