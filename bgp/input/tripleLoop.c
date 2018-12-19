@@ -29,6 +29,7 @@ int main()
                 if( a[i][j][k] % 3 != 0 )
                 {
                     printInt( a[i][j][k] );
+                    printSpace();
                 }
             }
             ++j;

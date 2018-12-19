@@ -257,6 +257,7 @@ addu	$t2, $sp, $t0
 lw	$t0, 0($t2)
 move	$a0, $t0
 jal	printInt
+jal	printSpace
 $l33:	
 addiu	$t0, $sp, 4
 lw	$t2, 0($t0)

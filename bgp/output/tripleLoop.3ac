@@ -249,6 +249,8 @@ addu	$t135	$sp	$t134
 lw	$t136	0($t135)
 move	$a0	$t136
 jal	printInt
+jal	printSpace
+free	$v0
 free	$v0
 label	$l33
 addiu	$t137	$sp	4
