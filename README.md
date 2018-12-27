@@ -1,29 +1,6 @@
 # BGP Compiler
 Built by **Matthew Beck**, **William Garner**, and **Price Poston**.
 
-## Quick Start
-Here are the quick and dirty instructions for getting some 3AC output to examine.\
-If your name is **Chris Koh** or **Derek Stratton**, you are required to read these instructions twice.\
-This is due to the fact that neither of you can follow instructions.
-
-**Linux**
-1. Make sure you are in the bgp directory.
-2. Compile the code with ```make -C src```.
-3. Run ```./bin/bgp input/forLoop.c``` to see 3AC for a for loop.
-4. Run ```./bin/bgp input/whileLoop.c``` to see 3AC for a while loop.
-5. Run ```./bin/bgp input/doWhileLoop.c``` to see 3AC for a do while loop.
-
-**Windows**
-1. Make sure you are in the bgp directory.
-2. Compile the code with ```make -C src```.
-3. Run ```bin\bgp.exe input/forLoop.c``` to see 3AC for a for loop.
-4. Run ```bin\bgp.exe input/whileLoop.c``` to see 3AC for a while loop.
-5. Run ```bin\bgp.exe input/doWhileLoop.c``` to see 3AC for a do while loop.
-
-Please note that the 3AC for all three of the inputs are exactly the same.\
-This is due to the fact that all three of the inputs should indeed be the same program written in three different ways.\
-Other test cases can be found in the input directory within the bgp directory (the bgp directory is the one you are in at step 1).
-
 ## Running bgp
 
 **Linux**
