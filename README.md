@@ -23,7 +23,7 @@ Please note that the 3AC for all three of the inputs are exactly the same.\
 This is due to the fact that all three of the inputs should indeed be the same program written in three different ways.\
 Other test cases can be found in the input directory within the bgp directory (the bgp directory is the one you are in at step 1).
 
-## Running PA9
+## Running bgp
 
 **Linux**
 1. Make sure you are in the bgp directory.
