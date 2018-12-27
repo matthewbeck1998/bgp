@@ -1,4 +1,4 @@
-# BGP Compiler
+# bgp
 Built by **Matthew Beck**, **William Garner**, and **Price Poston**.
 
 ## Running bgp
