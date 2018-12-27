@@ -1,4 +1,5 @@
 # BGP Compiler
+Built for CS 460, Dr. Frederick Calvin Harris, Jr's Compiler Construction course by Matthew Beck, William Garner, and Price Poston.
 
 ## Quick Start
 Here are the quick and dirty instructions for getting some 3AC output to examine.\
